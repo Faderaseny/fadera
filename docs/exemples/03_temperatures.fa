@@ -1,0 +1,41 @@
+# Exemple 3 — Convertisseur de températures
+# Notions : fonctions, paramètres, renvoyer, arrondir, listes de structures
+
+fonction celsius_vers_fahrenheit(c)
+  renvoyer c * 9 / 5 + 32
+fin
+
+fonction fahrenheit_vers_celsius(f)
+  renvoyer (f - 32) * 5 / 9
+fin
+
+fonction celsius_vers_kelvin(c)
+  renvoyer c + 273.15
+fin
+
+afficher "100 °C = " + celsius_vers_fahrenheit(100) + " °F"
+afficher "-40 °F = " + fahrenheit_vers_celsius(-40) + " °C"
+afficher "37 °C = " + celsius_vers_kelvin(37) + " K"
+
+afficher ""
+afficher "Tableau de conversion :"
+pour c allantde -10 a 40 pas 10 faire
+  soit f = celsius_vers_fahrenheit(c)
+  afficher texte_remplir_gauche(texte(c), 4, " ") + " °C  =  " + texte_remplir_gauche(texte(arrondir(f, 1)), 5, " ") + " °F"
+fin
+
+afficher ""
+fonction description(c)
+  si c < 0 alors
+    renvoyer "gel"
+  sinon si c < 15 alors
+    renvoyer "frais"
+  sinon si c < 28 alors
+    renvoyer "agréable"
+  sinon
+    renvoyer "chaud"
+  fin
+fin
+pour chaque t dans [-5, 8, 21, 35] faire
+  afficher t + " °C : " + description(t)
+fin

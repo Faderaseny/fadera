@@ -1,0 +1,9 @@
+Nombres premiers jusqu'à 60 :
+[2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59]
+Il y en a 17.
+
+Décomposition en facteurs premiers :
+12 = 2 x 2 x 3
+97 = 97
+360 = 2 x 2 x 2 x 3 x 3 x 5
+1001 = 7 x 11 x 13

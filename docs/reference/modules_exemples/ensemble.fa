@@ -1,0 +1,9 @@
+importer "std/ensemble"
+
+soit a = ensemble_depuis([1, 2, 3, 3, 2])
+soit b = ensemble_depuis([3, 4])
+afficher a.longueur()
+afficher a.union(b).en_liste()
+afficher a.intersection(b).en_liste()
+afficher a.difference(b).en_liste()
+afficher a.possede(2)

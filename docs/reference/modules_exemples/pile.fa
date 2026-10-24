@@ -1,0 +1,8 @@
+importer "std/pile"
+
+soit p = Pile()
+p.empiler("a").empiler("b").empiler("c")
+afficher p.sommet()
+afficher p.depiler() + p.depiler()
+afficher p.longueur()
+afficher p.en_liste()

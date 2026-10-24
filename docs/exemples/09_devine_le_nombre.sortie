@@ -1,0 +1,10 @@
+Le nombre secret est entre 1 et 100 (l'ordinateur le cherche).
+  50 : trop grand
+  25 : trop petit
+  37 : trop petit
+  43 : trop petit
+  46 : trop petit
+  48 : trouvé en 6 essai(s) !
+
+Sur 20 nombres secrets différents, la dichotomie a besoin de :
+au plus 7 essais (log2(100) ≈ 6,6)

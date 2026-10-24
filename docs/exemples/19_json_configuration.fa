@@ -1,0 +1,32 @@
+# Exemple 19 — Lire, modifier et écrire du JSON
+# Notions : json_lire, json_texte, json_valide, json_chemin, essayer / attraper
+
+soit brut = "{\"nom\": \"Boutique Awa\", \"ouvert\": true, \"horaires\": {\"semaine\": \"8h-18h\", \"dimanche\": null}, \"produits\": [{\"nom\": \"thé\", \"prix\": 1500}, {\"nom\": \"café\", \"prix\": 2200}]}"
+
+afficher "JSON valide ? " + json_valide(brut)
+afficher "JSON valide ? " + json_valide("{ceci n'est pas du json")
+
+soit config = json_lire(brut)
+afficher "Boutique : " + lireCle(config, "nom")
+afficher "Horaires de semaine : " + json_chemin(config, "horaires.semaine", "?")
+afficher "Prix du 2e produit : " + json_chemin(config, "produits.1.prix", 0)
+afficher "Horaires du samedi : " + json_chemin(config, "horaires.samedi", "non renseigné")
+
+# On modifie la configuration puis on la réécrit
+modifierCle(config, "ouvert", faux)
+soit produits = lireCle(config, "produits")
+ajouter(produits, { nom: "miel", prix: 3000 })
+
+afficher ""
+afficher json_texte(config, 2)
+
+afficher ""
+afficher "Version compacte : " + json_texte(lireElement(produits, 2))
+
+# Un JSON invalide produit une erreur qu'on peut attraper
+essayer
+  soit x = json_lire("[1, 2,")
+  afficher x
+attraper erreur
+  afficher "Lecture impossible : le texte n'est pas du JSON."
+fin

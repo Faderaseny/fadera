@@ -1,0 +1,10 @@
+importer "std/maths"
+
+afficher factorielle(6)
+afficher fibonacci(10)
+afficher premiers_jusqua(30)
+afficher pgcd(84, 36) + " " + ppcm(4, 6)
+afficher combinaisons(5, 2)
+afficher diviseurs(28)
+afficher transposer([[1, 2, 3], [4, 5, 6]])
+afficher puissance_mod(2, 100, 13)

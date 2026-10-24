@@ -1,0 +1,38 @@
+# Exemple 4 — Nombres premiers : le crible d'Ératosthène
+# Notions : listes, tantque, lireElement / modifierElement, racine
+
+soit limite = 60
+soit estPremier = []
+pour i allantde 0 a limite faire
+  ajouter(estPremier, vrai)
+fin
+modifierElement(estPremier, 0, faux)
+modifierElement(estPremier, 1, faux)
+
+soit p = 2
+tantque p * p <= limite faire
+  si lireElement(estPremier, p) alors
+    soit m = p * p
+    tantque m <= limite faire
+      modifierElement(estPremier, m, faux)
+      m = m + p
+    fin
+  fin
+  p = p + 1
+fin
+
+soit premiers = []
+pour n allantde 2 a limite faire
+  si lireElement(estPremier, n) alors
+    ajouter(premiers, n)
+  fin
+fin
+afficher "Nombres premiers jusqu'à " + limite + " :"
+afficher premiers
+afficher "Il y en a " + taille(premiers) + "."
+
+afficher ""
+afficher "Décomposition en facteurs premiers :"
+pour chaque n dans [12, 97, 360, 1001] faire
+  afficher n + " = " + joindre(math_facteurs_premiers(n), " x ")
+fin

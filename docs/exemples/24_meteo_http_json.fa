@@ -1,0 +1,16 @@
+# Exemple 24 — Interroger une API web (réseau)
+# Notions : http_json, essayer / attraper, json_chemin
+# Ce programme a besoin d'internet. Sans réseau, il explique le problème au lieu de planter.
+# (Dans le playground, le site visé doit autoriser les appels depuis un navigateur.)
+
+soit adresse = "https://api.open-meteo.com/v1/forecast?latitude=14.69&longitude=-17.44&current_weather=true"
+
+essayer
+  soit reponse = http_json(adresse)
+  soit actuel = lireCle(reponse, "current_weather")
+  afficher "Dakar en ce moment :"
+  afficher "  Température : " + lireCle(actuel, "temperature") + " °C"
+  afficher "  Vent        : " + json_chemin(actuel, "windspeed", "?") + " km/h"
+attraper erreur
+  afficher "Impossible de joindre le service météo."
+fin

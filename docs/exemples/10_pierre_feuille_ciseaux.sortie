@@ -1,0 +1,13 @@
+Manche  1 : pierre   contre pierre   → égalité
+Manche  2 : feuille  contre pierre   → Alice gagne
+Manche  3 : ciseaux  contre ciseaux  → égalité
+Manche  4 : ciseaux  contre ciseaux  → égalité
+Manche  5 : pierre   contre ciseaux  → Alice gagne
+Manche  6 : ciseaux  contre pierre   → Bruno gagne
+Manche  7 : pierre   contre feuille  → Bruno gagne
+Manche  8 : feuille  contre pierre   → Alice gagne
+Manche  9 : pierre   contre feuille  → Bruno gagne
+Manche 10 : pierre   contre feuille  → Bruno gagne
+
+Score final : { alice: 3, bruno: 4, egalites: 3 }
+Bruno remporte le tournoi !

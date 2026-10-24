@@ -1,0 +1,42 @@
+# Exemple 20 — Un journal de bord enregistré dans un fichier
+# Notions : ecrireFichier, lireFichier, découper en lignes, gestion d'erreur
+# Avec la commande fadera, le fichier « journal_exemple.txt » est créé à côté de vous.
+
+soit nom_fichier = "journal_exemple.txt"
+
+fonction ajouter_entree(texte_entree, numero)
+  soit contenu = ""
+  essayer
+    contenu = lireFichier(nom_fichier)
+  attraper erreur
+    contenu = ""
+  fin
+  ecrireFichier(nom_fichier, contenu + "Jour " + numero + " : " + texte_entree + "\n")
+fin
+
+# On repart d'un fichier vide
+ecrireFichier(nom_fichier, "")
+ajouter_entree("départ de Dakar", 1)
+ajouter_entree("arrivée à Saint-Louis", 2)
+ajouter_entree("visite du marché", 3)
+ajouter_entree("retour à Dakar", 4)
+
+soit contenu = lireFichier(nom_fichier)
+soit lignes = filtrer(decouper(contenu, "\n"), l => taille(l) > 0)
+afficher "Le journal contient " + taille(lignes) + " entrées :"
+pour chaque l dans lignes faire
+  afficher "  " + l
+fin
+
+afficher ""
+afficher "Entrées qui parlent de Dakar :"
+pour chaque l dans filtrer(lignes, l => contient(l, "Dakar")) faire
+  afficher "  " + l
+fin
+
+afficher ""
+essayer
+  lireFichier("fichier_qui_n_existe_pas.txt")
+attraper erreur
+  afficher "Fichier introuvable : le programme continue sans planter."
+fin

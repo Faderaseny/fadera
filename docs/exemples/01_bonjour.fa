@@ -1,0 +1,15 @@
+# Exemple 1 — Bonjour, Fadéra !
+# Notions : afficher, variables (soit), texte, nombres, concaténation avec +
+
+soit prenom = "Awa"
+soit age = 17
+
+afficher "Bonjour, " + prenom + " !"
+afficher prenom + " a " + age + " ans."
+
+# Un calcul dans un texte : les nombres sont convertis automatiquement
+afficher "Dans 10 ans, " + prenom + " aura " + (age + 10) + " ans."
+
+# Les variables peuvent changer de valeur
+age = age + 1
+afficher "Cette année : " + age

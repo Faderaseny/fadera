@@ -1,0 +1,16 @@
+importer "std/tas"
+
+soit t = tas_min()
+pour chaque x dans [42, 7, 19, 3, 25] faire
+  t.pousser(x)
+fin
+soit ordre = []
+tantque non t.est_vide() faire
+  ajouter(ordre, t.extraire())
+fin
+afficher ordre
+
+# Une file de priorité avec sa propre règle : les plus âgés d'abord
+soit urgences = Tas((a, b) => lireCle(b, "age") - lireCle(a, "age"))
+urgences.pousser({ nom: "Awa", age: 30 }).pousser({ nom: "Ali", age: 71 }).pousser({ nom: "Bineta", age: 55 })
+afficher lireCle(urgences.extraire(), "nom")

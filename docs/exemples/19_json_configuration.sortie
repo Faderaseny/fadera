@@ -1,0 +1,32 @@
+JSON valide ? vrai
+JSON valide ? faux
+Boutique : Boutique Awa
+Horaires de semaine : 8h-18h
+Prix du 2e produit : 2200
+Horaires du samedi : non renseigné
+
+{
+  "nom": "Boutique Awa",
+  "ouvert": false,
+  "horaires": {
+    "semaine": "8h-18h",
+    "dimanche": null
+  },
+  "produits": [
+    {
+      "nom": "thé",
+      "prix": 1500
+    },
+    {
+      "nom": "café",
+      "prix": 2200
+    },
+    {
+      "nom": "miel",
+      "prix": 3000
+    }
+  ]
+}
+
+Version compacte : {"nom":"miel","prix":3000}
+Lecture impossible : le texte n'est pas du JSON.

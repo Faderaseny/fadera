@@ -1,0 +1,46 @@
+# Exemple 17 — Palindromes et anagrammes
+# Notions : normaliser un texte (accents, majuscules, espaces), comparer, trier des lettres
+
+fonction normaliser(t)
+  soit s = minuscule(texte_sans_accents(t))
+  soit lettres = ""
+  pour i allantde 0 a taille(s) - 1 faire
+    soit c = caractere(s, i)
+    si code_caractere(c) >= 97 et code_caractere(c) <= 122 alors
+      lettres = lettres + c
+    fin
+  fin
+  renvoyer lettres
+fin
+
+fonction est_palindrome(t)
+  soit n = normaliser(t)
+  renvoyer n == inverser(n)
+fin
+
+fonction lettres_triees(t)
+  renvoyer joindre(trier(decouper(normaliser(t), "")), "")
+fin
+
+fonction sont_anagrammes(a, b)
+  renvoyer lettres_triees(a) == lettres_triees(b)
+fin
+
+pour chaque phrase dans ["Radar", "Ésope reste ici et se repose", "Bonjour", "A man, a plan, a canal : Panama"] faire
+  si est_palindrome(phrase) alors
+    afficher "« " + phrase + " » est un palindrome"
+  sinon
+    afficher "« " + phrase + " » n'est pas un palindrome"
+  fin
+fin
+
+afficher ""
+pour chaque paire dans [["Marie", "aimer"], ["Chien", "Niche"], ["Chat", "Chien"], ["Eleve", "Levée"]] faire
+  soit a = lireElement(paire, 0)
+  soit b = lireElement(paire, 1)
+  si sont_anagrammes(a, b) alors
+    afficher a + " et " + b + " sont des anagrammes"
+  sinon
+    afficher a + " et " + b + " ne sont pas des anagrammes"
+  fin
+fin

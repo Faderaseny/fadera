@@ -1,0 +1,17 @@
+Tour 1 : X joue en case 5
+Tour 2 : O joue en case 1
+Tour 3 : X joue en case 3
+Tour 4 : O joue en case 7
+Tour 5 : X joue en case 4
+Tour 6 : O joue en case 6
+Tour 7 : X joue en case 9
+Tour 8 : O joue en case 2
+Tour 9 : X joue en case 8
+
+ O | O | X
+---+---+---
+ X | X | O
+---+---+---
+ O | X | X
+
+Match nul.

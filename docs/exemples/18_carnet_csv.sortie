@@ -1,0 +1,22 @@
+Colonnes : nom, ville, age
+5 personnes.
+
+À Dakar :
+  Awa (34 ans)
+  Fatou (41 ans)
+
+Du plus jeune au plus âgé :
+  Ibrahima 19
+  Moussa   27
+  Awa      34
+  Fatou    41
+  Mariama  52
+
+Âge moyen : 34.6 ans
+
+nom,majeur
+Awa,true
+Moussa,true
+Fatou,true
+Ibrahima,true
+Mariama,true

@@ -1,0 +1,28 @@
+# Exemple 7 — Équation du second degré  ax² + bx + c = 0
+# Notions : discriminant, racine, fonctions de la bibliothèque (math_resoudre_second_degre)
+
+fonction resoudre(a, b, c)
+  soit delta = b * b - 4 * a * c
+  si delta < 0 alors
+    renvoyer "aucune solution réelle (delta = " + delta + ")"
+  sinon si delta == 0 alors
+    renvoyer "une solution double : x = " + (-b / (2 * a))
+  sinon
+    soit x1 = (-b - racine(delta)) / (2 * a)
+    soit x2 = (-b + racine(delta)) / (2 * a)
+    renvoyer "deux solutions : x1 = " + x1 + " et x2 = " + x2
+  fin
+fin
+
+afficher "x² - 3x + 2 = 0  → " + resoudre(1, -3, 2)
+afficher "x² + 2x + 1 = 0  → " + resoudre(1, 2, 1)
+afficher "x² + x + 1 = 0   → " + resoudre(1, 1, 1)
+afficher "2x² - 8 = 0      → " + resoudre(2, 0, -8)
+
+afficher ""
+afficher "La fonction toute faite donne la même chose :"
+afficher math_resoudre_second_degre(1, -3, 2)
+
+afficher ""
+afficher "Un système de deux équations (2x + y = 5 et x - y = 1) :"
+afficher math_resoudre_systeme_gauss([[2, 1, 5], [1, -1, 1]])

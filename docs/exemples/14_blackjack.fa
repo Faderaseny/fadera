@@ -1,0 +1,89 @@
+# Exemple 14 — Blackjack : le joueur contre la banque
+# Notions : paquet de cartes, mélange de Fisher-Yates avec une graine, fonctions, listes
+
+soit graine = 99
+fonction alea(m)
+  graine = (graine * 1103515245 + 12345) % 2147483648
+  renvoyer graine % m
+fin
+
+fonction nouveau_paquet()
+  soit valeurs = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "V", "D", "R", "A"]
+  soit couleurs = ["♠", "♥", "♦", "♣"]
+  soit paquet = []
+  pour chaque c dans couleurs faire
+    pour chaque v dans valeurs faire
+      ajouter(paquet, v + c)
+    fin
+  fin
+  renvoyer paquet
+fin
+
+fonction melanger(paquet)
+  pour i allantde taille(paquet) - 1 a 1 pas -1 faire
+    soit j = alea(i + 1)
+    soit tmp = lireElement(paquet, i)
+    modifierElement(paquet, i, lireElement(paquet, j))
+    modifierElement(paquet, j, tmp)
+  fin
+  renvoyer paquet
+fin
+
+# Valeur d'une main : les figures valent 10, l'as vaut 11 ou 1 selon ce qui est le plus favorable
+fonction valeur(main)
+  soit total = 0
+  soit as = 0
+  pour chaque carte dans main faire
+    soit v = sous_texte(carte, 0, taille(carte) - 1)
+    si v == "A" alors
+      total = total + 11
+      as = as + 1
+    sinon si v == "V" ou v == "D" ou v == "R" ou v == "10" alors
+      total = total + 10
+    sinon
+      total = total + nombre(v)
+    fin
+  fin
+  tantque total > 21 et as > 0 faire
+    total = total - 10
+    as = as - 1
+  fin
+  renvoyer total
+fin
+
+soit paquet = melanger(nouveau_paquet())
+fonction tirer()
+  renvoyer retirer(paquet, taille(paquet) - 1)
+fin
+
+soit joueur = [tirer(), tirer()]
+soit banque = [tirer(), tirer()]
+afficher "Vos cartes : " + joindre(joueur, " ") + "  (" + valeur(joueur) + ")"
+afficher "La banque montre : " + lireElement(banque, 0)
+
+# Le joueur s'arrête à 17 ou plus, la banque aussi
+tantque valeur(joueur) < 17 faire
+  soit c = tirer()
+  ajouter(joueur, c)
+  afficher "Vous tirez " + c + "  → " + valeur(joueur)
+fin
+
+si valeur(joueur) > 21 alors
+  afficher "Vous dépassez 21 : la banque gagne."
+sinon
+  afficher "La banque dévoile : " + joindre(banque, " ") + "  (" + valeur(banque) + ")"
+  tantque valeur(banque) < 17 faire
+    soit c = tirer()
+    ajouter(banque, c)
+    afficher "La banque tire " + c + "  → " + valeur(banque)
+  fin
+  soit vj = valeur(joueur)
+  soit vb = valeur(banque)
+  si vb > 21 ou vj > vb alors
+    afficher "Vous gagnez (" + vj + " contre " + vb + ") !"
+  sinon si vj == vb alors
+    afficher "Égalité à " + vj + "."
+  sinon
+    afficher "La banque gagne (" + vb + " contre " + vj + ")."
+  fin
+fin

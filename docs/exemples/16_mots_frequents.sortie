@@ -1,0 +1,11 @@
+Nombre de mots : 18
+Mots différents : 10
+
+Les 5 mots les plus fréquents :
+le      █████ 5
+chat    ███ 3
+dort    ██ 2
+chien   ██ 2
+court   █ 1
+
+{ le: 5, chat: 3, dort: 2, chien: 2, court: 1, et: 1, jouent: 1, ensemble: 1, puis: 1, encore: 1 }

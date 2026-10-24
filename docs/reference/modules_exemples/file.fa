@@ -1,0 +1,8 @@
+importer "std/file"
+
+soit f = File()
+f.enfiler("premier").enfiler("deuxième").enfiler("troisième")
+afficher f.defiler()
+afficher f.tete()
+afficher f.longueur()
+afficher f.en_liste()

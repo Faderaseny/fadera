@@ -1,0 +1,30 @@
+# Exemple 22 — Calculer un sous-réseau IP
+# Notions : telecom_calculer_sous_reseau, lireCle, boucle sur plusieurs préfixes
+
+fonction decrire(adresse, prefixe)
+  soit r = telecom_calculer_sous_reseau(adresse, prefixe)
+  afficher "Réseau          : " + lireCle(r, "adresse_reseau_exacte") + "/" + prefixe
+  afficher "Masque          : " + lireCle(r, "masque_sous_reseau")
+  afficher "Diffusion       : " + lireCle(r, "adresse_diffusion_broadcast")
+  afficher "Première / dernière : " + lireCle(r, "premiere_ip_disponible") + " → " + lireCle(r, "derniere_ip_disponible")
+  afficher "Machines        : " + lireCle(r, "nombre_hotes_utilisables")
+fin
+
+decrire("192.168.1.130", 26)
+
+afficher ""
+afficher "Combien de machines selon le préfixe ?"
+pour chaque p dans [24, 25, 26, 27, 28, 30] faire
+  soit r = telecom_calculer_sous_reseau("10.0.0.1", p)
+  afficher "  /" + p + " → " + texte_remplir_gauche(texte(lireCle(r, "nombre_hotes_utilisables")), 4, " ") + " machines, masque " + lireCle(r, "masque_sous_reseau")
+fin
+
+afficher ""
+afficher "Plus petit préfixe pour 50 machines :"
+soit choisi = 0
+pour p allantde 30 a 8 pas -1 faire
+  si choisi == 0 et lireCle(telecom_calculer_sous_reseau("10.0.0.1", p), "nombre_hotes_utilisables") >= 50 alors
+    choisi = p
+  fin
+fin
+afficher "  /" + choisi

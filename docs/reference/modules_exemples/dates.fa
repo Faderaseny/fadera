@@ -1,0 +1,9 @@
+importer "std/dates"
+
+soit d = date_creer(2026, 10, 24, 0, 0, 0)
+afficher date_longue(d)
+afficher est_week_end(d)
+afficher jours_entre(d, date_creer(2026, 12, 25))
+afficher date_longue(ajouter_jours_ouvres(d, 5))
+afficher date_longue(fin_du_mois(d))
+afficher duree_texte(93784000)

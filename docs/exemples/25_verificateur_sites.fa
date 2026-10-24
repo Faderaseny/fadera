@@ -1,0 +1,28 @@
+# Exemple 25 — Vérifier que des sites répondent
+# Notions : http_obtenir, chrono (mesurer une durée), tableau de résultats, essayer / attraper
+# Ce programme a besoin d'internet.
+
+soit sites = ["https://example.com", "https://faderaseny.github.io/fadera/", "https://site-qui-n-existe-pas.invalid"]
+
+fonction tester_site(adresse)
+  soit debut = chrono()
+  essayer
+    soit page = http_obtenir(adresse)
+    renvoyer { site: adresse, ok: vrai, octets: taille(page), ms: arrondir(chrono() - debut, 0) }
+  attraper erreur
+    renvoyer { site: adresse, ok: faux, octets: 0, ms: arrondir(chrono() - debut, 0) }
+  fin
+fin
+
+soit resultats = transformer(sites, tester_site)
+pour chaque r dans resultats faire
+  soit etat = "HORS LIGNE"
+  si lireCle(r, "ok") alors
+    etat = "en ligne (" + lireCle(r, "octets") + " octets)"
+  fin
+  afficher texte_remplir_droite(lireCle(r, "site"), 42, " ") + etat
+fin
+
+soit pannes = filtrer(resultats, r => non lireCle(r, "ok"))
+afficher ""
+afficher taille(pannes) + " site(s) injoignable(s) sur " + taille(sites)

@@ -1,0 +1,46 @@
+# Exemple 18 — Un carnet d'adresses au format CSV
+# Notions : csv_lire, csv_texte, listes de structures, filtrer, trier_par, recherche
+
+soit donnees = "nom;ville;age
+Awa;Dakar;34
+Moussa;Thiès;27
+Fatou;Dakar;41
+Ibrahima;Saint-Louis;19
+Mariama;Thiès;52"
+
+# csv_lire renvoie une liste de lignes (chaque ligne est une liste de textes)
+soit lignes = csv_lire(donnees, ";")
+soit entete = lireElement(lignes, 0)
+afficher "Colonnes : " + joindre(entete, ", ")
+
+# On transforme chaque ligne en structure : { nom, ville, age }
+soit gens = []
+pour i allantde 1 a taille(lignes) - 1 faire
+  soit l = lireElement(lignes, i)
+  ajouter(gens, { nom: lireElement(l, 0), ville: lireElement(l, 1), age: nombre(lireElement(l, 2)) })
+fin
+afficher taille(gens) + " personnes."
+
+afficher ""
+afficher "À Dakar :"
+pour chaque g dans filtrer(gens, p => lireCle(p, "ville") == "Dakar") faire
+  afficher "  " + lireCle(g, "nom") + " (" + lireCle(g, "age") + " ans)"
+fin
+
+afficher ""
+afficher "Du plus jeune au plus âgé :"
+pour chaque g dans trier_par(gens, p => lireCle(p, "age")) faire
+  afficher "  " + texte_remplir_droite(lireCle(g, "nom"), 9, " ") + lireCle(g, "age")
+fin
+
+afficher ""
+soit ages = transformer(gens, p => lireCle(p, "age"))
+afficher "Âge moyen : " + arrondir(stats_moyenne(ages), 1) + " ans"
+
+# On produit un nouveau CSV, avec une colonne de plus
+soit sortie = [["nom", "majeur"]]
+pour chaque g dans gens faire
+  ajouter(sortie, [lireCle(g, "nom"), lireCle(g, "age") >= 18])
+fin
+afficher ""
+afficher csv_texte(sortie, ",")

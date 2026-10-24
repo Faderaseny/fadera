@@ -1,0 +1,97 @@
+# Exemple 15 — Sortir d'un labyrinthe : le plus court chemin
+# Notions : parcours en largeur (file), grille de texte, structures comme clés
+
+soit carte = [
+  "S.#.......",
+  ".##.####.#",
+  "....#..#..",
+  "###.#.##.#",
+  "....#..#..",
+  ".####.##.#",
+  "......#..E"
+]
+soit hauteur = taille(carte)
+soit largeur = taille(lireElement(carte, 0))
+
+fonction symbole(l, c)
+  renvoyer caractere(lireElement(carte, l), c)
+fin
+
+fonction cherche(s)
+  pour l allantde 0 a hauteur - 1 faire
+    pour c allantde 0 a largeur - 1 faire
+      si symbole(l, c) == s alors
+        renvoyer [l, c]
+      fin
+    fin
+  fin
+  renvoyer []
+fin
+
+soit depart = cherche("S")
+soit arrivee = cherche("E")
+
+# distance[l][c] vaut -1 tant que la case n'est pas atteinte
+soit distance = []
+soit precedent = {}
+pour l allantde 0 a hauteur - 1 faire
+  soit ligne = []
+  pour c allantde 0 a largeur - 1 faire
+    ajouter(ligne, -1)
+  fin
+  ajouter(distance, ligne)
+fin
+
+fonction cle(l, c)
+  renvoyer l + "," + c
+fin
+
+soit file = [depart]
+modifierElement(lireElement(distance, lireElement(depart, 0)), lireElement(depart, 1), 0)
+soit tete = 0
+tantque tete < taille(file) faire
+  soit courant = lireElement(file, tete)
+  tete = tete + 1
+  soit l = lireElement(courant, 0)
+  soit c = lireElement(courant, 1)
+  pour chaque d dans [[-1, 0], [1, 0], [0, -1], [0, 1]] faire
+    soit nl = l + lireElement(d, 0)
+    soit nc = c + lireElement(d, 1)
+    si nl >= 0 et nl < hauteur et nc >= 0 et nc < largeur alors
+      si symbole(nl, nc) != "#" et lireElement(lireElement(distance, nl), nc) == -1 alors
+        modifierElement(lireElement(distance, nl), nc, lireElement(lireElement(distance, l), c) + 1)
+        modifierCle(precedent, cle(nl, nc), courant)
+        ajouter(file, [nl, nc])
+      fin
+    fin
+  fin
+fin
+
+soit la = lireElement(arrivee, 0)
+soit ca = lireElement(arrivee, 1)
+soit longueur = lireElement(lireElement(distance, la), ca)
+si longueur == -1 alors
+  afficher "Pas de sortie !"
+sinon
+  afficher "Sortie atteinte en " + longueur + " pas."
+  # On remonte le chemin de l'arrivée vers le départ
+  soit chemin = {}
+  soit pos = arrivee
+  tantque cle(lireElement(pos, 0), lireElement(pos, 1)) != cle(lireElement(depart, 0), lireElement(depart, 1)) faire
+    modifierCle(chemin, cle(lireElement(pos, 0), lireElement(pos, 1)), vrai)
+    pos = lireCle(precedent, cle(lireElement(pos, 0), lireElement(pos, 1)))
+  fin
+  afficher ""
+  pour l allantde 0 a hauteur - 1 faire
+    soit s = ""
+    pour c allantde 0 a largeur - 1 faire
+      soit sym = symbole(l, c)
+      si sym == "." et a_cle(chemin, cle(l, c)) alors
+        s = s + "*"
+      sinon
+        s = s + sym
+      fin
+    fin
+    afficher s
+  fin
+fin

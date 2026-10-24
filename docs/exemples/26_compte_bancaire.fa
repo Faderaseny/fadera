@@ -1,0 +1,64 @@
+# Exemple 26 — Un compte bancaire avec des classes
+# Notions : classe, creer, soi, héritage, erreurs avec lever
+
+classe Compte
+  fonction creer(titulaire, solde)
+    soi.titulaire = titulaire
+    soi.solde = solde
+    soi.historique = []
+  fin
+
+  fonction deposer(montant)
+    si montant <= 0 alors
+      lever("Le montant à déposer doit être positif.")
+    fin
+    soi.solde = soi.solde + montant
+    ajouter(soi.historique, "+" + montant)
+  fin
+
+  fonction retirer_argent(montant)
+    si montant > soi.solde alors
+      lever("Solde insuffisant : " + soi.solde + " disponibles, " + montant + " demandés.")
+    fin
+    soi.solde = soi.solde - montant
+    ajouter(soi.historique, "-" + montant)
+  fin
+
+  fonction resume()
+    renvoyer soi.titulaire + " : " + soi.solde + " FCFA"
+  fin
+fin
+
+# Un compte épargne est un compte qui rapporte des intérêts
+classe CompteEpargne herite Compte
+  fonction creer(titulaire, solde, taux)
+    soi.titulaire = titulaire
+    soi.solde = solde
+    soi.historique = []
+    soi.taux = taux
+  fin
+
+  fonction ajouter_interets()
+    soit interets = arrondir(soi.solde * soi.taux / 100, 0)
+    soi.deposer(interets)
+    renvoyer interets
+  fin
+fin
+
+soit awa = Compte("Awa", 50000)
+awa.deposer(25000)
+awa.retirer_argent(10000)
+afficher awa.resume()
+afficher "Historique : " + joindre(awa.historique, " ")
+
+essayer
+  awa.retirer_argent(1000000)
+attraper erreur
+  afficher "Refusé → " + erreur
+fin
+
+afficher ""
+soit livret = CompteEpargne("Moussa", 200000, 3)
+afficher "Intérêts versés : " + livret.ajouter_interets()
+afficher livret.resume()
+afficher "Livret est un Compte ? " + est_instance(livret, "Compte")

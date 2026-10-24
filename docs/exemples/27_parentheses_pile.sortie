@@ -1,0 +1,6 @@
+OK      (1 + 2) * 3
+OK      [(a + b) * {c - d}]
+ERREUR  (1 + 2
+ERREUR  1 + 2)
+ERREUR  [(])
+OK      {[()()]}

@@ -1,0 +1,48 @@
+# Exemple 5 — Récursivité : factorielle, Fibonacci, tours de Hanoï
+# Notions : une fonction qui s'appelle elle-même, cas de base
+
+fonction factorielle(n)
+  si n <= 1 alors
+    renvoyer 1
+  fin
+  renvoyer n * factorielle(n - 1)
+fin
+
+fonction fibonacci(n)
+  si n < 2 alors
+    renvoyer n
+  fin
+  renvoyer fibonacci(n - 1) + fibonacci(n - 2)
+fin
+
+# Tours de Hanoï : on déplace n disques de "depart" vers "arrivee" en passant par "aide"
+soit coups = 0
+soit afficher_coups = vrai
+fonction hanoi(n, depart, arrivee, aide)
+  si n == 0 alors
+    renvoyer
+  fin
+  hanoi(n - 1, depart, aide, arrivee)
+  coups = coups + 1
+  si afficher_coups alors
+    afficher "Coup " + coups + " : disque " + n + " de " + depart + " vers " + arrivee
+  fin
+  hanoi(n - 1, aide, arrivee, depart)
+fin
+
+afficher "factorielle(10) = " + factorielle(10)
+afficher "factorielle(20) = " + factorielle(20)
+
+soit suite = []
+pour i allantde 0 a 14 faire
+  ajouter(suite, fibonacci(i))
+fin
+afficher "Fibonacci : " + joindre(suite, ", ")
+
+afficher ""
+afficher "Hanoï à 3 disques :"
+hanoi(3, "A", "C", "B")
+afficher_coups = faux
+coups = 0
+hanoi(10, "A", "C", "B")
+afficher "Hanoï à 10 disques : " + coups + " coups (2^10 - 1 = " + (puissance(2, 10) - 1) + ")"

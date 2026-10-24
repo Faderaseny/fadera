@@ -1,0 +1,47 @@
+# Exemple 29 — Tester ses propres fonctions
+# Notions : tester "nom" … fin, verifier, verifier_egal, verifier_erreur
+# Lancez-le avec :  fadera tester 29_tests_integres.fa
+
+fonction factorielle(n)
+  si n < 0 alors
+    lever("factorielle : n doit être positif.")
+  fin
+  si n <= 1 alors
+    renvoyer 1
+  fin
+  renvoyer n * factorielle(n - 1)
+fin
+
+fonction est_premier(n)
+  si n < 2 alors
+    renvoyer faux
+  fin
+  pour d allantde 2 a entier(racine(n)) faire
+    si n % d == 0 alors
+      renvoyer faux
+    fin
+  fin
+  renvoyer vrai
+fin
+
+tester "factorielle de petits nombres"
+  verifier_egal(factorielle(0), 1)
+  verifier_egal(factorielle(5), 120)
+  verifier_egal(factorielle(10), 3628800)
+fin
+
+tester "factorielle refuse les négatifs"
+  verifier_erreur(() => factorielle(-3), "positif")
+fin
+
+tester "nombres premiers"
+  verifier(est_premier(2))
+  verifier(est_premier(97))
+  verifier(non est_premier(1))
+  verifier(non est_premier(91))
+fin
+
+tester "les premiers nombres premiers"
+  soit premiers = filtrer(plage(1, 30), est_premier)
+  verifier_egal(premiers, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29])
+fin

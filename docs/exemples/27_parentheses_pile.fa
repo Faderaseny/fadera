@@ -1,0 +1,33 @@
+# Exemple 27 — Vérifier les parenthèses avec une pile
+# Notions : importer "std/pile", empiler / dépiler, algorithme classique
+
+importer "std/pile"
+
+fonction bien_forme(expression)
+  soit ouvrants = "([{"
+  soit fermants = ")]}"
+  soit p = Pile()
+  pour i allantde 0 a taille(expression) - 1 faire
+    soit c = caractere(expression, i)
+    si contient(ouvrants, c) alors
+      p.empiler(c)
+    sinon si contient(fermants, c) alors
+      si p.est_vide() alors
+        renvoyer faux
+      fin
+      soit dernier = p.depiler()
+      si position(ouvrants, dernier) != position(fermants, c) alors
+        renvoyer faux
+      fin
+    fin
+  fin
+  renvoyer p.est_vide()
+fin
+
+pour chaque e dans ["(1 + 2) * 3", "[(a + b) * {c - d}]", "(1 + 2", "1 + 2)", "[(])", "{[()()]}"] faire
+  si bien_forme(e) alors
+    afficher "OK      " + e
+  sinon
+    afficher "ERREUR  " + e
+  fin
+fin

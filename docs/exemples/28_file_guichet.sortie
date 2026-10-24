@@ -1,0 +1,16 @@
+Minute  0 : client n°1 servi, 0 en attente
+Minute  2 : client n°2 servi, 0 en attente
+Minute  4 : client n°3 servi, 0 en attente
+Minute  6 : client n°4 servi, 1 en attente
+Minute  8 : client n°5 servi, 0 en attente
+Minute 12 : client n°6 servi, 0 en attente
+Minute 14 : client n°7 servi, 0 en attente
+Minute 18 : client n°8 servi, 0 en attente
+Minute 20 : client n°9 servi, 1 en attente
+Minute 22 : client n°10 servi, 1 en attente
+Minute 24 : client n°11 servi, 0 en attente
+Minute 26 : client n°12 servi, 0 en attente
+
+12 clients servis sur 12 arrivés
+Attente moyenne : 0.8 minutes
+Encore en file : 0

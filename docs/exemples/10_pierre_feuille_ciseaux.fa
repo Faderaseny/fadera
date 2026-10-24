@@ -1,0 +1,51 @@
+# Exemple 10 — Pierre, feuille, ciseaux : un tournoi entre deux ordinateurs
+# Notions : selon, structures modifiables, générateur pseudo-aléatoire
+
+soit graine = 7
+fonction alea(m)
+  graine = (graine * 1103515245 + 12345) % 2147483648
+  renvoyer graine % m
+fin
+
+soit coups = ["pierre", "feuille", "ciseaux"]
+
+# Renvoie 1 si a bat b, -1 si b bat a, 0 en cas d'égalité
+fonction duel(a, b)
+  si a == b alors
+    renvoyer 0
+  fin
+  si (a == "pierre" et b == "ciseaux") ou (a == "feuille" et b == "pierre") ou (a == "ciseaux" et b == "feuille") alors
+    renvoyer 1
+  fin
+  renvoyer -1
+fin
+
+structure score = { alice: 0, bruno: 0, egalites: 0 }
+pour manche allantde 1 a 10 faire
+  soit a = lireElement(coups, alea(3))
+  soit b = lireElement(coups, alea(3))
+  soit r = duel(a, b)
+  soit resultat = ""
+  selon r faire
+    cas 1 alors
+      modifierCle(score, "alice", lireCle(score, "alice") + 1)
+      resultat = "Alice gagne"
+    cas -1 alors
+      modifierCle(score, "bruno", lireCle(score, "bruno") + 1)
+      resultat = "Bruno gagne"
+    defaut
+      modifierCle(score, "egalites", lireCle(score, "egalites") + 1)
+      resultat = "égalité"
+  fin
+  afficher "Manche " + texte_remplir_gauche(texte(manche), 2, " ") + " : " + texte_remplir_droite(a, 8, " ") + " contre " + texte_remplir_droite(b, 8, " ") + " → " + resultat
+fin
+
+afficher ""
+afficher "Score final : " + score
+si lireCle(score, "alice") > lireCle(score, "bruno") alors
+  afficher "Alice remporte le tournoi !"
+sinon si lireCle(score, "alice") < lireCle(score, "bruno") alors
+  afficher "Bruno remporte le tournoi !"
+sinon
+  afficher "Match nul."
+fin

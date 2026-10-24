@@ -1,0 +1,26 @@
+# Exemple 21 — Dates et calendrier
+# Notions : importer "std/dates", date_creer, date_formater, calculs de durées
+# Les dates sont des nombres (millisecondes) : on les fabrique avec date_creer(an, mois, jour, heure, minute, seconde).
+
+importer "std/dates"
+
+soit rentree = date_creer(2026, 9, 7, 8, 0, 0)
+soit noel = date_creer(2026, 12, 25, 0, 0, 0)
+soit aujourdhui = date_creer(2026, 10, 24, 0, 0, 0)
+
+afficher "Rentrée : " + date_longue(rentree)
+afficher "Noël    : " + date_longue(noel)
+afficher "Il reste " + jours_entre(aujourdhui, noel) + " jours avant Noël."
+afficher "Noël tombe un jour ouvré ? " + est_jour_ouvre(noel)
+afficher "Dans 100 jours, ce sera le " + date_formater(ajouter_jours(aujourdhui, 100), "JJ/MM/AAAA")
+afficher "Jours ouvrés d'ici Noël : " + jours_ouvres_entre(aujourdhui, noel)
+afficher "Prochain lundi : " + date_longue(prochain_jour(aujourdhui, "lundi"))
+
+afficher ""
+afficher calendrier(2026, 10)
+
+afficher ""
+soit anniversaire = date_creer(2008, 3, 15, 0, 0, 0)
+afficher "Né le 15/03/2008 : " + date_age(anniversaire, aujourdhui) + " ans au 24 octobre 2026"
+afficher "2028 est bissextile ? " + est_bissextile(2028)
+afficher "Février 2028 compte " + date_jours_dans_mois(2028, 2) + " jours"

@@ -39,6 +39,12 @@ fadera --version
 Sous Windows : décompresser l'archive, puis dans l'invite de commandes `fadera.exe run programme.fa`
 (ajouter le dossier au `PATH` pour taper simplement `fadera`). Windows peut afficher un avertissement SmartScreen : l'exécutable n'est pas signé.
 
+## Apprendre
+
+- [**Tutoriel pas à pas**](docs/TUTORIEL.md) : de « Bonjour le monde » aux classes, aux fichiers et au réseau.
+- [**30 exemples**](docs/exemples/) : calculs, jeux (devine le nombre, pendu, morpion, jeu de la vie, labyrinthe…), textes, CSV/JSON, dates, réseau, classes.
+- [**Référence des fonctions**](docs/REFERENCE.md) : les 195 fonctions natives et les 12 modules standard, avec un exemple vérifié pour chacune.
+
 ## Compiler soi-même
 
 ```
@@ -52,6 +58,7 @@ cd fadera-rs && cargo build --release        # → target/release/fadera  (fader
 | `index.html` | l'IDE et le moteur JavaScript (un seul fichier) |
 | `fadera-rs/` | le moteur Rust, la ligne de commande, la cible WebAssembly |
 | `GUIDE_FADERA.md`, `SPEC_FADERA.md` | guide d'utilisation ; spécification exécutable |
+| `docs/` | tutoriel, 30 exemples, référence des fonctions (générés et vérifiés par la CI) |
 | `tests_fadera.js`, `verifier_*.js` | tests JavaScript ; vérification complète (`node verifier_tout.js`) |
 | `.github/workflows/` | CI, publication des versions, playground |
 

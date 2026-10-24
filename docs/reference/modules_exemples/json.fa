@@ -1,0 +1,8 @@
+importer "std/json"
+
+soit v = { nom: "Awa", adresse: { ville: "Dakar", rue: ["Plateau", 12] } }
+afficher json_compact(v)
+afficher json_aplatir(v)
+afficher json_profondeur(v)
+afficher json_selectionner(v, ["nom"])
+afficher json_lire_ou("pas du json", "repli")

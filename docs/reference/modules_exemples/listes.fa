@@ -1,0 +1,8 @@
+importer "std/listes"
+
+soit l = [5, 8, 1, 9, 4]
+afficher premier(l) + " " + dernier(l)
+afficher prendre(l, 2)
+afficher sauter(l, 3)
+afficher compter_si(l, x => x > 4)
+afficher partitionner(l, x => x % 2 == 0)

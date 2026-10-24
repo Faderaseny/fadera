@@ -1,0 +1,13 @@
+factorielle(10) = 3628800
+factorielle(20) = 2432902008176640000
+Fibonacci : 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377
+
+Hanoï à 3 disques :
+Coup 1 : disque 1 de A vers C
+Coup 2 : disque 2 de A vers B
+Coup 3 : disque 1 de C vers B
+Coup 4 : disque 3 de A vers C
+Coup 5 : disque 1 de B vers A
+Coup 6 : disque 2 de B vers C
+Coup 7 : disque 1 de A vers C
+Hanoï à 10 disques : 1023 coups (2^10 - 1 = 1023)

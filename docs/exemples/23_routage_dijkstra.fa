@@ -1,0 +1,21 @@
+# Exemple 23 — Le plus court chemin dans un réseau
+# Notions : telecom_creer_topologie, telecom_ajouter_liaison, telecom_dijkstra_routage
+# Chaque liaison est une structure { de, a, cout }.
+
+soit reseau = telecom_creer_topologie()
+pour chaque l dans [
+  { de: "Dakar", a: "Thiès", cout: 70 },
+  { de: "Dakar", a: "Mbour", cout: 80 },
+  { de: "Thiès", a: "Saint-Louis", cout: 190 },
+  { de: "Thiès", a: "Kaolack", cout: 120 },
+  { de: "Mbour", a: "Kaolack", cout: 100 },
+  { de: "Kaolack", a: "Tambacounda", cout: 250 }
+] faire
+  telecom_ajouter_liaison(reseau, l)
+fin
+
+afficher "Réseau connexe ? " + telecom_verifier_connexite(reseau)
+pour chaque destination dans ["Saint-Louis", "Kaolack", "Tambacounda"] faire
+  soit route = telecom_dijkstra_routage(reseau, { depart: "Dakar", arrivee: destination })
+  afficher destination + " : " + lireCle(route, "cout_total") + " km via " + joindre(lireCle(route, "itineraire"), " → ")
+fin

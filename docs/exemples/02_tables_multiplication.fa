@@ -1,0 +1,29 @@
+# Exemple 2 — Tables de multiplication
+# Notions : boucle « pour », boucle imbriquée, pas (pas)
+
+soit n = 7
+afficher "Table de " + n + " :"
+pour i allantde 1 a 10 faire
+  afficher n + " x " + i + " = " + (n * i)
+fin
+
+afficher ""
+afficher "Les tables de 1 à 5, colonnes de 1 à 9 :"
+pour ligne allantde 1 a 5 faire
+  soit texte_ligne = ""
+  pour colonne allantde 1 a 9 faire
+    texte_ligne = texte_ligne + texte_remplir_gauche(texte(ligne * colonne), 4, " ")
+  fin
+  afficher texte_ligne
+fin
+
+afficher ""
+afficher "Les multiples de 3 jusqu'à 30, puis à rebours :"
+soit multiples = []
+pour k allantde 3 a 30 pas 3 faire
+  ajouter(multiples, k)
+fin
+afficher joindre(multiples, " ")
+pour k allantde 30 a 3 pas -9 faire
+  afficher "k = " + k
+fin

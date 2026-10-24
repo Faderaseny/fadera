@@ -1,0 +1,39 @@
+# Exemple 28 — La file d'attente d'un guichet
+# Notions : importer "std/file", enfiler / défiler, simulation avec une graine fixe
+
+importer "std/file"
+
+soit graine = 7
+fonction suivant(m)
+  graine = (graine * 1103515245 + 12345) % 2147483648
+  renvoyer plancher(graine / 65536) % m
+fin
+
+soit attente = File()
+soit minute = 0
+soit servis = 0
+soit total_attente = 0
+soit arrivees = {}
+soit numero = 0
+
+tantque minute < 30 faire
+  # Un client arrive une minute sur deux en moyenne
+  si suivant(2) == 0 alors
+    numero = numero + 1
+    attente.enfiler(numero)
+    modifierCle(arrivees, texte(numero), minute)
+  fin
+  # Le guichet sert un client toutes les 2 minutes
+  si minute % 2 == 0 et non attente.est_vide() alors
+    soit c = attente.defiler()
+    total_attente = total_attente + (minute - lireCle(arrivees, texte(c)))
+    servis = servis + 1
+    afficher "Minute " + texte_remplir_gauche(texte(minute), 2, " ") + " : client n°" + c + " servi, " + attente.longueur() + " en attente"
+  fin
+  minute = minute + 1
+fin
+
+afficher ""
+afficher servis + " clients servis sur " + numero + " arrivés"
+afficher "Attente moyenne : " + arrondir(total_attente / servis, 1) + " minutes"
+afficher "Encore en file : " + attente.longueur()

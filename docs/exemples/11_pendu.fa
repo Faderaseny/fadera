@@ -1,0 +1,57 @@
+# Exemple 11 — Le pendu
+# Notions : texte (caractere, taille), listes, contient, boucle tantque
+#
+# Les lettres sont proposées par une liste pour que l'exemple soit rejouable à l'identique.
+# Pour jouer au clavier, remplacez  lettre = lireElement(propositions, tour)  par  lettre = saisir("Lettre ? ")
+
+fonction masque(mot, trouvees)
+  soit s = ""
+  pour i allantde 0 a taille(mot) - 1 faire
+    soit c = caractere(mot, i)
+    si contient(trouvees, c) alors
+      s = s + c + " "
+    sinon
+      s = s + "_ "
+    fin
+  fin
+  renvoyer nettoyer(s)
+fin
+
+fonction gagne(mot, trouvees)
+  pour i allantde 0 a taille(mot) - 1 faire
+    si non contient(trouvees, caractere(mot, i)) alors
+      renvoyer faux
+    fin
+  fin
+  renvoyer vrai
+fin
+
+soit mot = "programmation"
+soit propositions = ["e", "a", "o", "i", "r", "n", "t", "p", "g", "m"]
+soit trouvees = []
+soit erreurs = 0
+soit maxErreurs = 6
+soit tour = 0
+
+afficher "Mot à deviner : " + masque(mot, trouvees)
+tantque erreurs < maxErreurs et non gagne(mot, trouvees) et tour < taille(propositions) faire
+  soit lettre = lireElement(propositions, tour)
+  tour = tour + 1
+  si contient(trouvees, lettre) alors
+    afficher lettre + " : déjà proposée"
+  sinon
+    ajouter(trouvees, lettre)
+    si contient(mot, lettre) alors
+      afficher lettre + " : oui !   " + masque(mot, trouvees)
+    sinon
+      erreurs = erreurs + 1
+      afficher lettre + " : non (" + erreurs + "/" + maxErreurs + ")   " + masque(mot, trouvees)
+    fin
+  fin
+fin
+
+si gagne(mot, trouvees) alors
+  afficher "Bravo ! Le mot était « " + mot + " »."
+sinon
+  afficher "Perdu... Le mot était « " + mot + " »."
+fin

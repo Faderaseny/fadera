@@ -1,0 +1,64 @@
+# Exemple 9 — Devine le nombre
+# Notions : fonctions passées en argument, générateur pseudo-aléatoire, dichotomie
+#
+# La partie est écrite une seule fois (jouer). Ce qui change, c'est « qui propose » :
+#   • l'ordinateur, par dichotomie (ce que fait ce fichier) ;
+#   • vous, au clavier : remplacez la dernière ligne par   jouer(secret, joueur_humain)
+
+soit graine = 2026
+fonction alea(m)
+  graine = (graine * 1103515245 + 12345) % 2147483648
+  renvoyer graine % m
+fin
+
+fonction jouer(secret, proposer)
+  soit bas = 1
+  soit haut = 100
+  soit essais = 0
+  tantque vrai faire
+    soit essai = nombre(proposer(bas, haut))
+    essais = essais + 1
+    si essai == secret alors
+      afficher "  " + essai + " : trouvé en " + essais + " essai(s) !"
+      renvoyer essais
+    sinon si essai < secret alors
+      afficher "  " + essai + " : trop petit"
+      bas = essai + 1
+    sinon
+      afficher "  " + essai + " : trop grand"
+      haut = essai - 1
+    fin
+  fin
+fin
+
+soit joueur_dichotomie = (bas, haut) => entier((bas + haut) / 2)
+soit joueur_humain = (bas, haut) => saisir("Un nombre entre " + bas + " et " + haut + " ? ")
+
+soit secret = alea(100) + 1
+afficher "Le nombre secret est entre 1 et 100 (l'ordinateur le cherche)."
+soit total = jouer(secret, joueur_dichotomie)
+
+afficher ""
+afficher "Sur 20 nombres secrets différents, la dichotomie a besoin de :"
+soit pire = 0
+pour partie allantde 1 a 20 faire
+  soit s = alea(100) + 1
+  soit nb = 0
+  soit b = 1
+  soit h = 100
+  tantque vrai faire
+    soit e = entier((b + h) / 2)
+    nb = nb + 1
+    si e == s alors
+      rompre
+    sinon si e < s alors
+      b = e + 1
+    sinon
+      h = e - 1
+    fin
+  fin
+  si nb > pire alors
+    pire = nb
+  fin
+fin
+afficher "au plus " + pire + " essais (log2(100) ≈ 6,6)"

@@ -1,0 +1,36 @@
+# Exemple 16 — Les mots les plus fréquents d'un texte
+# Notions : texte, découper, structures comme tableau de comptage, trier_par, liste_frequences
+
+soit texte_source = "Le chat dort. Le chien court ! Le chat et le chien jouent ensemble, puis le chat dort encore."
+
+# 1. On nettoie : minuscules, sans ponctuation
+soit propre = minuscule(texte_source)
+pour chaque signe dans [".", "!", ",", "?"] faire
+  propre = remplacer(propre, signe, "")
+fin
+soit mots = filtrer(decouper(propre, " "), m => taille(m) > 0)
+afficher "Nombre de mots : " + taille(mots)
+
+# 2. On compte avec une structure : une clé par mot
+soit comptes = {}
+pour chaque m dans mots faire
+  si a_cle(comptes, m) alors
+    modifierCle(comptes, m, lireCle(comptes, m) + 1)
+  sinon
+    modifierCle(comptes, m, 1)
+  fin
+fin
+afficher "Mots différents : " + taille(comptes)
+
+# 3. On classe du plus fréquent au moins fréquent
+soit classement = trier_par(paires(comptes), p => -lireElement(p, 1))
+afficher ""
+afficher "Les 5 mots les plus fréquents :"
+pour i allantde 0 a 4 faire
+  soit p = lireElement(classement, i)
+  afficher texte_remplir_droite(lireElement(p, 0), 8, " ") + repeter("█", lireElement(p, 1)) + " " + lireElement(p, 1)
+fin
+
+# 4. La fonction toute faite fait le comptage en une ligne
+afficher ""
+afficher liste_frequences(mots)

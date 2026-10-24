@@ -5,6 +5,11 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et la nu
 
 ## [Non publié]
 
+### Ajouté
+- Documentation (`docs/`) : tutoriel en français en 17 chapitres, 30 exemples complets (calculs, jeux, textes, fichiers, réseau, objets),
+  référence de toutes les fonctions natives et des 12 modules standard. Les exemples et les résultats affichés sont exécutés
+  sur les deux moteurs ; la CI échoue si une fonction native n'est pas documentée.
+
 ## [0.5.0] — 2026-10-23
 
 Première version publiée du dépôt.

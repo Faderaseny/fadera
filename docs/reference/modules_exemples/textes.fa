@@ -1,0 +1,7 @@
+importer "std/textes"
+
+afficher "[" + centrer("Fadéra", 14) + "]"
+afficher tronquer("Programmer en français", 12)
+afficher inverser_texte("bonjour")
+afficher compter_occurrences("banane", "an")
+afficher est_vide("   ")

@@ -1,0 +1,10 @@
+x² - 3x + 2 = 0  → deux solutions : x1 = 1 et x2 = 2
+x² + 2x + 1 = 0  → une solution double : x = -1
+x² + x + 1 = 0   → aucune solution réelle (delta = -3)
+2x² - 8 = 0      → deux solutions : x1 = -2 et x2 = 2
+
+La fonction toute faite donne la même chose :
+[1, 2]
+
+Un système de deux équations (2x + y = 5 et x - y = 1) :
+[2, 1]

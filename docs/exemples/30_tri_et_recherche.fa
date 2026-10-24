@@ -1,0 +1,32 @@
+# Exemple 30 — Trier et chercher efficacement
+# Notions : importer "std/tri", tri_fusion, trier_multi, recherche_binaire
+
+importer "std/tri"
+
+soit notes = [14, 9, 17, 12, 9, 20, 5, 17]
+afficher "Croissant   : " + trier(notes, (a, b) => a - b)
+afficher "Décroissant : " + trier_decroissant(notes)
+afficher "Est trié ? " + est_trie(notes) + " / " + est_trie(tri_fusion(notes, (a, b) => a - b))
+
+soit eleves = [
+  { nom: "Awa", classe: "B", note: 15 },
+  { nom: "Moussa", classe: "A", note: 12 },
+  { nom: "Fatou", classe: "A", note: 18 },
+  { nom: "Ibrahima", classe: "B", note: 15 },
+  { nom: "Mariama", classe: "A", note: 12 }
+]
+afficher ""
+afficher "Par classe, puis par note décroissante :"
+pour chaque e dans trier_multi(eleves, [x => lireCle(x, "classe"), x => -lireCle(x, "note")]) faire
+  afficher "  " + lireCle(e, "classe") + "  " + texte_remplir_droite(lireCle(e, "nom"), 9, " ") + lireCle(e, "note")
+fin
+
+# La recherche binaire exige une liste triée
+soit nombres = []
+pour i allantde 1 a 50 faire
+  ajouter(nombres, i * 3)
+fin
+afficher ""
+afficher "Position de 63 : " + recherche_binaire(nombres, 63)
+afficher "Position de 64 : " + recherche_binaire(nombres, 64)
+afficher "64 s'insérerait en position " + borne_inf(nombres, 64)

@@ -1,0 +1,8 @@
+importer "std/tri"
+
+soit l = [30, 10, 20, 10]
+afficher tri_fusion(l, (a, b) => a - b)
+afficher trier_decroissant(l)
+afficher recherche_binaire([10, 20, 30, 40], 30)
+afficher borne_inf([10, 20, 20, 30], 20) + " " + borne_sup([10, 20, 20, 30], 20)
+afficher est_trie([1, 2, 2, 3])

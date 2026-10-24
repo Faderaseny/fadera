@@ -1,0 +1,46 @@
+# Exemple 6 — Statistiques d'une classe
+# Notions : listes de structures, stats_*, selon, transformer, filtrer, trier_par
+
+soit eleves = [
+  { nom: "Awa", note: 15 },
+  { nom: "Moussa", note: 9 },
+  { nom: "Fatou", note: 18 },
+  { nom: "Ibrahima", note: 12 },
+  { nom: "Mariama", note: 7 },
+  { nom: "Cheikh", note: 14 }
+]
+
+soit notes = transformer(eleves, e => lireCle(e, "note"))
+afficher "Notes : " + joindre(notes, ", ")
+afficher "Moyenne : " + arrondir(stats_moyenne(notes), 2)
+afficher "Médiane : " + stats_mediane(notes)
+afficher "Écart-type : " + arrondir(stats_ecart_type(notes), 2)
+afficher "Meilleure note : " + stats_max(notes) + " — la plus basse : " + stats_min(notes)
+
+fonction mention(note)
+  selon note faire
+    cas 18, 19, 20 alors
+      renvoyer "Excellent"
+    cas 16, 17 alors
+      renvoyer "Très bien"
+    cas 14, 15 alors
+      renvoyer "Bien"
+    cas 10, 11, 12, 13 alors
+      renvoyer "Passable"
+    defaut
+      renvoyer "Insuffisant"
+  fin
+fin
+
+afficher ""
+afficher "Classement :"
+soit classes = trier_par(eleves, e => -lireCle(e, "note"))
+soit rang = 1
+pour chaque e dans classes faire
+  afficher rang + ". " + texte_remplir_droite(lireCle(e, "nom"), 9, " ") + texte_remplir_gauche(texte(lireCle(e, "note")), 3, " ") + "  " + mention(lireCle(e, "note"))
+  rang = rang + 1
+fin
+
+soit admis = filtrer(eleves, e => lireCle(e, "note") >= 10)
+afficher ""
+afficher taille(admis) + " élèves sur " + taille(eleves) + " ont la moyenne."

@@ -1,0 +1,30 @@
+# Exemple 8 — Épargne et prêt : intérêts composés
+# Notions : boucles, arrondi, fonction qui renvoie une liste, structures
+
+fonction epargne(capital, taux, annees, versement)
+  soit solde = capital
+  soit historique = []
+  pour an allantde 1 a annees faire
+    solde = solde * (1 + taux / 100) + versement
+    ajouter(historique, arrondir(solde, 2))
+  fin
+  renvoyer historique
+fin
+
+soit evolution = epargne(1000, 5, 10, 100)
+afficher "Capital de départ 1000, 5 % par an, 100 versés chaque année :"
+soit an = 1
+pour chaque valeur dans evolution faire
+  afficher "Année " + texte_remplir_gauche(texte(an), 2, " ") + " : " + texte_remplir_gauche(texte(valeur), 9, " ")
+  an = an + 1
+fin
+
+fonction mensualite(montant, taux_annuel, mois)
+  soit t = taux_annuel / 100 / 12
+  renvoyer montant * t / (1 - puissance(1 + t, -mois))
+fin
+
+afficher ""
+soit m = mensualite(10000, 6, 24)
+afficher "Prêt de 10000 sur 24 mois à 6 % : " + arrondir(m, 2) + " par mois"
+afficher "Coût total du crédit : " + arrondir(m * 24 - 10000, 2)

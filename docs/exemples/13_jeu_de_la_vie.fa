@@ -1,0 +1,80 @@
+# Exemple 13 — Le jeu de la vie de Conway
+# Notions : grille à deux dimensions (liste de listes), voisins, génération suivante
+# Règles : une cellule vivante reste en vie avec 2 ou 3 voisines ; une cellule morte naît avec exactement 3 voisines.
+
+soit n = 6
+
+fonction grille_vide()
+  soit g = []
+  pour i allantde 1 a n faire
+    soit ligne = []
+    pour j allantde 1 a n faire
+      ajouter(ligne, 0)
+    fin
+    ajouter(g, ligne)
+  fin
+  renvoyer g
+fin
+
+fonction vivante(g, i, j)
+  si i < 0 ou j < 0 ou i >= n ou j >= n alors
+    renvoyer 0
+  fin
+  renvoyer lireElement(lireElement(g, i), j)
+fin
+
+fonction voisines(g, i, j)
+  soit total = 0
+  pour di allantde -1 a 1 faire
+    pour dj allantde -1 a 1 faire
+      si di != 0 ou dj != 0 alors
+        total = total + vivante(g, i + di, j + dj)
+      fin
+    fin
+  fin
+  renvoyer total
+fin
+
+fonction suivante(g)
+  soit r = grille_vide()
+  pour i allantde 0 a n - 1 faire
+    pour j allantde 0 a n - 1 faire
+      soit v = voisines(g, i, j)
+      si vivante(g, i, j) == 1 alors
+        si v == 2 ou v == 3 alors
+          modifierElement(lireElement(r, i), j, 1)
+        fin
+      sinon si v == 3 alors
+        modifierElement(lireElement(r, i), j, 1)
+      fin
+    fin
+  fin
+  renvoyer r
+fin
+
+fonction dessiner(g)
+  pour chaque ligne dans g faire
+    soit s = ""
+    pour chaque c dans ligne faire
+      si c == 1 alors
+        s = s + "# "
+      sinon
+        s = s + ". "
+      fin
+    fin
+    afficher nettoyer(s)
+  fin
+fin
+
+# Un « planeur » : il se déplace en diagonale
+soit g = grille_vide()
+pour chaque p dans [[0, 1], [1, 2], [2, 0], [2, 1], [2, 2]] faire
+  modifierElement(lireElement(g, lireElement(p, 0)), lireElement(p, 1), 1)
+fin
+
+pour generation allantde 0 a 4 faire
+  afficher "Génération " + generation + " :"
+  dessiner(g)
+  afficher ""
+  g = suivante(g)
+fin

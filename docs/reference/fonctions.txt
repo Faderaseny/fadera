@@ -1,0 +1,238 @@
+#! Référence des fonctions Fadéra — SOURCE.
+#! Format : une fonction par ligne →  signature | description | expression d'exemple (facultative)
+#! Les lignes « # Titre » ouvrent une section. « ## texte » ajoute une remarque à la section.
+#! Le générateur (docs/generer_reference.js) exécute chaque exemple sur les deux moteurs et écrit le résultat réel
+#! dans REFERENCE.md ; il refuse de produire le fichier si un exemple échoue, diffère entre moteurs, ou si une fonction manque.
+
+# Entrées, sorties et fichiers
+## Ces fonctions font partie du langage : elles s'écrivent comme les autres (nom suivi de parenthèses).
+afficher valeur | Écrit la valeur dans la console (mot-clé : sans parenthèses). | 
+saisir(message) | Demande une réponse à l'utilisateur et la renvoie sous forme de texte. |
+hasard(min, max) | Entier aléatoire entre min et max inclus. | 
+lireFichier(chemin) | Renvoie le contenu d'un fichier texte ; erreur s'il n'existe pas. |
+ecrireFichier(chemin, texte) | Écrit (remplace) le contenu d'un fichier texte. |
+creer_fichier(chemin, texte) | Crée un fichier dans l'espace de fichiers de l'IDE (le navigateur). Avec la commande fadera, utilisez ecrireFichier. |
+ecrire_log(chemin, ligne) | Ajoute une ligne horodatée à un journal dans l'IDE. Avec la commande fadera, utilisez ecrireFichier. |
+pause(ms) | Attend ms millisecondes (10 000 au maximum) et renvoie ms. | pause(0)
+chrono() | Heure actuelle en millisecondes ; sert à mesurer une durée en faisant la différence de deux appels. |
+maintenant() | Date et heure actuelles sous forme de nombre (millisecondes depuis 1970). |
+
+# Listes et structures du langage
+liste(a, b, …) | Fabrique une liste à partir de ses arguments (équivalent de [a, b, …]). | liste(1, 2, 3)
+taille(x) | Nombre d'éléments d'une liste, de caractères d'un texte ou de clés d'une structure. | taille([4, 5, 6])
+ajouter(liste, valeur) | Ajoute la valeur à la fin de la liste (modifie la liste). | taille(ajouter([1, 2], 3))
+lireElement(liste, position) | Élément à la position donnée (la première position est 0). | lireElement(["a", "b", "c"], 1)
+modifierElement(liste, position, valeur) | Remplace l'élément à la position donnée (modifie la liste). | modifierElement([1, 2, 3], 0, 9)
+lireCle(structure, cle) | Valeur associée à la clé d'une structure. | lireCle({ nom: "Awa" }, "nom")
+modifierCle(structure, cle, valeur) | Crée ou remplace une clé d'une structure (modifie la structure). | modifierCle({ a: 1 }, "b", 2)
+a_cle(structure, cle) | Vrai si la structure possède cette clé. | a_cle({ a: 1 }, "a")
+supprimer_cle(structure, cle) | Retire une clé d'une structure et renvoie la valeur retirée. | supprimer_cle({ a: 1, b: 2 }, "a")
+cles(structure) | Liste des clés. | cles({ a: 1, b: 2 })
+valeurs(structure) | Liste des valeurs. | valeurs({ a: 1, b: 2 })
+paires(structure) | Liste de paires [clé, valeur]. | paires({ a: 1, b: 2 })
+structure_depuis_paires(paires) | Reconstruit une structure à partir d'une liste de paires [clé, valeur]. | structure_depuis_paires([["a", 1], ["b", 2]])
+fusionner(s1, s2) | Nouvelle structure réunissant les clés de s1 et s2 (s2 l'emporte). | fusionner({ a: 1, b: 2 }, { b: 9, c: 3 })
+copier(valeur) | Copie profonde : modifier la copie ne change pas l'original. | copier([1, [2, 3]])
+type_de(valeur) | Nom du type : nombre, texte, booléen, liste, structure, fonction… | type_de([1])
+est_nombre(valeur) | Vrai si le texte ou la valeur représente un nombre. | est_nombre("12.5")
+classe_de(objet) | Nom de la classe d'un objet. |
+est_instance(objet, "Classe") | Vrai si l'objet est de cette classe ou d'une classe dérivée. |
+lever(message) | Déclenche une erreur que essayer / attraper peut intercepter. |
+
+# Listes : outils
+plage(debut, fin, pas) | Liste de nombres de debut à fin inclus, par pas (1 par défaut). | plage(1, 9, 2)
+tranche(liste, debut, fin) | Sous-liste de la position debut (incluse) à fin (exclue). | tranche([1, 2, 3, 4, 5], 1, 3)
+inserer(liste, position, valeur) | Insère la valeur à la position (modifie la liste). | inserer([1, 3], 1, 2)
+retirer(liste, position) | Retire l'élément à la position et le renvoie (modifie la liste). | retirer([7, 8, 9], 0)
+concatener(l1, l2) | Nouvelle liste : l1 suivie de l2. | concatener([1, 2], [3])
+aplatir(liste) | Met à plat les listes imbriquées. | aplatir([[1], [2, [3]]])
+unique(liste) | Liste sans doublons, dans l'ordre d'apparition. | unique([1, 1, 2, 1, 3])
+compter(liste, valeur) | Combien de fois la valeur apparaît. | compter([1, 2, 1, 1], 1)
+inverser(x) | Inverse l'ordre d'une liste ou d'un texte. | inverser("abc")
+trier(liste, comparer) | Nouvelle liste triée ; comparer(a, b) renvoie un nombre négatif, nul ou positif. | trier([3, 1, 2], (a, b) => a - b)
+trier_par(liste, cle) | Nouvelle liste triée selon la valeur renvoyée par la fonction cle(x) pour chaque élément. | trier_par(["ccc", "a", "bb"], x => taille(x))
+filtrer(liste, test) | Garde les éléments pour lesquels test(x) est vrai. | filtrer([1, 2, 3, 4], x => x % 2 == 0)
+transformer(liste, f) | Applique f à chaque élément. | transformer([1, 2, 3], x => x * x)
+reduire(liste, f, depart) | Combine les éléments en une seule valeur avec f(cumul, x). | reduire([1, 2, 3, 4], (t, x) => t + x, 0)
+trouver(liste, test) | Premier élément pour lequel test(x) est vrai. | trouver([1, 2, 3], x => x > 1)
+tous(liste, test) | Vrai si test(x) est vrai pour tous les éléments. | tous([2, 4], x => x % 2 == 0)
+existe(liste, test) | Vrai si test(x) est vrai pour au moins un élément. | existe([1, 2], x => x > 1)
+appliquer(f, arguments) | Appelle la fonction f avec les éléments de la liste comme arguments. | appliquer((a, b) => a + b, [3, 4])
+liste_decouper(liste, taille) | Découpe en morceaux de la taille donnée. | liste_decouper([1, 2, 3, 4, 5], 2)
+liste_zip(l1, l2) | Associe les éléments deux à deux. | liste_zip([1, 2], ["a", "b"])
+liste_cumul(liste) | Sommes cumulées. | liste_cumul([1, 2, 3, 4])
+liste_frequences(liste) | Structure qui compte les occurrences de chaque valeur. | liste_frequences(["a", "b", "a"])
+alea_choisir(liste) | Un élément au hasard. |
+alea_melanger(liste) | Nouvelle liste mélangée au hasard. |
+alea_entier(min, max) | Entier au hasard entre min et max inclus. |
+alea_uuid() | Identifiant unique aléatoire (UUID). |
+
+# Nombres et mathématiques
+nombre(x) | Convertit un texte en nombre. | nombre("42") + 1
+texte(x) | Convertit n'importe quelle valeur en texte. | texte(42) + "!"
+arrondir(x, decimales) | Arrondit à un nombre de décimales (0 par défaut). | arrondir(3.14159, 2)
+plancher(x) | Plus grand entier inférieur ou égal. | plancher(3.9)
+plafond(x) | Plus petit entier supérieur ou égal. | plafond(3.1)
+entier(x) | Partie entière (coupe les décimales). | entier(-3.9)
+racine(x) | Racine carrée. | racine(16)
+absolu(x) | Valeur absolue. | absolu(-5)
+puissance(a, b) | a puissance b. | puissance(2, 10)
+minimum(a, b) | Le plus petit des deux. | minimum(3, 8)
+maximum(a, b) | Le plus grand des deux. | maximum(3, 8)
+signe(x) | -1, 0 ou 1 selon le signe. | signe(-7)
+modulo(a, b) | Reste de la division, toujours positif pour b positif. | modulo(-1, 5)
+pi() | Le nombre π. | arrondir(pi(), 5)
+sinus(x) | Sinus (x en radians). | arrondir(sinus(pi() / 2), 3)
+cosinus(x) | Cosinus (x en radians). | arrondir(cosinus(0), 3)
+tangente(x) | Tangente (x en radians). | arrondir(tangente(pi() / 4), 3)
+arc_sinus(x) | Arc sinus (résultat en radians). | arrondir(arc_sinus(1), 4)
+arc_cosinus(x) | Arc cosinus (résultat en radians). | arrondir(arc_cosinus(1), 4)
+arc_tangente(x) | Arc tangente (résultat en radians). | arrondir(arc_tangente(1), 4)
+arc_tangente2(y, x) | Angle du point (x, y) en radians. | arrondir(arc_tangente2(1, 1), 4)
+exponentielle(x) | e puissance x. | arrondir(exponentielle(1), 4)
+logarithme(x, base) | Logarithme ; népérien si la base est omise. | logarithme(8, 2)
+logarithme10(x) | Logarithme décimal. | logarithme10(1000)
+radians(degres) | Convertit des degrés en radians. | arrondir(radians(180), 4)
+degres(radians) | Convertit des radians en degrés. | degres(pi())
+en_base(n, base) | Écrit un entier dans une base de 2 à 36. | en_base(255, 2)
+depuis_base(texte, base) | Lit un entier écrit dans une base de 2 à 36. | depuis_base("ff", 16)
+math_pgcd_ppcm(a, b) | Structure { pgcd, ppcm }. | math_pgcd_ppcm(12, 18)
+math_facteurs_premiers(n) | Décomposition en facteurs premiers. | math_facteurs_premiers(60)
+math_resoudre_second_degre(a, b, c) | Racines de ax² + bx + c = 0. | math_resoudre_second_degre(1, -3, 2)
+math_integrale_trapeze(valeurs, dx) | Intégrale approchée (méthode des trapèzes) à partir de valeurs régulièrement espacées de dx. | math_integrale_trapeze([0, 1, 4, 9], 1)
+math_derivee_centree(valeurs, position) | Dérivée numérique centrée en un point (valeurs espacées de 1). | math_derivee_centree([0, 1, 4, 9, 16], 2)
+math_resoudre_systeme_gauss(matrice) | Résout un système linéaire donné par sa matrice augmentée. | math_resoudre_systeme_gauss([[2, 1, 5], [1, -1, 1]])
+matrice_carree(m) | Vrai si la matrice est carrée. | matrice_carree([[1, 2], [3, 4]])
+matrice_triangulaire(m) | Vrai si la matrice est triangulaire. | matrice_triangulaire([[1, 2], [0, 4]])
+inverser_matrice(m) | Inverse d'une matrice 2×2. | inverser_matrice([[1, 2], [3, 4]])
+
+# Statistiques
+stats_somme(liste) | Somme des valeurs. | stats_somme([12, 15, 8])
+stats_moyenne(liste) | Moyenne arithmétique. | stats_moyenne([12, 15, 8, 20])
+stats_min(liste) | Plus petite valeur. | stats_min([12, 15, 8])
+stats_max(liste) | Plus grande valeur. | stats_max([12, 15, 8])
+stats_mediane(liste) | Médiane. | stats_mediane([12, 15, 8, 20])
+stats_mode(liste) | Liste des valeurs les plus fréquentes (plusieurs en cas d'égalité). | stats_mode([1, 2, 2, 3])
+stats_variance(liste) | Variance. | stats_variance([2, 4, 4, 4, 5, 5, 7, 9])
+stats_ecart_type(liste) | Écart-type. | stats_ecart_type([2, 4, 4, 4, 5, 5, 7, 9])
+stats_analyse_distribution(liste) | Quartiles, écart interquartile et seuils de valeurs aberrantes. | stats_analyse_distribution([1, 2, 3, 4, 5, 6, 7, 8, 100])
+stats_pearson_correlation(x, y) | Coefficient de corrélation entre deux listes (de -1 à 1). | stats_pearson_correlation([1, 2, 3], [2, 4, 6])
+stats_regression_lineaire(x, y) | Droite de régression : pente et ordonnée à l'origine. | stats_regression_lineaire([1, 2, 3], [3, 5, 7])
+stats_supprimer_doublons(liste) | Enlève les valeurs en double. | stats_supprimer_doublons([1, 2, 2, 3])
+stats_nettoyer_valeurs_manquantes(liste, strategie) | Traite les valeurs manquantes : "supprimer", "moyenne" ou "mediane". | stats_nettoyer_valeurs_manquantes([1, 2, 3], "supprimer")
+stats_normalisation_ia(liste) | Ramène les valeurs entre 0 et 1. | stats_normalisation_ia([10, 20, 30])
+stats_query_engine(donnees, options) | Filtre, trie et sélectionne dans une liste de structures (voir le guide, section 13). | stats_query_engine([{ n: 1 }, { n: 5 }], { filtres: [{ champ: "n", operateur: ">", valeur: 2 }] })
+somme(liste) | Autre nom court pour stats_somme. | somme([1, 2, 3])
+moyenne(liste) | Autre nom court pour stats_moyenne. | moyenne([1, 2, 3])
+
+# Textes
+majuscule(t) | Met en majuscules. | majuscule("bonjour")
+minuscule(t) | Met en minuscules. | minuscule("BONJOUR")
+nettoyer(t) | Retire les espaces au début et à la fin. | "[" + nettoyer("  salut  ") + "]"
+decouper(t, separateur) | Coupe un texte en liste (séparateur vide : lettre par lettre). | decouper("a,b,c", ",")
+joindre(liste, separateur) | Assemble une liste en texte. | joindre(["a", "b", "c"], "-")
+remplacer(t, ancien, nouveau) | Remplace toutes les occurrences. | remplacer("a-b-c", "-", "+")
+contient(t, morceau) | Vrai si le texte (ou la liste) contient le morceau. | contient("bonjour", "jou")
+commence_par(t, debut) | Vrai si le texte commence par debut. | commence_par("bonjour", "bon")
+termine_par(t, fin) | Vrai si le texte se termine par fin. | termine_par("bonjour", "jour")
+sous_texte(t, debut, fin) | Morceau du texte de debut (inclus) à fin (exclu). | sous_texte("bonjour", 0, 3)
+position(t, morceau) | Position de la première occurrence, ou -1. | position("bonjour", "j")
+repeter(t, n) | Répète le texte n fois. | repeter("ab", 3)
+caractere(t, position) | Le caractère à la position donnée. | caractere("bonjour", 1)
+code_caractere(c) | Code Unicode du caractère. | code_caractere("A")
+depuis_code(code) | Caractère correspondant à un code Unicode. | depuis_code(66)
+texte_remplir_gauche(t, largeur, c) | Complète à gauche avec c jusqu'à la largeur. | texte_remplir_gauche("7", 3, "0")
+texte_remplir_droite(t, largeur, c) | Complète à droite avec c jusqu'à la largeur. | texte_remplir_droite("ab", 5, ".") + "|"
+texte_capitaliser(t) | Première lettre en majuscule. | texte_capitaliser("fadéra")
+texte_titre(t) | Majuscule à chaque mot. | texte_titre("le petit prince")
+texte_lignes(t) | Découpe en lignes. | texte_lignes("a\nb\nc")
+texte_mots(t) | Découpe en mots (la casse est conservée). | texte_mots("Le chat, le chien")
+texte_sans_accents(t) | Retire les accents. | texte_sans_accents("éléphant à Thiès")
+texte_slug(t) | Texte utilisable dans une adresse web : minuscules, sans accents, tirets. | texte_slug("Mon Premier Article !")
+texte_est_palindrome(t) | Vrai si le texte se lit pareil dans les deux sens (en ignorant casse et ponctuation). | texte_est_palindrome("Esope reste ici et se repose")
+texte_distance(a, b) | Distance de Levenshtein : nombre minimal de modifications pour passer de a à b. | texte_distance("chat", "chien")
+texte_format(modele, valeurs) | Remplit {} (dans l'ordre), {0} (par position) ou {nom} (liste ou structure). | texte_format("{} a {} ans", ["Awa", 20])
+url_encoder(t) | Encode un texte pour une adresse web. | url_encoder("café & thé")
+url_decoder(t) | Décode un texte d'adresse web. | url_decoder("caf%C3%A9%20%26%20th%C3%A9")
+regex_test(t, motif, options) | Vrai si le texte correspond au motif (expression régulière). | regex_test("abc123", "[0-9]+", "")
+regex_trouver(t, motif, options) | Liste de toutes les correspondances. | regex_trouver("a1 b22 c333", "[0-9]+", "")
+regex_remplacer(t, motif, nouveau, options) | Remplace les correspondances. | regex_remplacer("a1 b22", "[0-9]+", "#", "")
+regex_groupes(t, motif, options) | Valeurs des groupes entre parenthèses de la première correspondance. | regex_groupes("2026-10-24", "([0-9]+)-([0-9]+)-([0-9]+)", "")
+regex_decouper(t, motif, options) | Découpe le texte à chaque correspondance. | regex_decouper("a1b22c", "[0-9]+", "")
+regex_echapper(t) | Neutralise les caractères spéciaux pour les chercher tels quels. | regex_echapper("1+1=2?")
+csv_lire(t, separateur) | Transforme un texte CSV en liste de lignes (listes de textes). | csv_lire("a;b\n1;2", ";")
+csv_texte(lignes, separateur) | Transforme une liste de lignes en texte CSV. | csv_texte([["a", "b"], [1, 2]], ";")
+json_lire(t) | Transforme du texte JSON en listes et structures. | json_lire("{\"a\": [1, 2]}")
+json_texte(valeur, indentation) | Transforme une valeur en texte JSON (indentation facultative). | json_texte({ a: [1, 2] }, 0)
+json_valide(t) | Vrai si le texte est du JSON valide. | json_valide("{\"a\": 1}")
+json_chemin(valeur, chemin, defaut) | Va chercher une valeur profonde : "a.b.0.c"; renvoie defaut si le chemin n'existe pas. | json_chemin({ a: { b: [10, 20] } }, "a.b.1", 0)
+json_fusionner(a, b) | Fusionne deux structures en profondeur. | json_fusionner({ a: { x: 1 } }, { a: { y: 2 } })
+
+# Dates
+## Une date est un nombre (millisecondes depuis le 1er janvier 1970, heure UTC). Les exemples ci-dessous sont en heure UTC.
+date_creer(an, mois, jour, h, min, s) | Fabrique une date (heures, minutes, secondes facultatives). | date_creer(2026, 10, 24, 0, 0, 0)
+date_composants(date) | Structure : annee, mois, jour, heure, minute, seconde, jour de la semaine… | date_composants(date_creer(2026, 10, 24, 15, 30, 0))
+date_formater(date, modele) | Écrit une date. Modèle : AAAA MM JJ hh mm ss jour mois. | date_formater(date_creer(2026, 10, 24), "JJ/MM/AAAA")
+date_analyser(texte) | Lit une date écrite en texte (format ISO ou JJ/MM/AAAA). | date_analyser("2026-10-24")
+date_iso(date) | Écrit la date au format ISO 8601. | date_iso(date_creer(2026, 10, 24))
+formater_date(date) | Écrit la date au format JJ/MM/AAAA hh:mm:ss. | formater_date(date_creer(2026, 10, 24, 8, 5, 0))
+date_ajouter(date, quantite, unite) | Ajoute une durée ("secondes", "minutes", "heures", "jours"). | date_formater(date_ajouter(date_creer(2026, 10, 24), 10, "jours"), "JJ/MM/AAAA")
+date_ajouter_mois(date, n) | Ajoute n mois. | date_formater(date_ajouter_mois(date_creer(2026, 1, 31), 1), "JJ/MM/AAAA")
+date_difference(a, b, unite) | Durée de a à b dans l'unité demandée. | date_difference(date_creer(2026, 10, 24), date_creer(2026, 12, 25), "jours")
+date_debut(date, unite) | Début du jour, du mois ou de l'année contenant la date. | date_formater(date_debut(date_creer(2026, 10, 24, 15, 0, 0), "mois"), "JJ/MM/AAAA hh:mm")
+date_jours_dans_mois(an, mois) | Nombre de jours du mois. | date_jours_dans_mois(2028, 2)
+date_semaine(date) | Numéro de la semaine dans l'année. | date_semaine(date_creer(2026, 10, 24))
+date_age(naissance, date) | Âge en années complètes à la date donnée. | date_age(date_creer(2008, 3, 15), date_creer(2026, 10, 24))
+est_bissextile(an) | Vrai si l'année est bissextile. | est_bissextile(2028)
+
+# Réseau et télécommunications
+telecom_calculer_sous_reseau(ip, prefixe) | Masque, adresse du réseau, diffusion et plage d'hôtes. | telecom_calculer_sous_reseau("192.168.1.130", 26)
+masque_reseau(prefixe) | Masque de sous-réseau pour un préfixe. | masque_reseau(24)
+plage_reseau(ip, prefixe) | Première et dernière adresse du réseau. | plage_reseau("192.168.1.0", 30)
+telecom_creer_topologie() | Réseau vide (nœuds et liaisons). | telecom_creer_topologie()
+telecom_ajouter_liaison(reseau, liaison) | Ajoute une liaison { de, a, cout } (dans les deux sens). | telecom_ajouter_liaison(telecom_creer_topologie(), { de: "A", a: "B", cout: 4 })
+telecom_matrice_adjacence(reseau) | Matrice d'adjacence du réseau. | telecom_matrice_adjacence(telecom_ajouter_liaison(telecom_creer_topologie(), { de: "A", a: "B", cout: 4 }))
+telecom_verifier_connexite(reseau) | Vrai si tous les nœuds sont reliés. | telecom_verifier_connexite(telecom_ajouter_liaison(telecom_creer_topologie(), { de: "A", a: "B", cout: 4 }))
+telecom_dijkstra_routage(reseau, requete) | Plus court chemin : requête { depart, arrivee }. | telecom_dijkstra_routage(telecom_ajouter_liaison(telecom_creer_topologie(), { de: "A", a: "B", cout: 4 }), { depart: "A", arrivee: "B" })
+http_obtenir(url) | Télécharge une page ou un fichier texte (a besoin d'internet). |
+http_json(url) | Télécharge une réponse JSON et la convertit en valeur Fadéra (a besoin d'internet). |
+http_envoyer(url, donnees, entetes) | Envoie des données (POST) ; renvoie { statut, ok, corps } (a besoin d'internet). |
+
+# Chiffrement
+crypto_hacher_sha256(t) | Empreinte SHA-256. | crypto_hacher_sha256("a")
+sha256(t) | Autre nom de crypto_hacher_sha256. | sha256("a")
+hacher_sha256(t) | Autre nom de crypto_hacher_sha256. | hacher_sha256("a")
+crypto_hacher_sha512(t) | Empreinte SHA-512. | taille(crypto_hacher_sha512("a"))
+crypto_hmac_sha256(t, cle) | Signature HMAC-SHA256. | crypto_hmac_sha256("message", "cle")
+crypto_aleatoire_hex(n) | n octets aléatoires sûrs, écrits en hexadécimal. |
+crypto_chiffrer_symetrique(t, mot_de_passe) | Chiffre avec AES-256-GCM ; le résultat change à chaque appel. |
+crypto_dechiffrer_symetrique(chiffre, mot_de_passe) | Déchiffre ; erreur claire si le mot de passe est faux. | crypto_dechiffrer_symetrique(crypto_chiffrer_symetrique("secret", "mdp"), "mdp")
+crypto_generer_cles_rsa() | Paire de clés RSA 2048 bits : { cle_publique, cle_privee }. |
+crypto_chiffrer_asymetrique(t, cle_publique) | Chiffre avec la clé publique. |
+crypto_dechiffrer_asymetrique(chiffre, cle_privee) | Déchiffre avec la clé privée. |
+chiffrer(t, mot_de_passe) | Autre nom de crypto_chiffrer_symetrique. | chiffrer("abc", "mdp") != "abc"
+dechiffrer(chiffre, mot_de_passe) | Autre nom de crypto_dechiffrer_symetrique. | dechiffrer(chiffrer("abc", "mdp"), "mdp")
+chiffrer_base64(t) | Encode un texte en Base64 (ce n'est pas un chiffrement secret). | chiffrer_base64("Fadéra")
+dechiffrer_base64(t) | Décode du Base64. | dechiffrer_base64("RmFkw6lyYQ==")
+
+# Intelligence artificielle
+ia_creer_neurone(nb_entrees, activation) | Crée un neurone ("sigmoid", "relu" ou "heaviside"). | type_de(ia_creer_neurone(2, "relu"))
+ia_activation_perceptron(neurone, entrees) | Sortie du neurone pour une liste d'entrées. | ia_activation_perceptron({ poids: [1, 1], biais: -1, activation: "heaviside" }, [1, 1])
+ia_descente_gradient(neurone, config) | Met à jour les poids : config = { entrees, erreur }. |
+ia_entrainer_reseau_xor(epoques) | Entraîne un petit réseau sur le problème XOR. |
+ia_reseau_multicouche(architecture, config) | Entraîne un réseau multicouche : config = { dataset, epoques, tauxApprentissage }. |
+creer_reseau(entrees, caches, sorties) | Crée un réseau de neurones à une couche cachée. | type_de(creer_reseau(2, 3, 1))
+ia_entrainer(reseau, entrees, cibles, taux) | Fait un pas d'entraînement et renvoie l'erreur. |
+ia_predire(reseau, entrees) | Prédiction du réseau pour une liste d'entrées. |
+
+# Tests
+verifier(condition, message) | Échoue si la condition est fausse (dans un bloc tester). |
+verifier_egal(obtenu, attendu, message) | Échoue si les deux valeurs diffèrent (dans un bloc tester). |
+verifier_erreur(fonction, texte) | Échoue si la fonction ne déclenche pas d'erreur contenant ce texte (dans un bloc tester). |
+
+# Autres noms (écriture en majuscules internes)
+masqueReseau(prefixe) | Autre nom de masque_reseau. | masqueReseau(24)
+plageReseau(ip, prefixe) | Autre nom de plage_reseau. | plageReseau("192.168.1.0", 30)
+creerReseau(entrees, caches, sorties) | Autre nom de creer_reseau. | type_de(creerReseau(2, 3, 1))
+iaEntrainer(reseau, entrees, cibles, taux) | Autre nom de ia_entrainer. |
+iaPredire(reseau, entrees) | Autre nom de ia_predire. |

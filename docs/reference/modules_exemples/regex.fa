@@ -1,0 +1,9 @@
+importer "std/regex"
+
+soit t = "Écrivez à awa@exemple.sn ou moussa@fadera.org avant le 24 octobre (12 places, 7,5 €)."
+afficher extraire_courriels(t)
+afficher extraire_nombres(t)
+afficher est_courriel("awa@exemple.sn")
+afficher est_courriel("awa@")
+afficher reduire_espaces("  trop    d'espaces   ici ")
+afficher remplacer_chaque("a1b22", "[0-9]+", n => "<" + n + ">")

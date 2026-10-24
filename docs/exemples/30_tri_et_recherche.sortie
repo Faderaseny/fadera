@@ -1,0 +1,14 @@
+Croissant   : [5, 9, 9, 12, 14, 17, 17, 20]
+Décroissant : [20, 17, 17, 14, 12, 9, 9, 5]
+Est trié ? faux / vrai
+
+Par classe, puis par note décroissante :
+  A  Fatou    18
+  A  Moussa   12
+  A  Mariama  12
+  B  Awa      15
+  B  Ibrahima 15
+
+Position de 63 : 20
+Position de 64 : -1
+64 s'insérerait en position 21

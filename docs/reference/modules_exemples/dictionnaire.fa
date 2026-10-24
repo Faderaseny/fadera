@@ -1,0 +1,9 @@
+importer "std/dictionnaire"
+
+soit d = Dictionnaire()
+d.definir("pomme", 3).definir("poire", 5).definir("kiwi", 2)
+afficher d.obtenir("poire")
+afficher d.obtenir_ou("mangue", 0)
+afficher d.liste_cles()
+afficher d.supprimer("pomme")
+afficher d.longueur()
