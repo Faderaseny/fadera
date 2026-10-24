@@ -8,7 +8,7 @@ const RACINE = path.join(__dirname, "..");
 const BIN = process.env.FADERA_BIN || path.join(RACINE, "fadera-rs/target/release/fadera");
 const DOSSIER = path.join(__dirname, "exemples");
 const ecrire = process.argv.includes("--ecrire");
-// Exemples qui dépendent du réseau : on vérifie qu'ils tournent proprement hors ligne, sans sortie de référence figée.
+// Exemples qui dépendent du réseau : pas de sortie de référence figée, résultat variable selon la connexion.
 const RESEAU = new Set(["24_meteo_http_json.fa", "25_verificateur_sites.fa"]);
 
 const html = fs.readFileSync(path.join(RACINE, "index.html"), "utf8");
@@ -37,7 +37,10 @@ process.env.TZ = "UTC";
     const j = await sortieJs(code), r = sortieRs(chemin);
     const ref = chemin.replace(/\.fa$/, ".sortie");
     let probleme = "";
-    if (j !== r) probleme = "les deux moteurs diffèrent";
+    // Exemples réseau : la sortie dépend de la connexion (la CI a internet, pas toujours votre poste) ;
+    // on exige seulement qu'ils se terminent proprement sur les deux moteurs, sans erreur non rattrapée.
+    if (RESEAU.has(f)) { if (/ERR:|<<rust statut/.test(j + r)) probleme = "erreur non rattrapée"; }
+    else if (j !== r) probleme = "les deux moteurs diffèrent";
     else if (j.includes("ERR:") && !RESEAU.has(f)) probleme = "erreur d'exécution";
     else if (!RESEAU.has(f)) {
       if (ecrire) fs.writeFileSync(ref, j + "\n");
