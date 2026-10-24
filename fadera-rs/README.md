@@ -15,7 +15,7 @@ cargo build --release
 ## Vérifier que Rust et JavaScript donnent les mêmes résultats
 
 ```
-cargo test --release                      # 12 tests Rust (aléatoire, fichiers, saisie, chiffrement, IA, modules)
+cargo test --release                      # tests Rust (moteur, CLI, chiffrement, bibliothèque standard, formateur)
 TZ=UTC node tests/parite.js ../index.html # compare les deux moteurs sur ~380 programmes (TZ=UTC : le JS lit l'heure locale)
 node tests/crypto_interop.js ../index.html# ce que JS chiffre, Rust le déchiffre (et inversement)
 ```
