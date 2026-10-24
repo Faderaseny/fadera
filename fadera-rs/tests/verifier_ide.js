@@ -202,7 +202,7 @@ const eq = (nom, obtenu, att) => {
   eq("durabilité : onglet actif restauré avec son contenu", await val(p), "# autre fichier");
   await p.click("#barreOnglets .onglet:nth-child(1)");
   eq("durabilité : contenu du premier onglet", await val(p), 'afficher "durable ✓"');
-  eq("durabilité : localStorage n'est plus écrit", await p.evaluate(() => !localStorage.getItem("fadera_vfs_v1").includes("durable")), true);
+  eq("durabilité : localStorage n'est plus écrit", await p.evaluate(() => !(localStorage.getItem("fadera_vfs_v1") || "").includes("durable")), true);
 
   // ---------- export / import .zip ----------
   const [dl] = await Promise.all([p.waitForEvent("download"), p.evaluate(() => exporterZip(false))]);
