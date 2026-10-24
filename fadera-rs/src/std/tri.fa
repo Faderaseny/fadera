@@ -1,0 +1,228 @@
+# Module standard « std/tri » : importer "std/tri"
+# Tri et recherche avancés. Les fonctions ne modifient jamais la liste reçue.
+# comparer(a, b) renvoie un nombre négatif, 0 ou positif (comme pour trier).
+#
+# tri_fusion(l, comparer)        tri stable en O(n log n)
+# tri_rapide(l, comparer)        tri rapide (non stable)
+# tri_insertion(l, comparer)     tri stable, rapide sur les petites listes
+# trier_decroissant(l)           tri décroissant naturel
+# trier_multi(l, cles)           tri stable sur plusieurs clés : cles = [f1, f2, …] ; une clé est
+#                                une fonction x => valeur (le premier critère l'emporte)
+# est_trie(l)                    vrai si la liste est croissante
+# recherche_binaire(l, x)        position de x dans une liste triée croissante, ou -1
+# borne_inf(l, x)                première position où x pourrait s'insérer en gardant l'ordre
+# borne_sup(l, x)                dernière position où x pourrait s'insérer
+# indice_de(l, x)                position de la première occurrence de x (liste quelconque), ou -1
+# minimum_par(l, f)              élément dont f(x) est le plus petit (erreur si vide)
+# maximum_par(l, f)              élément dont f(x) est le plus grand (erreur si vide)
+# plus_petits(l, n)              les n plus petits éléments, triés
+# plus_grands(l, n)              les n plus grands éléments, triés du plus grand au plus petit
+# grouper_par(l, f)              structure { clé: [éléments] } selon f(x) (clés en texte)
+
+fonction ordre_naturel(a, b)
+  si a < b alors
+    renvoyer -1
+  fin
+  si a > b alors
+    renvoyer 1
+  fin
+  renvoyer 0
+fin
+
+fonction fusionner_triees(g, d, comparer)
+  soit r = []
+  soit i = 0
+  soit j = 0
+  soit ng = taille(g)
+  soit nd = taille(d)
+  tantque i < ng et j < nd faire
+    si comparer(lireElement(d, j), lireElement(g, i)) < 0 alors
+      ajouter(r, lireElement(d, j))
+      j = j + 1
+    sinon
+      ajouter(r, lireElement(g, i))
+      i = i + 1
+    fin
+  fin
+  tantque i < ng faire
+    ajouter(r, lireElement(g, i))
+    i = i + 1
+  fin
+  tantque j < nd faire
+    ajouter(r, lireElement(d, j))
+    j = j + 1
+  fin
+  renvoyer r
+fin
+
+fonction tri_fusion(l, comparer)
+  soit n = taille(l)
+  si n <= 1 alors
+    renvoyer copier(l)
+  fin
+  soit milieu = plancher(n / 2)
+  renvoyer fusionner_triees(tri_fusion(tranche(l, 0, milieu), comparer), tri_fusion(tranche(l, milieu), comparer), comparer)
+fin
+
+fonction tri_rapide(l, comparer)
+  si taille(l) <= 1 alors
+    renvoyer copier(l)
+  fin
+  soit pivot = lireElement(l, plancher(taille(l) / 2))
+  soit avant = []
+  soit egal = []
+  soit apres = []
+  pour chaque x dans l faire
+    soit c = comparer(x, pivot)
+    si c < 0 alors
+      ajouter(avant, x)
+    sinon
+      si c > 0 alors
+        ajouter(apres, x)
+      sinon
+        ajouter(egal, x)
+      fin
+    fin
+  fin
+  renvoyer concatener(concatener(tri_rapide(avant, comparer), egal), tri_rapide(apres, comparer))
+fin
+
+fonction tri_insertion(l, comparer)
+  soit r = copier(l)
+  pour i allantde 1 a taille(r) - 1 faire
+    soit x = lireElement(r, i)
+    soit j = i - 1
+    tantque j >= 0 et comparer(lireElement(r, j), x) > 0 faire
+      modifierElement(r, j + 1, lireElement(r, j))
+      j = j - 1
+    fin
+    modifierElement(r, j + 1, x)
+  fin
+  renvoyer r
+fin
+
+fonction trier_decroissant(l)
+  renvoyer tri_fusion(l, (a, b) => ordre_naturel(b, a))
+fin
+
+fonction comparer_multi(cles, a, b)
+  pour chaque f dans cles faire
+    soit c = ordre_naturel(f(a), f(b))
+    si c != 0 alors
+      renvoyer c
+    fin
+  fin
+  renvoyer 0
+fin
+
+fonction trier_multi(l, cles)
+  renvoyer tri_fusion(l, (a, b) => comparer_multi(cles, a, b))
+fin
+
+fonction est_trie(l)
+  pour i allantde 1 a taille(l) - 1 faire
+    si lireElement(l, i - 1) > lireElement(l, i) alors
+      renvoyer faux
+    fin
+  fin
+  renvoyer vrai
+fin
+
+fonction borne_inf(l, x)
+  soit bas = 0
+  soit haut = taille(l)
+  tantque bas < haut faire
+    soit m = plancher((bas + haut) / 2)
+    si lireElement(l, m) < x alors
+      bas = m + 1
+    sinon
+      haut = m
+    fin
+  fin
+  renvoyer bas
+fin
+
+fonction borne_sup(l, x)
+  soit bas = 0
+  soit haut = taille(l)
+  tantque bas < haut faire
+    soit m = plancher((bas + haut) / 2)
+    si lireElement(l, m) <= x alors
+      bas = m + 1
+    sinon
+      haut = m
+    fin
+  fin
+  renvoyer bas
+fin
+
+fonction recherche_binaire(l, x)
+  soit i = borne_inf(l, x)
+  si i < taille(l) et lireElement(l, i) == x alors
+    renvoyer i
+  fin
+  renvoyer -1
+fin
+
+fonction indice_de(l, x)
+  pour i allantde 0 a taille(l) - 1 faire
+    si lireElement(l, i) == x alors
+      renvoyer i
+    fin
+  fin
+  renvoyer -1
+fin
+
+fonction minimum_par(l, f)
+  si taille(l) == 0 alors
+    lever("minimum_par : la liste est vide.")
+  fin
+  soit meilleur = lireElement(l, 0)
+  soit cle = f(meilleur)
+  pour i allantde 1 a taille(l) - 1 faire
+    soit x = lireElement(l, i)
+    soit k = f(x)
+    si k < cle alors
+      meilleur = x
+      cle = k
+    fin
+  fin
+  renvoyer meilleur
+fin
+
+fonction maximum_par(l, f)
+  si taille(l) == 0 alors
+    lever("maximum_par : la liste est vide.")
+  fin
+  soit meilleur = lireElement(l, 0)
+  soit cle = f(meilleur)
+  pour i allantde 1 a taille(l) - 1 faire
+    soit x = lireElement(l, i)
+    soit k = f(x)
+    si k > cle alors
+      meilleur = x
+      cle = k
+    fin
+  fin
+  renvoyer meilleur
+fin
+
+fonction plus_petits(l, n)
+  renvoyer tranche(tri_fusion(l, ordre_naturel), 0, maximum(0, minimum(n, taille(l))))
+fin
+
+fonction plus_grands(l, n)
+  renvoyer tranche(trier_decroissant(l), 0, maximum(0, minimum(n, taille(l))))
+fin
+
+fonction grouper_par(l, f)
+  soit r = {}
+  pour chaque x dans l faire
+    soit k = texte(f(x))
+    si non a_cle(r, k) alors
+      modifierCle(r, k, [])
+    fin
+    ajouter(lireCle(r, k), x)
+  fin
+  renvoyer r
+fin

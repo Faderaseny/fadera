@@ -1,0 +1,101 @@
+# Module standard « std/tas » : importer "std/tas"
+# Tas : file de priorité. L'élément « le plus petit » selon la fonction de comparaison sort en premier.
+#   soit t = Tas((a, b) => a.age - b.age)    comparer(a, b) < 0 quand a doit sortir avant b
+#   soit t = tas_min()                       tas de nombres ou de textes, plus petit d'abord
+#   soit t = tas_max()                       idem, plus grand d'abord
+#   t.pousser(x)       ajoute x (renvoie le tas : les appels s'enchaînent)
+#   t.extraire()       retire et renvoie l'élément prioritaire (erreur si le tas est vide)
+#   t.premier()        lit l'élément prioritaire sans le retirer (erreur si vide)
+#   t.longueur()       nombre d'éléments
+#   t.est_vide()       vrai si le tas est vide
+
+fonction comparer_naturel(a, b)
+  si a < b alors
+    renvoyer -1
+  fin
+  si a > b alors
+    renvoyer 1
+  fin
+  renvoyer 0
+fin
+
+fonction comparer_inverse(a, b)
+  renvoyer comparer_naturel(b, a)
+fin
+
+classe Tas
+  fonction creer(comparer)
+    soi.comparer = comparer
+    soi.elements = []
+  fin
+  fonction pousser(x)
+    ajouter(soi.elements, x)
+    soit i = taille(soi.elements) - 1
+    tantque i > 0 faire
+      soit p = plancher((i - 1) / 2)
+      si soi.comparer(lireElement(soi.elements, i), lireElement(soi.elements, p)) < 0 alors
+        soit tmp = lireElement(soi.elements, i)
+        modifierElement(soi.elements, i, lireElement(soi.elements, p))
+        modifierElement(soi.elements, p, tmp)
+        i = p
+      sinon
+        i = 0
+      fin
+    fin
+    renvoyer soi
+  fin
+  fonction premier()
+    si taille(soi.elements) == 0 alors
+      lever("Tas vide : pas d'élément prioritaire.")
+    fin
+    renvoyer lireElement(soi.elements, 0)
+  fin
+  fonction extraire()
+    soit n = taille(soi.elements)
+    si n == 0 alors
+      lever("Tas vide : rien à extraire.")
+    fin
+    soit haut = lireElement(soi.elements, 0)
+    soit dernier = retirer(soi.elements, n - 1)
+    n = n - 1
+    si n > 0 alors
+      modifierElement(soi.elements, 0, dernier)
+      soit i = 0
+      soit fini = faux
+      tantque non fini faire
+        soit g = 2 * i + 1
+        soit d = g + 1
+        soit m = i
+        si g < n et soi.comparer(lireElement(soi.elements, g), lireElement(soi.elements, m)) < 0 alors
+          m = g
+        fin
+        si d < n et soi.comparer(lireElement(soi.elements, d), lireElement(soi.elements, m)) < 0 alors
+          m = d
+        fin
+        si m == i alors
+          fini = vrai
+        sinon
+          soit tmp = lireElement(soi.elements, i)
+          modifierElement(soi.elements, i, lireElement(soi.elements, m))
+          modifierElement(soi.elements, m, tmp)
+          i = m
+        fin
+      fin
+    fin
+    renvoyer haut
+  fin
+  fonction longueur()
+    renvoyer taille(soi.elements)
+  fin
+  fonction est_vide()
+    renvoyer taille(soi.elements) == 0
+  fin
+fin
+
+fonction tas_min()
+  renvoyer Tas(comparer_naturel)
+fin
+
+fonction tas_max()
+  renvoyer Tas(comparer_inverse)
+fin

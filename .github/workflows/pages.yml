@@ -1,0 +1,67 @@
+name: Playground (GitHub Pages)
+
+# Publie l'IDE en ligne à chaque modification de main.
+# Prérequis (une seule fois) : Settings → Pages → Source : « GitHub Actions ».
+# Les liens de partage (#p=…) fonctionnent tels quels : le code voyage dans le lien, jamais vers un serveur.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  construire:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Tests du moteur JavaScript avant publication
+        run: node tests_fadera.js index.html
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: fadera-rs
+      - uses: jetli/wasm-pack-action@v0.4.0
+      - name: "Moteur Rust/WebAssembly (facultatif, sinon moteur JavaScript)"
+        id: wasm
+        continue-on-error: true
+        working-directory: fadera-rs
+        run: wasm-pack build --release --target web -- --features wasm
+      - name: Assembler le site
+        run: |
+          mkdir _site
+          cp index.html _site/
+          touch _site/.nojekyll
+          if [ "${{ steps.wasm.outcome }}" = "success" ]; then
+            cp -r fadera-rs/pkg _site/pkg
+            rm -f _site/pkg/.gitignore
+          else
+            echo "::warning::WebAssembly non compilé : le playground tourne avec le moteur JavaScript seul."
+          fi
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deployer:
+    needs: construire
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploiement.outputs.page_url }}
+    steps:
+      - id: deploiement
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,75 @@
+# Module standard « std/regex » : importer "std/regex"
+# Expressions régulières toutes prêtes, bâties sur regex_test / regex_trouver / regex_remplacer.
+# correspond_entierement(t, motif)   vrai si le texte entier correspond au motif
+# compter_motif(t, motif)            nombre de correspondances
+# extraire_nombres(t)                liste des nombres (entiers ou décimaux, négatifs compris) du texte
+# extraire_mots(t)                   liste des mots (lettres, accents compris)
+# extraire_courriels(t)              adresses électroniques trouvées
+# extraire_urls(t)                   adresses http(s) trouvées
+# est_courriel(t)                    vrai si t est une adresse électronique
+# est_url(t)                         vrai si t est une adresse http(s)
+# est_entier(t)                      vrai si t est un entier écrit en chiffres (signe permis)
+# est_telephone(t)                   vrai pour un numéro de 8 à 15 chiffres (espaces, points, tirets, +, parenthèses permis)
+# reduire_espaces(t)                 remplace toute suite d'espaces par une seule espace, sans espaces aux bords
+# remplacer_chaque(t, motif, f)      remplace chaque correspondance par f(correspondance)
+
+fonction correspond_entierement(t, motif)
+  renvoyer regex_test(t, "^(?:" + motif + ")$")
+fin
+
+fonction compter_motif(t, motif)
+  renvoyer taille(regex_trouver(t, motif))
+fin
+
+fonction extraire_nombres(t)
+  renvoyer transformer(regex_trouver(t, "-?\\d+(?:\\.\\d+)?"), x => nombre(x))
+fin
+
+fonction extraire_mots(t)
+  renvoyer regex_trouver(t, "[A-Za-zÀ-ÖØ-öø-ÿŒœ]+")
+fin
+
+fonction extraire_courriels(t)
+  renvoyer regex_trouver(t, "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}")
+fin
+
+fonction extraire_urls(t)
+  renvoyer regex_trouver(t, "https?://[^\\s<>\"]+")
+fin
+
+fonction est_courriel(t)
+  renvoyer correspond_entierement(t, "[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}")
+fin
+
+fonction est_url(t)
+  renvoyer correspond_entierement(t, "https?://[^\\s/$.?#][^\\s]*")
+fin
+
+fonction est_entier(t)
+  renvoyer correspond_entierement(t, "[+-]?\\d+")
+fin
+
+fonction est_telephone(t)
+  si non correspond_entierement(t, "\\+?[\\d\\s().-]+") alors
+    renvoyer faux
+  fin
+  soit n = taille(regex_remplacer(t, "\\D", ""))
+  renvoyer n >= 8 et n <= 15
+fin
+
+fonction reduire_espaces(t)
+  renvoyer nettoyer(regex_remplacer(t, "\\s+", " "))
+fin
+
+fonction remplacer_chaque(t, motif, f)
+  soit morceaux = regex_decouper(t, motif)
+  soit trouves = regex_trouver(t, motif)
+  soit r = ""
+  pour i allantde 0 a taille(morceaux) - 1 faire
+    r = r + lireElement(morceaux, i)
+    si i < taille(trouves) alors
+      r = r + texte(f(lireElement(trouves, i)))
+    fin
+  fin
+  renvoyer r
+fin

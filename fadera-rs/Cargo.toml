@@ -1,0 +1,43 @@
+[package]
+name = "fadera"
+version = "0.5.0"
+edition = "2021"
+description = "Fadéra — langage de programmation en français (moteur Rust)"
+license = "MIT"
+
+[lib]
+name = "fadera"
+path = "src/lib.rs"
+crate-type = ["rlib", "cdylib"]
+
+[[bin]]
+name = "fadera"
+path = "src/main.rs"
+
+[features]
+default = ["crypto"]
+# Vrai chiffrement : AES-256-GCM (PBKDF2 600 000 it.), RSA-OAEP 2048, SHA-256/512, HMAC
+crypto = ["dep:sha2", "dep:hmac", "dep:pbkdf2", "dep:aes-gcm", "dep:rsa", "dep:rand", "dep:getrandom"]
+# Liaison WebAssembly pour le navigateur (wasm-pack build --target web -- --features wasm)
+wasm = ["dep:wasm-bindgen", "dep:js-sys", "getrandom?/js"]
+
+[dependencies]
+regex = "1"
+base64 = "0.22"
+unicode-normalization = "0.1"
+# fonctions mathématiques identiques sur toutes les plateformes (port de musl/fdlibm), pour coller au moteur JavaScript
+libm = "0.2"
+sha2 = { version = "0.10", optional = true }
+hmac = { version = "0.12", optional = true }
+pbkdf2 = { version = "0.12", default-features = false, features = ["hmac"], optional = true }
+aes-gcm = { version = "0.10", optional = true }
+rsa = { version = "0.9", optional = true }
+rand = { version = "0.8", optional = true }
+getrandom = { version = "0.2", optional = true }
+wasm-bindgen = { version = "0.2", optional = true }
+js-sys = { version = "0.3", optional = true }
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1

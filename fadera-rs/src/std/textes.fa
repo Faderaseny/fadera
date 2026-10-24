@@ -1,0 +1,44 @@
+# Module standard « std/textes » : importer "std/textes"
+# est_vide(t)                      vrai si le texte est vide ou ne contient que des espaces
+# centrer(t, largeur)              ajoute des espaces des deux côtés pour centrer
+# tronquer(t, n)                   coupe à n caractères au plus (« … » à la fin si le texte est coupé)
+# inverser_texte(t)                texte à l'envers
+# compter_occurrences(t, motif)    nombre de fois où motif apparaît (sans chevauchement)
+
+fonction est_vide(t)
+  renvoyer taille(nettoyer(t)) == 0
+fin
+
+fonction centrer(t, largeur)
+  soit manque = largeur - taille(t)
+  si manque <= 0 alors
+    renvoyer t
+  fin
+  soit gauche = plancher(manque / 2)
+  renvoyer repeter(" ", gauche) + t + repeter(" ", manque - gauche)
+fin
+
+fonction tronquer(t, n)
+  si taille(t) <= n alors
+    renvoyer t
+  fin
+  si n < 1 alors
+    renvoyer ""
+  fin
+  renvoyer sous_texte(t, 0, n - 1) + "…"
+fin
+
+fonction inverser_texte(t)
+  soit r = ""
+  pour i allantde taille(t) - 1 a 0 pas -1 faire
+    r = r + caractere(t, i)
+  fin
+  renvoyer r
+fin
+
+fonction compter_occurrences(t, motif)
+  si taille(motif) == 0 alors
+    renvoyer 0
+  fin
+  renvoyer taille(decouper(t, motif)) - 1
+fin

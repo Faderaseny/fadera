@@ -1,0 +1,45 @@
+# Module standard « std/pile » : importer "std/pile"
+# Pile (dernier entré, premier sorti) bâtie sur une classe.
+#   soit p = Pile()
+#   p.empiler(x)        ajoute au sommet (renvoie la pile : les appels s'enchaînent)
+#   p.depiler()         retire et renvoie le sommet (erreur si la pile est vide)
+#   p.sommet()          lit le sommet sans le retirer (erreur si vide)
+#   p.longueur()        nombre d'éléments
+#   p.est_vide()        vrai si la pile est vide
+#   p.vider()           retire tout
+#   p.en_liste()        copie des éléments, du fond vers le sommet
+
+classe Pile
+  fonction creer()
+    soi.elements = []
+  fin
+  fonction empiler(x)
+    ajouter(soi.elements, x)
+    renvoyer soi
+  fin
+  fonction depiler()
+    si taille(soi.elements) == 0 alors
+      lever("Pile vide : rien à dépiler.")
+    fin
+    renvoyer retirer(soi.elements, taille(soi.elements) - 1)
+  fin
+  fonction sommet()
+    si taille(soi.elements) == 0 alors
+      lever("Pile vide : pas de sommet.")
+    fin
+    renvoyer lireElement(soi.elements, taille(soi.elements) - 1)
+  fin
+  fonction longueur()
+    renvoyer taille(soi.elements)
+  fin
+  fonction est_vide()
+    renvoyer taille(soi.elements) == 0
+  fin
+  fonction vider()
+    soi.elements = []
+    renvoyer soi
+  fin
+  fonction en_liste()
+    renvoyer copier(soi.elements)
+  fin
+fin

@@ -1,0 +1,94 @@
+# Module standard « std/ensemble » : importer "std/ensemble"
+# Ensemble d'éléments sans doublon, dans l'ordre d'insertion. Deux éléments sont égaux s'ils ont
+# la même représentation JSON (1 et "1" sont donc différents).
+#   soit e = Ensemble()
+#   e.inclure(x)           ajoute x (sans effet s'il est déjà là) ; renvoie l'ensemble
+#   e.exclure(x)           retire x (sans effet s'il est absent) ; renvoie l'ensemble
+#   e.possede(x)           vrai si x est dans l'ensemble
+#   e.longueur()           nombre d'éléments
+#   e.est_vide()           vrai si l'ensemble est vide
+#   e.en_liste()           éléments dans l'ordre d'insertion
+#   e.union(autre)         nouvel ensemble : éléments de l'un ou de l'autre
+#   e.intersection(autre)  nouvel ensemble : éléments communs
+#   e.difference(autre)    nouvel ensemble : éléments de e absents de autre
+# ensemble_depuis(l)       construit un ensemble à partir d'une liste
+
+classe Ensemble
+  fonction creer()
+    soi.ordre = []
+    soi.cles = {}
+  fin
+  fonction inclure(x)
+    soit k = json_texte(x)
+    si non a_cle(soi.cles, k) alors
+      ajouter(soi.ordre, k)
+      modifierCle(soi.cles, k, x)
+    fin
+    renvoyer soi
+  fin
+  fonction exclure(x)
+    soit k = json_texte(x)
+    si a_cle(soi.cles, k) alors
+      pour i allantde 0 a taille(soi.ordre) - 1 faire
+        si lireElement(soi.ordre, i) == k alors
+          retirer(soi.ordre, i)
+          supprimer_cle(soi.cles, k)
+          renvoyer soi
+        fin
+      fin
+    fin
+    renvoyer soi
+  fin
+  fonction possede(x)
+    renvoyer a_cle(soi.cles, json_texte(x))
+  fin
+  fonction longueur()
+    renvoyer taille(soi.ordre)
+  fin
+  fonction est_vide()
+    renvoyer taille(soi.ordre) == 0
+  fin
+  fonction en_liste()
+    soit r = []
+    pour chaque k dans soi.ordre faire
+      ajouter(r, lireCle(soi.cles, k))
+    fin
+    renvoyer r
+  fin
+  fonction union(autre)
+    soit r = Ensemble()
+    pour chaque x dans soi.en_liste() faire
+      r.inclure(x)
+    fin
+    pour chaque x dans autre.en_liste() faire
+      r.inclure(x)
+    fin
+    renvoyer r
+  fin
+  fonction intersection(autre)
+    soit r = Ensemble()
+    pour chaque x dans soi.en_liste() faire
+      si autre.possede(x) alors
+        r.inclure(x)
+      fin
+    fin
+    renvoyer r
+  fin
+  fonction difference(autre)
+    soit r = Ensemble()
+    pour chaque x dans soi.en_liste() faire
+      si non autre.possede(x) alors
+        r.inclure(x)
+      fin
+    fin
+    renvoyer r
+  fin
+fin
+
+fonction ensemble_depuis(elements)
+  soit e = Ensemble()
+  pour chaque x dans elements faire
+    e.inclure(x)
+  fin
+  renvoyer e
+fin

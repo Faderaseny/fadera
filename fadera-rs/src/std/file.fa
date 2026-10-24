@@ -1,0 +1,53 @@
+# Module standard « std/file » : importer "std/file"
+# File (premier entré, premier sorti) bâtie sur une classe.
+#   soit f = File()
+#   f.enfiler(x)        ajoute à la fin (renvoie la file : les appels s'enchaînent)
+#   f.defiler()         retire et renvoie le premier élément (erreur si la file est vide)
+#   f.tete()            lit le premier élément sans le retirer (erreur si vide)
+#   f.longueur()        nombre d'éléments
+#   f.est_vide()        vrai si la file est vide
+#   f.vider()           retire tout
+#   f.en_liste()        copie des éléments, du premier au dernier
+
+classe File
+  fonction creer()
+    soi.elements = []
+    soi.debut = 0
+  fin
+  fonction enfiler(x)
+    ajouter(soi.elements, x)
+    renvoyer soi
+  fin
+  fonction longueur()
+    renvoyer taille(soi.elements) - soi.debut
+  fin
+  fonction est_vide()
+    renvoyer taille(soi.elements) - soi.debut == 0
+  fin
+  fonction tete()
+    si taille(soi.elements) - soi.debut == 0 alors
+      lever("File vide : pas de tête.")
+    fin
+    renvoyer lireElement(soi.elements, soi.debut)
+  fin
+  fonction defiler()
+    si taille(soi.elements) - soi.debut == 0 alors
+      lever("File vide : rien à défiler.")
+    fin
+    soit x = lireElement(soi.elements, soi.debut)
+    soi.debut = soi.debut + 1
+    si soi.debut >= 32 et soi.debut * 2 >= taille(soi.elements) alors
+      soi.elements = tranche(soi.elements, soi.debut)
+      soi.debut = 0
+    fin
+    renvoyer x
+  fin
+  fonction vider()
+    soi.elements = []
+    soi.debut = 0
+    renvoyer soi
+  fin
+  fonction en_liste()
+    renvoyer tranche(soi.elements, soi.debut)
+  fin
+fin

@@ -1,0 +1,84 @@
+name: CI
+
+# À chaque modification : tests Rust et JavaScript, parité JS/Rust, formateur, débogueur,
+# spécification exécutable et IDE dans un vrai Chromium (c'est « node verifier_tout.js »),
+# puis compilation et tests sous Windows et macOS, puis compilation WebAssembly.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_call:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verifier:
+    name: Tout vérifier (Linux)
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: fadera-rs
+      - name: Playwright (test de l'IDE dans Chromium)
+        run: |
+          npm install --no-save playwright@1.49.1
+          npx playwright install --with-deps chromium
+      - name: node verifier_tout.js
+        run: node verifier_tout.js
+
+  plateformes:
+    name: Compiler et tester (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+    defaults:
+      run:
+        shell: bash
+        working-directory: fadera-rs
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: fadera-rs
+      - name: Tests Rust
+        run: cargo test --release --locked
+      - name: Compilation de l'exécutable
+        run: cargo build --release --locked
+      - name: Essai « fadera run » (accents compris)
+        run: |
+          printf 'soit nom = "Fadéra"\nafficher "Bonjour " + nom\n' > "$RUNNER_TEMP/essai.fa"
+          sortie=$(./target/release/fadera run "$RUNNER_TEMP/essai.fa")
+          echo "$sortie"
+          test "$sortie" = "Bonjour Fadéra"
+
+  webassembly:
+    name: Compiler le moteur WebAssembly
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: fadera-rs
+      - uses: jetli/wasm-pack-action@v0.4.0
+      - name: wasm-pack build
+        working-directory: fadera-rs
+        run: wasm-pack build --release --target web -- --features wasm

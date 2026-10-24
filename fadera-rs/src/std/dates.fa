@@ -1,0 +1,151 @@
+# Module standard « std/dates » : importer "std/dates"
+# date_longue(ts)           « samedi 17 octobre 2026 »
+# est_week_end(ts)          vrai pour un samedi ou un dimanche
+# jours_entre(a, b)         nombre de jours de la date a à la date b (négatif si b est avant a)
+# ajouter_jours(ts, n)      la date n jours plus tard (n peut être négatif)
+# debut_du_mois(ts)         le 1er du mois à 00:00
+# fin_du_mois(ts)           le dernier jour du mois à 00:00
+# meme_jour(a, b)           vrai si les deux dates tombent le même jour
+# est_jour_ouvre(ts)        vrai du lundi au vendredi
+# jours_ouvres_entre(a, b)  nombre de jours ouvrés dans [a, b[ (négatif si b est avant a)
+# ajouter_jours_ouvres(ts, n)  avance de n jours ouvrés (n >= 0)
+# prochain_jour(ts, nom)    prochaine date strictement après ts qui tombe un « lundi », « mardi »…
+# calendrier(an, mois)      texte du calendrier du mois, semaine du lundi au dimanche
+# duree_texte(ms)           « 1 j 2 h 3 min 4 s » à partir d'une durée en millisecondes
+
+fonction date_longue(ts)
+  soit c = date_composants(ts)
+  renvoyer lireCle(c, "jour_semaine") + " " + lireCle(c, "jour") + " " + lireCle(c, "nom_mois") + " " + lireCle(c, "annee")
+fin
+
+fonction est_week_end(ts)
+  soit j = lireCle(date_composants(ts), "numero_semaine_jour")
+  renvoyer j == 0 ou j == 6
+fin
+
+fonction jours_entre(a, b)
+  renvoyer date_difference(a, b, "jours")
+fin
+
+fonction ajouter_jours(ts, n)
+  renvoyer date_ajouter(ts, n, "jours")
+fin
+
+fonction debut_du_mois(ts)
+  renvoyer date_debut(ts, "mois")
+fin
+
+fonction fin_du_mois(ts)
+  soit c = date_composants(ts)
+  renvoyer date_creer(lireCle(c, "annee"), lireCle(c, "mois"), date_jours_dans_mois(lireCle(c, "annee"), lireCle(c, "mois")))
+fin
+
+fonction meme_jour(a, b)
+  renvoyer date_debut(a, "jour") == date_debut(b, "jour")
+fin
+
+fonction est_jour_ouvre(ts)
+  soit j = lireCle(date_composants(ts), "numero_semaine_jour")
+  renvoyer j >= 1 et j <= 5
+fin
+
+fonction jours_ouvres_entre(a, b)
+  soit signe_ = 1
+  soit x = date_debut(a, "jour")
+  soit y = date_debut(b, "jour")
+  si y < x alors
+    signe_ = -1
+    soit tmp = x
+    x = y
+    y = tmp
+  fin
+  soit n = 0
+  tantque x < y faire
+    si est_jour_ouvre(x) alors
+      n = n + 1
+    fin
+    x = date_ajouter(x, 1, "jours")
+  fin
+  renvoyer n * signe_
+fin
+
+fonction ajouter_jours_ouvres(ts, n)
+  soit x = ts
+  soit reste = n
+  tantque reste > 0 faire
+    x = date_ajouter(x, 1, "jours")
+    si est_jour_ouvre(x) alors
+      reste = reste - 1
+    fin
+  fin
+  renvoyer x
+fin
+
+fonction prochain_jour(ts, nom)
+  soit x = date_ajouter(date_debut(ts, "jour"), 1, "jours")
+  pour i allantde 1 a 7 faire
+    si lireCle(date_composants(x), "jour_semaine") == minuscule(nom) alors
+      renvoyer x
+    fin
+    x = date_ajouter(x, 1, "jours")
+  fin
+  lever("prochain_jour : nom de jour inconnu « " + nom + " » (attendu : lundi, mardi, mercredi, jeudi, vendredi, samedi ou dimanche).")
+fin
+
+fonction calendrier(an, mois)
+  soit premier = date_creer(an, mois, 1)
+  soit decalage = (lireCle(date_composants(premier), "numero_semaine_jour") + 6) % 7
+  soit nb = date_jours_dans_mois(an, mois)
+  soit lignes = ["Lu Ma Me Je Ve Sa Di"]
+  soit ligne = repeter("   ", decalage)
+  soit col = decalage
+  pour j allantde 1 a nb faire
+    soit s = texte(j)
+    si taille(s) == 1 alors
+      s = " " + s
+    fin
+    ligne = ligne + s
+    col = col + 1
+    si col == 7 alors
+      ajouter(lignes, ligne)
+      ligne = ""
+      col = 0
+    sinon
+      ligne = ligne + " "
+    fin
+  fin
+  si col > 0 alors
+    ajouter(lignes, nettoyer_droite(ligne))
+  fin
+  renvoyer joindre(lignes, "\n")
+fin
+
+fonction nettoyer_droite(t)
+  soit n = taille(t)
+  tantque n > 0 et sous_texte(t, n - 1, n) == " " faire
+    n = n - 1
+  fin
+  renvoyer sous_texte(t, 0, n)
+fin
+
+fonction duree_texte(ms)
+  soit s = plancher(absolu(ms) / 1000)
+  soit j = plancher(s / 86400)
+  soit h = plancher((s % 86400) / 3600)
+  soit m = plancher((s % 3600) / 60)
+  soit r = s % 60
+  soit morceaux = []
+  si j > 0 alors
+    ajouter(morceaux, j + " j")
+  fin
+  si h > 0 alors
+    ajouter(morceaux, h + " h")
+  fin
+  si m > 0 alors
+    ajouter(morceaux, m + " min")
+  fin
+  si r > 0 ou taille(morceaux) == 0 alors
+    ajouter(morceaux, r + " s")
+  fin
+  renvoyer joindre(morceaux, " ")
+fin

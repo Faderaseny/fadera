@@ -1,0 +1,51 @@
+# Module standard « std/listes » : importer "std/listes"
+# premier(l), dernier(l)      premier / dernier élément (erreur si la liste est vide)
+# prendre(l, n)               les n premiers éléments
+# sauter(l, n)                la liste sans ses n premiers éléments
+# compter_si(l, f)            nombre d'éléments pour lesquels f(x) est vrai
+# partitionner(l, f)          [éléments où f est vrai, autres éléments]
+
+fonction premier(l)
+  renvoyer lireElement(l, 0)
+fin
+
+fonction dernier(l)
+  renvoyer lireElement(l, taille(l) - 1)
+fin
+
+fonction prendre(l, n)
+  si n < 0 alors
+    n = 0
+  fin
+  renvoyer tranche(l, 0, n)
+fin
+
+fonction sauter(l, n)
+  si n < 0 alors
+    n = 0
+  fin
+  renvoyer tranche(l, n)
+fin
+
+fonction compter_si(l, f)
+  soit c = 0
+  pour chaque x dans l faire
+    si f(x) alors
+      c = c + 1
+    fin
+  fin
+  renvoyer c
+fin
+
+fonction partitionner(l, f)
+  soit gardes = []
+  soit autres = []
+  pour chaque x dans l faire
+    si f(x) alors
+      ajouter(gardes, x)
+    sinon
+      ajouter(autres, x)
+    fin
+  fin
+  renvoyer [gardes, autres]
+fin

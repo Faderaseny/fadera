@@ -1,0 +1,91 @@
+# Module standard « std/dictionnaire » : importer "std/dictionnaire"
+# Dictionnaire ordonné : les clés gardent leur ordre d'insertion (même les clés qui ressemblent
+# à des nombres). Les clés sont comparées par leur texte : 1 et "1" désignent la même entrée.
+#   soit d = Dictionnaire()
+#   d.definir(cle, valeur)      ajoute ou remplace (renvoie le dictionnaire : les appels s'enchaînent)
+#   d.obtenir(cle)              valeur (erreur si la clé est absente)
+#   d.obtenir_ou(cle, repli)   valeur, ou repli si la clé est absente
+#   d.possede(cle)              vrai si la clé existe
+#   d.supprimer(cle)            retire la clé et renvoie sa valeur (erreur si absente)
+#   d.longueur()                nombre d'entrées
+#   d.est_vide()                vrai s'il n'y a aucune entrée
+#   d.liste_cles()              clés dans l'ordre d'insertion
+#   d.liste_valeurs()           valeurs dans le même ordre
+#   d.liste_paires()            [[cle, valeur], …]
+#   d.vider()                   retire tout
+#   d.en_structure()            structure ordinaire { cle: valeur }
+
+classe Dictionnaire
+  fonction creer()
+    soi.ordre = []
+    soi.donnees = {}
+  fin
+  fonction definir(cle, valeur)
+    soit k = texte(cle)
+    si non a_cle(soi.donnees, k) alors
+      ajouter(soi.ordre, k)
+    fin
+    modifierCle(soi.donnees, k, valeur)
+    renvoyer soi
+  fin
+  fonction possede(cle)
+    renvoyer a_cle(soi.donnees, texte(cle))
+  fin
+  fonction obtenir(cle)
+    soit k = texte(cle)
+    si non a_cle(soi.donnees, k) alors
+      lever("Dictionnaire : la clé « " + k + " » n'existe pas.")
+    fin
+    renvoyer lireCle(soi.donnees, k)
+  fin
+  fonction obtenir_ou(cle, repli)
+    soit k = texte(cle)
+    si non a_cle(soi.donnees, k) alors
+      renvoyer repli
+    fin
+    renvoyer lireCle(soi.donnees, k)
+  fin
+  fonction supprimer(cle)
+    soit k = texte(cle)
+    si non a_cle(soi.donnees, k) alors
+      lever("Dictionnaire : la clé « " + k + " » n'existe pas.")
+    fin
+    pour i allantde 0 a taille(soi.ordre) - 1 faire
+      si lireElement(soi.ordre, i) == k alors
+        retirer(soi.ordre, i)
+        renvoyer supprimer_cle(soi.donnees, k)
+      fin
+    fin
+  fin
+  fonction longueur()
+    renvoyer taille(soi.ordre)
+  fin
+  fonction est_vide()
+    renvoyer taille(soi.ordre) == 0
+  fin
+  fonction liste_cles()
+    renvoyer copier(soi.ordre)
+  fin
+  fonction liste_valeurs()
+    soit r = []
+    pour chaque k dans soi.ordre faire
+      ajouter(r, lireCle(soi.donnees, k))
+    fin
+    renvoyer r
+  fin
+  fonction liste_paires()
+    soit r = []
+    pour chaque k dans soi.ordre faire
+      ajouter(r, [k, lireCle(soi.donnees, k)])
+    fin
+    renvoyer r
+  fin
+  fonction vider()
+    soi.ordre = []
+    soi.donnees = {}
+    renvoyer soi
+  fin
+  fonction en_structure()
+    renvoyer copier(soi.donnees)
+  fin
+fin

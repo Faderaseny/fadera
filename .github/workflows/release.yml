@@ -1,0 +1,116 @@
+name: Publication d'une version
+
+# Déclenché par une étiquette « vX.Y.Z » (voir CONTRIBUTING.md). Étapes :
+#   1. l'étiquette doit correspondre à la version de fadera-rs/Cargo.toml ;
+#   2. toute la CI est relancée ; 3. exécutables Linux, Windows (fadera.exe) et macOS ;
+#   4. archive du playground ; 5. publication GitHub avec les sommes SHA-256.
+on:
+  push:
+    tags: ["v[0-9]+.[0-9]+.[0-9]+*"]
+
+permissions:
+  contents: write
+
+jobs:
+  controle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: L'étiquette correspond à Cargo.toml
+        run: |
+          v=$(sed -n 's/^version = "\(.*\)"/\1/p' fadera-rs/Cargo.toml | head -1)
+          echo "Cargo.toml : $v  ·  étiquette : $GITHUB_REF_NAME"
+          test "v$v" = "$GITHUB_REF_NAME"
+      - name: Le journal des versions a une section pour cette version
+        run: grep -q "^## \[${GITHUB_REF_NAME#v}\]" CHANGELOG.md
+
+  ci:
+    needs: controle
+    uses: ./.github/workflows/ci.yml
+
+  executables:
+    needs: ci
+    name: Exécutable (${{ matrix.nom }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - { os: ubuntu-latest, nom: linux-x86_64, binaire: fadera, archive: tar.gz }
+          - { os: windows-latest, nom: windows-x86_64, binaire: fadera.exe, archive: zip }
+          - { os: macos-latest, nom: macos-arm64, binaire: fadera, archive: tar.gz }
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: fadera-rs
+      - name: Compiler
+        working-directory: fadera-rs
+        run: cargo build --release --locked
+      - name: Emballer
+        run: |
+          nom="fadera-${GITHUB_REF_NAME}-${{ matrix.nom }}"
+          mkdir -p "dist/$nom"
+          cp "fadera-rs/target/release/${{ matrix.binaire }}" "dist/$nom/"
+          cp LICENSE README.md CHANGELOG.md GUIDE_FADERA.md "dist/$nom/"
+          cp -r fadera-rs/examples "dist/$nom/examples" 2>/dev/null || true
+          cd dist
+          if [ "${{ matrix.archive }}" = "zip" ]; then
+            python -m zipfile -c "$nom.zip" "$nom"
+          else
+            tar czf "$nom.tar.gz" "$nom"
+          fi
+          rm -rf "$nom"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exe-${{ matrix.nom }}
+          path: dist/*
+
+  playground:
+    needs: ci
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - uses: jetli/wasm-pack-action@v0.4.0
+      - name: Construire le playground (index.html + moteur WebAssembly)
+        run: |
+          (cd fadera-rs && wasm-pack build --release --target web -- --features wasm)
+          nom="fadera-${GITHUB_REF_NAME}-playground"
+          mkdir -p "dist/$nom"
+          cp index.html serveur.py LICENSE "dist/$nom/"
+          cp -r fadera-rs/pkg "dist/$nom/pkg" && rm -f "dist/$nom/pkg/.gitignore"
+          (cd dist && python -m zipfile -c "$nom.zip" "$nom" && rm -rf "$nom")
+      - uses: actions/upload-artifact@v4
+        with:
+          name: playground
+          path: dist/*
+
+  publier:
+    needs: [executables, playground]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: assets
+          merge-multiple: true
+      - name: Sommes SHA-256 et notes de version
+        run: |
+          cd assets && sha256sum * > SHA256SUMS && cat SHA256SUMS && cd ..
+          v="${GITHUB_REF_NAME#v}"
+          awk -v v="$v" '$0 ~ "^## \\[" v "\\]" {on=1; next} /^## \[/ {on=0} on' CHANGELOG.md > NOTES.md
+          test -s NOTES.md
+      - name: Créer la publication
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          pre=""
+          case "$GITHUB_REF_NAME" in *-*) pre="--prerelease";; esac
+          gh release create "$GITHUB_REF_NAME" assets/* --title "Fadéra $GITHUB_REF_NAME" --notes-file NOTES.md $pre

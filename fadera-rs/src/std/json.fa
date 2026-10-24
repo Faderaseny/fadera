@@ -1,0 +1,93 @@
+# Module standard « std/json » : importer "std/json"
+# Compléments à json_lire, json_texte et json_chemin.
+# json_joli(valeur)                 texte JSON indenté de 2 espaces
+# json_compact(valeur)              texte JSON sur une seule ligne
+# json_lire_ou(texte, repli)       lit le JSON, ou renvoie repli si le texte est invalide
+# json_aplatir(valeur)              structure { "a.b[0]": valeur, … } de toutes les feuilles
+# json_profondeur(valeur)           niveaux d'imbrication (0 pour une valeur simple)
+# json_selectionner(valeur, champs) garde seulement les champs donnés (structure, ou liste de structures)
+# json_egal(a, b)                   vrai si les deux valeurs ont le même contenu
+
+fonction json_joli(valeur)
+  renvoyer json_texte(valeur, 2)
+fin
+
+fonction json_compact(valeur)
+  renvoyer json_texte(valeur)
+fin
+
+fonction json_lire_ou(texte_json, repli)
+  si json_valide(texte_json) alors
+    renvoyer json_lire(texte_json)
+  fin
+  renvoyer repli
+fin
+
+fonction aplatir_vers(valeur, chemin, sortie)
+  soit t = type_de(valeur)
+  si t == "structure" alors
+    soit cs = cles(valeur)
+    si taille(cs) == 0 alors
+      modifierCle(sortie, chemin, valeur)
+    fin
+    pour chaque k dans cs faire
+      si chemin == "" alors
+        aplatir_vers(lireCle(valeur, k), k, sortie)
+      sinon
+        aplatir_vers(lireCle(valeur, k), chemin + "." + k, sortie)
+      fin
+    fin
+  sinon
+    si t == "liste" alors
+      si taille(valeur) == 0 alors
+        modifierCle(sortie, chemin, valeur)
+      fin
+      pour i allantde 0 a taille(valeur) - 1 faire
+        aplatir_vers(lireElement(valeur, i), chemin + "[" + i + "]", sortie)
+      fin
+    sinon
+      modifierCle(sortie, chemin, valeur)
+    fin
+  fin
+fin
+
+fonction json_aplatir(valeur)
+  soit sortie = {}
+  aplatir_vers(valeur, "", sortie)
+  renvoyer sortie
+fin
+
+fonction json_profondeur(valeur)
+  soit t = type_de(valeur)
+  soit m = 0
+  si t == "structure" alors
+    pour chaque v dans valeurs(valeur) faire
+      m = maximum(m, json_profondeur(v))
+    fin
+    renvoyer m + 1
+  fin
+  si t == "liste" alors
+    pour chaque v dans valeur faire
+      m = maximum(m, json_profondeur(v))
+    fin
+    renvoyer m + 1
+  fin
+  renvoyer 0
+fin
+
+fonction json_selectionner(valeur, champs)
+  si type_de(valeur) == "liste" alors
+    renvoyer transformer(valeur, v => json_selectionner(v, champs))
+  fin
+  soit r = {}
+  pour chaque c dans champs faire
+    si a_cle(valeur, c) alors
+      modifierCle(r, c, lireCle(valeur, c))
+    fin
+  fin
+  renvoyer r
+fin
+
+fonction json_egal(a, b)
+  renvoyer json_texte(a) == json_texte(b)
+fin

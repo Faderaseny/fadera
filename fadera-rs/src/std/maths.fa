@@ -1,0 +1,275 @@
+# Module standard « std/maths » : importer "std/maths"
+# factorielle(n)            n!  (1 si n <= 1)
+# fibonacci(n)              n-ième terme de la suite (fibonacci(0) = 0, fibonacci(1) = 1)
+# est_premier(n)            vrai si n est un nombre premier
+# premiers_jusqua(n)        liste des nombres premiers de 2 à n
+# somme_chiffres(n)         somme des chiffres de n (signe ignoré)
+# limiter(x, bas, haut)     ramène x entre bas et haut
+# pgcd(a, b), ppcm(a, b)    plus grand commun diviseur / plus petit commun multiple (entiers)
+# somme(l), produit(l)      somme / produit des éléments d'une liste
+# moyenne(l), mediane(l)    moyenne / médiane (erreur si la liste est vide)
+# variance(l), ecart_type(l)   variance et écart type de la population
+# combinaisons(n, k)        nombre de façons de choisir k éléments parmi n
+# arrangements(n, k)        nombre de listes ordonnées de k éléments parmi n
+# puissance_mod(b, e, m)    b puissance e modulo m (e entier >= 0), sans dépassement
+# racine_entiere(n)         plus grand entier r tel que r * r <= n
+# est_carre_parfait(n)      vrai si n est le carré d'un entier
+# diviseurs(n)              liste triée des diviseurs positifs de n
+# interpoler(a, b, t)       a + (b - a) * t
+# transposer(m)             transposée d'une matrice (liste de listes)
+# produit_matrices(a, b)    produit de deux matrices
+
+fonction factorielle(n)
+  soit r = 1
+  pour i allantde 2 a n faire
+    r = r * i
+  fin
+  renvoyer r
+fin
+
+fonction fibonacci(n)
+  soit x = 0
+  soit y = 1
+  pour i allantde 1 a n faire
+    soit suivant = x + y
+    x = y
+    y = suivant
+  fin
+  renvoyer x
+fin
+
+fonction est_premier(n)
+  si n < 2 alors
+    renvoyer faux
+  fin
+  soit d = 2
+  tantque d * d <= n faire
+    si n % d == 0 alors
+      renvoyer faux
+    fin
+    d = d + 1
+  fin
+  renvoyer vrai
+fin
+
+fonction premiers_jusqua(n)
+  soit r = []
+  pour i allantde 2 a n faire
+    si est_premier(i) alors
+      ajouter(r, i)
+    fin
+  fin
+  renvoyer r
+fin
+
+fonction somme_chiffres(n)
+  soit m = absolu(entier(n))
+  soit s = 0
+  tantque m > 0 faire
+    s = s + m % 10
+    m = plancher(m / 10)
+  fin
+  renvoyer s
+fin
+
+fonction limiter(x, bas, haut)
+  si x < bas alors
+    renvoyer bas
+  fin
+  si x > haut alors
+    renvoyer haut
+  fin
+  renvoyer x
+fin
+
+fonction pgcd(a, b)
+  soit x = absolu(entier(a))
+  soit y = absolu(entier(b))
+  tantque y != 0 faire
+    soit r = x % y
+    x = y
+    y = r
+  fin
+  renvoyer x
+fin
+
+fonction ppcm(a, b)
+  si a == 0 ou b == 0 alors
+    renvoyer 0
+  fin
+  renvoyer absolu(entier(a) * entier(b)) / pgcd(a, b)
+fin
+
+fonction somme(l)
+  soit s = 0
+  pour chaque x dans l faire
+    s = s + x
+  fin
+  renvoyer s
+fin
+
+fonction produit(l)
+  soit p = 1
+  pour chaque x dans l faire
+    p = p * x
+  fin
+  renvoyer p
+fin
+
+fonction moyenne(l)
+  si taille(l) == 0 alors
+    lever("moyenne : la liste est vide.")
+  fin
+  renvoyer somme(l) / taille(l)
+fin
+
+fonction mediane(l)
+  soit n = taille(l)
+  si n == 0 alors
+    lever("mediane : la liste est vide.")
+  fin
+  soit s = trier(l)
+  si n % 2 == 1 alors
+    renvoyer lireElement(s, (n - 1) / 2)
+  fin
+  renvoyer (lireElement(s, n / 2 - 1) + lireElement(s, n / 2)) / 2
+fin
+
+fonction variance(l)
+  soit m = moyenne(l)
+  soit s = 0
+  pour chaque x dans l faire
+    s = s + (x - m) * (x - m)
+  fin
+  renvoyer s / taille(l)
+fin
+
+fonction ecart_type(l)
+  renvoyer racine(variance(l))
+fin
+
+fonction combinaisons(n, k)
+  si k < 0 ou k > n alors
+    renvoyer 0
+  fin
+  soit kk = minimum(k, n - k)
+  soit r = 1
+  pour i allantde 1 a kk faire
+    r = r * (n - kk + i) / i
+  fin
+  renvoyer arrondir(r)
+fin
+
+fonction arrangements(n, k)
+  si k < 0 ou k > n alors
+    renvoyer 0
+  fin
+  soit r = 1
+  pour i allantde 0 a k - 1 faire
+    r = r * (n - i)
+  fin
+  renvoyer r
+fin
+
+fonction puissance_mod(b, e, m)
+  si m == 1 alors
+    renvoyer 0
+  fin
+  soit r = 1
+  soit base = b % m
+  soit exposant = e
+  tantque exposant > 0 faire
+    si exposant % 2 == 1 alors
+      r = (r * base) % m
+    fin
+    base = (base * base) % m
+    exposant = plancher(exposant / 2)
+  fin
+  renvoyer r
+fin
+
+fonction racine_entiere(n)
+  si n < 0 alors
+    lever("racine_entiere : le nombre doit être positif ou nul.")
+  fin
+  soit r = plancher(racine(n))
+  tantque r * r > n faire
+    r = r - 1
+  fin
+  tantque (r + 1) * (r + 1) <= n faire
+    r = r + 1
+  fin
+  renvoyer r
+fin
+
+fonction est_carre_parfait(n)
+  si n < 0 alors
+    renvoyer faux
+  fin
+  soit r = racine_entiere(n)
+  renvoyer r * r == n
+fin
+
+fonction diviseurs(n)
+  soit petits = []
+  soit grands = []
+  soit m = absolu(entier(n))
+  soit d = 1
+  tantque d * d <= m faire
+    si m % d == 0 alors
+      ajouter(petits, d)
+      si d * d != m alors
+        ajouter(grands, m / d)
+      fin
+    fin
+    d = d + 1
+  fin
+  renvoyer concatener(petits, inverser_liste(grands))
+fin
+
+fonction inverser_liste(l)
+  soit r = []
+  pour i allantde 0 a taille(l) - 1 faire
+    ajouter(r, lireElement(l, taille(l) - 1 - i))
+  fin
+  renvoyer r
+fin
+
+fonction interpoler(a, b, t)
+  renvoyer a + (b - a) * t
+fin
+
+fonction transposer(m)
+  si taille(m) == 0 alors
+    renvoyer []
+  fin
+  soit r = []
+  pour j allantde 0 a taille(lireElement(m, 0)) - 1 faire
+    soit ligne = []
+    pour chaque l dans m faire
+      ajouter(ligne, lireElement(l, j))
+    fin
+    ajouter(r, ligne)
+  fin
+  renvoyer r
+fin
+
+fonction produit_matrices(a, b)
+  si taille(a) > 0 et taille(lireElement(a, 0)) != taille(b) alors
+    lever("produit_matrices : dimensions incompatibles.")
+  fin
+  soit bt = transposer(b)
+  soit r = []
+  pour chaque la dans a faire
+    soit ligne = []
+    pour chaque cb dans bt faire
+      soit s = 0
+      pour k allantde 0 a taille(la) - 1 faire
+        s = s + lireElement(la, k) * lireElement(cb, k)
+      fin
+      ajouter(ligne, s)
+    fin
+    ajouter(r, ligne)
+  fin
+  renvoyer r
+fin
