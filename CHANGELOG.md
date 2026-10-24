@@ -5,10 +5,18 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et la nu
 
 ## [Non publié]
 
+## [0.6.0] — 2026-10-24
+
+Documentation complète.
+
 ### Ajouté
-- Documentation (`docs/`) : tutoriel en français en 17 chapitres, 30 exemples complets (calculs, jeux, textes, fichiers, réseau, objets),
-  référence de toutes les fonctions natives et des 12 modules standard. Les exemples et les résultats affichés sont exécutés
-  sur les deux moteurs ; la CI échoue si une fonction native n'est pas documentée.
+- Documentation (`docs/`) : tutoriel en français en 17 chapitres (`docs/TUTORIEL.md`), 30 exemples complets avec leur sortie attendue
+  (calculs, jeux, textes, CSV et JSON, dates, réseau, classes, tests), référence de toutes les fonctions natives et des 12 modules
+  standard (`docs/REFERENCE.md`). Les exemples et les résultats affichés sont exécutés sur les deux moteurs ; la CI échoue si une
+  fonction native n'est pas documentée ou si un exemple donne des résultats différents en JS et en Rust.
+
+### Corrigé
+- Test de l'IDE : ne plante plus quand la clé de stockage du navigateur est absente.
 
 ## [0.5.0] — 2026-10-23
 
