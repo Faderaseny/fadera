@@ -6,6 +6,7 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et la nu
 ## [Non publié]
 
 ### Ajouté
+- `docs/PAQUETS_CONNUS.md` : la liste des paquets publiés (`geometrie`, `notes`) et comment ajouter le sien.
 - Banc d'essai de vitesse du moteur Rust (`fadera-rs/tests/vitesse.js`), lancé par `node verifier_tout.js` et donc par la CI :
   12 programmes avec des limites très larges, pour détecter une régression catastrophique de performance.
 

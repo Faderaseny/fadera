@@ -5,6 +5,8 @@ Il n'y a ni nouveau mot-clé ni nouvelle fonction : un paquet s'utilise avec `im
 
 > Les paquets s'installent avec la ligne de commande (`fadera`). Le terrain de jeu en ligne n'a pas de dossier de projet : il utilise les modules standard (`importer "std/maths"`) et les fichiers que vous y importez.
 
+Les paquets déjà publiés sont listés dans [PAQUETS_CONNUS.md](PAQUETS_CONNUS.md).
+
 ## Utiliser un paquet
 
 Dans le dossier de votre projet :

@@ -6,6 +6,7 @@
 | [**exemples/**](exemples/) | Vous voulez des programmes complets à lire, lancer et modifier : 30 exemples (calculs, jeux, textes, fichiers, réseau, objets). |
 | [**REFERENCE.md**](REFERENCE.md) | Vous cherchez une fonction précise : les 195 fonctions natives, les 12 du langage et les 12 modules standard, avec un exemple vérifié pour chacune. |
 | [**PAQUETS.md**](PAQUETS.md) | Vous voulez installer du code écrit par d'autres, ou partager le vôtre : `fadera paquet …`. |
+| [**PAQUETS_CONNUS.md**](PAQUETS_CONNUS.md) | La liste des paquets déjà publiés (géométrie, notes…) et comment ajouter le vôtre. |
 | [**SERVICES.md**](SERVICES.md) | Vous voulez interroger une API, une base de données hébergée ou un service en ligne. |
 | [Guide du langage](../GUIDE_FADERA.md) | Vous voulez la grammaire complète, l'IDE, la distribution. |
 | [Spécification](../SPEC_FADERA.md) | Vous voulez le comportement exact du langage (elle est exécutable et testée). |
