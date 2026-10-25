@@ -9712,6 +9712,15 @@ fin
           }
           return r;
         };
+        const entetesHttp = (entetes, nom) => {
+          const h = {};
+          if (entetes !== undefined) {
+            if (!estStructure(entetes))
+              throw E(nom + " : les en-têtes doivent être une structure.");
+            for (const k of Object.keys(entetes)) h[k] = String(entetes[k]);
+          }
+          return h;
+        };
         Object.assign(FONCTIONS_NATIVES, {
           // ----- dates -----
           date_creer(a, m, j, h, mi, s) {
@@ -10189,12 +10198,16 @@ fin
               : Date.now();
           },
           // ----- HTTP (soumis aux règles CORS du navigateur) -----
-          async http_obtenir(url) {
-            const r = await http("http_obtenir", url);
+          async http_obtenir(url, entetes) {
+            const r = await http("http_obtenir", url, {
+              headers: entetesHttp(entetes, "http_obtenir"),
+            });
             return await r.text();
           },
-          async http_json(url) {
-            const r = await http("http_json", url);
+          async http_json(url, entetes) {
+            const r = await http("http_json", url, {
+              headers: entetesHttp(entetes, "http_json"),
+            });
             const t = await r.text();
             try {
               return versFadera(JSON.parse(t));
@@ -10207,14 +10220,7 @@ fin
             }
           },
           async http_envoyer(url, corps, entetes) {
-            const h = {};
-            if (entetes !== undefined) {
-              if (!estStructure(entetes))
-                throw E(
-                  "http_envoyer : les en-têtes doivent être une structure.",
-                );
-              for (const k of Object.keys(entetes)) h[k] = String(entetes[k]);
-            }
+            const h = entetesHttp(entetes, "http_envoyer");
             const estObj =
               corps !== undefined &&
               typeof corps === "object" &&

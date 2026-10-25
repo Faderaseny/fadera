@@ -1,6 +1,6 @@
 [package]
 name = "fadera"
-version = "0.6.0"
+version = "0.7.0"
 edition = "2021"
 description = "Fadéra — langage de programmation en français (moteur Rust)"
 license = "MIT"
@@ -41,3 +41,8 @@ js-sys = { version = "0.3", optional = true }
 opt-level = 3
 lto = true
 codegen-units = 1
+
+# Requêtes HTTP(S) de la ligne de commande (http_obtenir, http_json, http_envoyer et « fadera paquet »).
+# Absent de la version WebAssembly : dans le navigateur, c'est fetch() qui s'en charge.
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+ureq = { version = "2", default-features = false, features = ["tls", "proxy-from-env"] }

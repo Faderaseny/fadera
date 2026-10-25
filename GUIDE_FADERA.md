@@ -960,7 +960,7 @@ Règle d'or : une nouvelle fonction se déclare uniquement dans `FONCTIONS_NATIV
 | **Listes** | `liste_decouper(l, n)`, `liste_zip(a, b)`, `liste_cumul(l)`, `liste_frequences(l)` |
 | **CSV** | `csv_lire(texte, séparateur)` (les nombres sont convertis), `csv_texte(lignes, séparateur)` |
 | **Temps** | `pause(ms)` (max 10 s), `chrono()` |
-| **HTTP** | `http_obtenir(url)`, `http_json(url)`, `http_envoyer(url, corps, entetes)` → structure `{statut, ok, corps}` |
+| **HTTP** | `http_obtenir(url, entetes)`, `http_json(url, entetes)`, `http_envoyer(url, corps, entetes)` → structure `{statut, ok, corps}` |
 
 Unités de durée acceptées : `ms`, `secondes`, `minutes`, `heures`, `jours`, `semaines`.
 

@@ -194,8 +194,8 @@ telecom_ajouter_liaison(reseau, liaison) | Ajoute une liaison { de, a, cout } (d
 telecom_matrice_adjacence(reseau) | Matrice d'adjacence du réseau. | telecom_matrice_adjacence(telecom_ajouter_liaison(telecom_creer_topologie(), { de: "A", a: "B", cout: 4 }))
 telecom_verifier_connexite(reseau) | Vrai si tous les nœuds sont reliés. | telecom_verifier_connexite(telecom_ajouter_liaison(telecom_creer_topologie(), { de: "A", a: "B", cout: 4 }))
 telecom_dijkstra_routage(reseau, requete) | Plus court chemin : requête { depart, arrivee }. | telecom_dijkstra_routage(telecom_ajouter_liaison(telecom_creer_topologie(), { de: "A", a: "B", cout: 4 }), { depart: "A", arrivee: "B" })
-http_obtenir(url) | Télécharge une page ou un fichier texte (a besoin d'internet). |
-http_json(url) | Télécharge une réponse JSON et la convertit en valeur Fadéra (a besoin d'internet). |
+http_obtenir(url, entetes) | Télécharge une page ou un fichier texte ; « entetes » (facultatif) est une structure d'en-têtes, par exemple { Authorization: "Bearer …" } (a besoin d'internet). |
+http_json(url, entetes) | Télécharge une réponse JSON et la convertit en valeur Fadéra ; « entetes » est facultatif, comme pour http_obtenir (a besoin d'internet). |
 http_envoyer(url, donnees, entetes) | Envoie des données (POST) ; renvoie { statut, ok, corps } (a besoin d'internet). |
 
 # Chiffrement

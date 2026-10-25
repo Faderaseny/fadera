@@ -43,6 +43,7 @@ Sous Windows : décompresser l'archive, puis dans l'invite de commandes `fadera.
 
 - [**Tutoriel pas à pas**](docs/TUTORIEL.md) : de « Bonjour le monde » aux classes, aux fichiers et au réseau.
 - [**30 exemples**](docs/exemples/) : calculs, jeux (devine le nombre, pendu, morpion, jeu de la vie, labyrinthe…), textes, CSV/JSON, dates, réseau, classes.
+- [**Paquets**](docs/PAQUETS.md) et [**services en ligne**](docs/SERVICES.md) : installer du code d'autres personnes (`fadera paquet installer`), interroger des API et des bases hébergées.
 - [**Référence des fonctions**](docs/REFERENCE.md) : les 195 fonctions natives et les 12 modules standard, avec un exemple vérifié pour chacune.
 
 ## Compiler soi-même

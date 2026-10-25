@@ -1177,9 +1177,9 @@ afficher telecom_dijkstra_routage(telecom_ajouter_liaison(telecom_creer_topologi
 # → { cout_total: 4, itineraire: ["A", "B"] }
 ```
 
-**`http_obtenir(url)`** — Télécharge une page ou un fichier texte (a besoin d'internet).
+**`http_obtenir(url, entetes)`** — Télécharge une page ou un fichier texte ; « entetes » (facultatif) est une structure d'en-têtes, par exemple { Authorization: "Bearer …" } (a besoin d'internet).
 
-**`http_json(url)`** — Télécharge une réponse JSON et la convertit en valeur Fadéra (a besoin d'internet).
+**`http_json(url, entetes)`** — Télécharge une réponse JSON et la convertit en valeur Fadéra ; « entetes » est facultatif, comme pour http_obtenir (a besoin d'internet).
 
 **`http_envoyer(url, donnees, entetes)`** — Envoie des données (POST) ; renvoie { statut, ok, corps } (a besoin d'internet).
 

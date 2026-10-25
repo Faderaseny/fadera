@@ -5,6 +5,27 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et la nu
 
 ## [Non publié]
 
+### Ajouté
+- Banc d'essai de vitesse du moteur Rust (`fadera-rs/tests/vitesse.js`), lancé par `node verifier_tout.js` et donc par la CI :
+  12 programmes avec des limites très larges, pour détecter une régression catastrophique de performance.
+
+## [0.7.0] — 2026-10-25
+
+### Ajouté
+- **Gestionnaire de paquets** : `fadera paquet installer | lister | retirer | creer`. Un paquet est un dossier de fichiers Fadéra avec un
+  `fadera-paquet.json` ; il s'installe depuis GitHub (`utilisateur/depot@version`), une adresse web ou un dossier, dans `paquets/<nom>/`,
+  est noté dans `fadera.json` et s'utilise avec `importer`. Aucun nouveau mot-clé. Installation sûre : noms et chemins contrôlés, extensions
+  limitées, tout est vérifié avant la première écriture (voir `docs/PAQUETS.md`).
+- **Accès réseau dans la ligne de commande** : `http_obtenir`, `http_json` et `http_envoyer` fonctionnent dans `fadera.exe` (jusqu'ici, seul
+  le terrain de jeu en navigateur y avait accès). Délai de 20 s, réponse limitée à 20 Mo, prise en charge du proxy d'entreprise.
+- **En-têtes facultatifs** pour `http_obtenir(adresse, entetes)` et `http_json(adresse, entetes)`, comme pour `http_envoyer` : on peut
+  désormais envoyer une clé d'accès (`Authorization`) avec une simple lecture. Identique dans les deux moteurs.
+- Guide `docs/SERVICES.md` : interroger une API, une base de données hébergée (Supabase, Airtable…) ou tout service en ligne.
+- Test `fadera-rs/tests/verifier_paquets.js` (29 vérifications, sans internet) branché dans `node verifier_tout.js` et donc dans la CI.
+
+### Modifié
+- Nouvelle dépendance du binaire en ligne de commande : `ureq` (client HTTP, absent de la version WebAssembly).
+
 ## [0.6.0] — 2026-10-24
 
 Documentation complète.

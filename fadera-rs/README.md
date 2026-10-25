@@ -48,8 +48,7 @@ Dépendance ajoutée : `unicode-normalization` (pour `texte_sans_accents` / `tex
 - `date_analyser` : sous-ensemble ISO 8601 (`2026-10-14`, `2026-10-14T10:30:00Z`, `…+02:00`, `2026-10-14 08:00`) ; le JS accepte en plus
   d'autres écritures de V8 (« Oct 14 2026 »…).
 - `alea_*` : octets aléatoires du système (comme le JS) ; repli sur le générateur interne si la fonctionnalité `crypto` est absente.
-- `http_obtenir`, `http_json`, `http_envoyer` : le binaire en ligne de commande n'a pas de client HTTP (aucune dépendance réseau ajoutée) ;
-  ils répondent « réseau indisponible ». L'hôte WebAssembly/embarqué peut les fournir en implémentant `Hote::http`.
+- `http_obtenir`, `http_json`, `http_envoyer` : le binaire en ligne de commande a un client HTTP(S) (bibliothèque `ureq`, `src/reseau.rs`, délai de 20 s, réponse limitée à 20 Mo) ; sans l'hôte, la bibliothèque seule répond « réseau indisponible ». L'hôte WebAssembly/embarqué les fournit en implémentant `Hote::http`.
 - `pause` : bloque le thread (10 s maximum) ; sans effet en WebAssembly.
 - `trier` sur du texte : ordre alphabétique français approché (accents, casse), pas ICU complet.
 - Longueurs de texte comptées en caractères Unicode (le JS compte en unités UTF-16 : différence uniquement pour les émojis).

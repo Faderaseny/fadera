@@ -698,19 +698,10 @@ fn http(it: &mut Interp, nom: &str, url: &str, methode: &str, corps: Option<Stri
         )),
     })
 }
-fn http_obtenir(it: &mut Interp, a: &[Valeur], _: usize) -> R<Valeur> {
-    let u = txt(a, 0, "http_obtenir")?;
-    Ok(t(http(it, "http_obtenir", &u, "GET", None, vec![])?.1))
-}
-fn http_json(it: &mut Interp, a: &[Valeur], _: usize) -> R<Valeur> {
-    let u = txt(a, 0, "http_json")?;
-    let (_, corps) = http(it, "http_json", &u, "GET", None, vec![])?;
-    json_lire(&corps).map_err(|_| fad(format!("http_json : la réponse de {} n'est pas du JSON valide.", u)))
-}
-fn http_envoyer(it: &mut Interp, a: &[Valeur], _: usize) -> R<Valeur> {
-    let u = txt(a, 0, "http_envoyer")?;
+/// En-têtes facultatifs : une structure { "Authorization": "Bearer …" } à la position `i`.
+fn entetes_http(a: &[Valeur], i: usize, nom: &str) -> R<Vec<(String, String)>> {
     let mut h: Vec<(String, String)> = Vec::new();
-    match a.get(2) {
+    match a.get(i) {
         None => {}
         Some(Valeur::Struct(d)) => {
             let d = d.borrow();
@@ -718,8 +709,24 @@ fn http_envoyer(it: &mut Interp, a: &[Valeur], _: usize) -> R<Valeur> {
                 h.push((k.clone(), js_texte(d.get(&k).unwrap_or(&Valeur::Rien))));
             }
         }
-        Some(_) => return Err(fad("http_envoyer : les en-têtes doivent être une structure.")),
+        Some(_) => return Err(fad(format!("{} : les en-têtes doivent être une structure.", nom))),
     }
+    Ok(h)
+}
+fn http_obtenir(it: &mut Interp, a: &[Valeur], _: usize) -> R<Valeur> {
+    let u = txt(a, 0, "http_obtenir")?;
+    let h = entetes_http(a, 1, "http_obtenir")?;
+    Ok(t(http(it, "http_obtenir", &u, "GET", None, h)?.1))
+}
+fn http_json(it: &mut Interp, a: &[Valeur], _: usize) -> R<Valeur> {
+    let u = txt(a, 0, "http_json")?;
+    let h = entetes_http(a, 1, "http_json")?;
+    let (_, corps) = http(it, "http_json", &u, "GET", None, h)?;
+    json_lire(&corps).map_err(|_| fad(format!("http_json : la réponse de {} n'est pas du JSON valide.", u)))
+}
+fn http_envoyer(it: &mut Interp, a: &[Valeur], _: usize) -> R<Valeur> {
+    let u = txt(a, 0, "http_envoyer")?;
+    let mut h = entetes_http(a, 2, "http_envoyer")?;
     let est_obj = matches!(a.get(1), Some(Valeur::Liste(_)) | Some(Valeur::Struct(_)));
     if est_obj && !h.iter().any(|(k, _)| k == "Content-Type") {
         h.push(("Content-Type".into(), "application/json".into()));
