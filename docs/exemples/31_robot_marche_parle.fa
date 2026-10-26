@@ -1,0 +1,32 @@
+# Exemple 31 — Un robot qui marche en parlant
+# Notions : parler (voix), classe, soi, boucle pour, texte_format
+
+classe Robot
+  fonction creer(nom)
+    soi.nom = nom
+    soi.position = 0
+    soi.pas = 0
+  fin
+
+  fonction dire(phrase)
+    afficher "🤖 " + soi.nom + " : " + phrase
+    parler(phrase)
+  fin
+
+  fonction marcher(nombre_de_pas)
+    pour i allantde 1 a nombre_de_pas faire
+      soi.position = soi.position + 1
+      soi.pas = soi.pas + 1
+      soit piste = repeter("·", soi.position - 1) + "🤖" + repeter("·", 10 - soi.position)
+      afficher "  [" + piste + "]"
+    fin
+  fin
+fin
+
+soit robot = Robot("Fadi")
+robot.dire("Bonjour, je m'appelle Fadi.")
+robot.dire("Je vais marcher jusqu'au bout de la piste.")
+robot.marcher(5)
+robot.dire("J'ai fait cinq pas, il en reste cinq.")
+robot.marcher(5)
+robot.dire(texte_format("Arrivé ! J'ai marché {} pas.", [robot.pas]))

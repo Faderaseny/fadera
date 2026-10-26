@@ -3,8 +3,8 @@
 | Document | Pour qui ? |
 |---|---|
 | [**TUTORIEL.md**](TUTORIEL.md) | Vous découvrez la programmation ou Fadéra : 17 chapitres pas à pas, avec le vrai résultat de chaque exemple. |
-| [**exemples/**](exemples/) | Vous voulez des programmes complets à lire, lancer et modifier : 30 exemples (calculs, jeux, textes, fichiers, réseau, objets). |
-| [**REFERENCE.md**](REFERENCE.md) | Vous cherchez une fonction précise : les 195 fonctions natives, les 12 du langage et les 12 modules standard, avec un exemple vérifié pour chacune. |
+| [**exemples/**](exemples/) | Vous voulez des programmes complets à lire, lancer et modifier : 40 exemples (calculs, jeux, textes, fichiers, réseau, objets, robotique). |
+| [**REFERENCE.md**](REFERENCE.md) | Vous cherchez une fonction précise : les 196 fonctions natives, les 12 du langage et les 12 modules standard, avec un exemple vérifié pour chacune. |
 | [**PAQUETS.md**](PAQUETS.md) | Vous voulez installer du code écrit par d'autres, ou partager le vôtre : `fadera paquet …`. |
 | [**PAQUETS_CONNUS.md**](PAQUETS_CONNUS.md) | La liste des paquets déjà publiés (géométrie, notes…) et comment ajouter le vôtre. |
 | [**SERVICES.md**](SERVICES.md) | Vous voulez interroger une API, une base de données hébergée ou un service en ligne. |
@@ -19,7 +19,7 @@ fadera run docs/exemples/01_bonjour.fa
 
 ou copiez son contenu dans le [playground](https://faderaseny.github.io/fadera/).
 
-## Les 30 exemples
+## Les 40 exemples
 
 | Fichier | Sujet | Notions |
 |---|---|---|
@@ -53,14 +53,24 @@ ou copiez son contenu dans le [playground](https://faderaseny.github.io/fadera/)
 | [`28_file_guichet.fa`](exemples/28_file_guichet.fa) | La file d'attente d'un guichet | importer "std/file", enfiler / défiler, simulation avec une graine fixe |
 | [`29_tests_integres.fa`](exemples/29_tests_integres.fa) | Tester ses propres fonctions | tester "nom" … fin, verifier, verifier_egal, verifier_erreur |
 | [`30_tri_et_recherche.fa`](exemples/30_tri_et_recherche.fa) | Trier et chercher efficacement | importer "std/tri", tri_fusion, trier_multi, recherche_binaire |
+| [`31_robot_marche_parle.fa`](exemples/31_robot_marche_parle.fa) | Un robot qui marche en parlant | parler, classe, soi, repeter, texte_format |
+| [`32_robot_slogan_fadera.fa`](exemples/32_robot_slogan_fadera.fa) | Le robot qui présente Fadéra (slogan, forces) | parler, listes de structures, pour chaque, texte_remplir_droite |
+| [`33_robot_coureur.fa`](exemples/33_robot_coureur.fa) | Un robot coureur : vitesse, fatigue, batterie | simulation par pas de temps, minimum / maximum, barre de progression |
+| [`34_robot_lecteur.fa`](exemples/34_robot_lecteur.fa) | Un robot qui lit une histoire à voix haute | parler, decouper, compter les mots |
+| [`35_robot_menager.fa`](exemples/35_robot_menager.fa) | Un robot qui fait plein de choses : liste de tâches, batterie | trier_par, structures, essayer / attraper, lever |
+| [`36_robot_navigation.fa`](exemples/36_robot_navigation.fa) | Simulation : le robot trouve son chemin et l'annonce | parcours en largeur, cap (nord, est, sud, ouest), tourner / avancer |
+| [`37_robot_capteurs_regulation.fa`](exemples/37_robot_capteurs_regulation.fa) | Capteur de distance bruité et régulation proportionnelle | simulation, capteur, régulateur, graine fixe |
+| [`38_robot_bras_articule.fa`](exemples/38_robot_bras_articule.fa) | Bras de robot à deux segments (cinématique inverse) | cosinus, arc_cosinus, arc_tangente, degres, essayer / attraper |
+| [`39_robot_machine_etats.fa`](exemples/39_robot_machine_etats.fa) | Le cerveau d'un robot gardien : machine à états | selon, états, batterie, graine fixe |
+| [`40_essaim_de_robots.fa`](exemples/40_essaim_de_robots.fa) | Un essaim de robots qui se partagent une mission | classe, héritage, polymorphisme, filtrer, est_instance |
 
-Chaque `.fa` a un fichier `.sortie` voisin : le résultat attendu. Les exemples 24 et 25 ont besoin d'internet ; hors ligne ils affichent un message d'erreur propre au lieu de planter.
+Chaque `.fa` a un fichier `.sortie` voisin : le résultat attendu. Les exemples 31 à 40 (robotique) utilisent `parler` : dans le terrain de jeu ou dans `fadera.exe` ils se font entendre, et dans les tests la voix est simplement ignorée. Les exemples 24 et 25 ont besoin d'internet ; hors ligne ils affichent un message d'erreur propre au lieu de planter.
 
 ## Comment cette documentation reste juste
 
 Rien n'est écrit « de tête » :
 
-- `node docs/verifier_exemples.js` exécute les 30 exemples sur le moteur JS **et** sur le moteur Rust et compare avec les `.sortie` ;
+- `node docs/verifier_exemples.js` exécute les 40 exemples sur le moteur JS **et** sur le moteur Rust et compare avec les `.sortie` ;
 - `node docs/generer_reference.js` régénère `REFERENCE.md` en exécutant chaque exemple, et refuse de produire le fichier si une fonction native n'est pas documentée ;
 - `node docs/generer_tutoriel.js` régénère `TUTORIEL.md` à partir de `tutoriel/TUTORIEL.src.md` en exécutant chaque exemple.
 

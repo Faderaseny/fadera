@@ -48,6 +48,7 @@ pub fn trouver(nom: &str) -> Option<NatFn> {
         "csv_texte" => csv_texte,
         "pause" => pause,
         "chrono" => chrono,
+        "parler" => parler,
         "http_obtenir" => http_obtenir,
         "http_json" => http_json,
         "http_envoyer" => http_envoyer,
@@ -682,6 +683,11 @@ fn pause(it: &mut Interp, a: &[Valeur], _: usize) -> R<Valeur> {
     let ms = num(a, 0, "pause")?;
     it.hote.pause(ms.max(0.0).min(10_000.0));
     Ok(n(ms))
+}
+fn parler(it: &mut Interp, a: &[Valeur], _: usize) -> R<Valeur> {
+    let texte = txt(a, 0, "parler")?;
+    it.hote.parler(&texte);
+    Ok(t(texte))
 }
 fn chrono(it: &mut Interp, _: &[Valeur], _: usize) -> R<Valeur> {
     Ok(n(it.hote.maintenant_ms()))

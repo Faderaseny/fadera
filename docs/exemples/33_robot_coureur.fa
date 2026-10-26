@@ -1,0 +1,34 @@
+# Exemple 33 — Un robot qui court : vitesse, fatigue et batterie
+# Notions : fonctions, boucle tantque, minimum / maximum, arrondir, simulation par pas de temps
+
+soit distance_course = 400       # mètres
+soit vitesse_max = 6             # mètres par seconde
+soit batterie = 100              # pourcentage
+soit position = 0
+soit temps = 0
+
+fonction vitesse_selon(batterie)
+  # plus la batterie baisse, plus le robot ralentit (jamais moins de 40 % de la vitesse max)
+  renvoyer vitesse_max * maximum(0.4, batterie / 100)
+fin
+
+fonction barre(valeur, largeur)
+  soit pleins = entier(valeur / 100 * largeur)
+  renvoyer "[" + repeter("█", pleins) + repeter("░", largeur - pleins) + "]"
+fin
+
+parler("Le robot coureur est prêt. Quatre cents mètres, départ !")
+afficher "🏁 Départ : " + distance_course + " m"
+
+tantque position < distance_course faire
+  temps = temps + 1
+  soit v = vitesse_selon(batterie)
+  position = minimum(distance_course, position + v)
+  batterie = maximum(0, batterie - 0.9)
+  si temps % 10 == 0 ou position >= distance_course alors
+    afficher texte_remplir_gauche(temps + " s", 6, " ") + " | " + texte_remplir_gauche(arrondir(position, 0) + " m", 6, " ") + " | " + arrondir(v, 1) + " m/s | batterie " + barre(batterie, 10) + " " + arrondir(batterie, 0) + " %"
+  fin
+fin
+
+afficher "🏆 Arrivée en " + temps + " secondes, vitesse moyenne " + arrondir(distance_course / temps, 2) + " m/s."
+parler("Arrivée en " + temps + " secondes !")

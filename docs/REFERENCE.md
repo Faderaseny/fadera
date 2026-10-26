@@ -2,7 +2,7 @@
 
 > Ce fichier est **généré** par `node docs/generer_reference.js` : chaque exemple a été exécuté sur les deux moteurs (navigateur et `fadera`) et le résultat affiché est le résultat réel. Ne le modifiez pas à la main : éditez `docs/reference/fonctions.txt`.
 
-195 fonctions natives, 12 fonctions du langage, 12 modules standard. Pour une première approche, lisez plutôt le [tutoriel](TUTORIEL.md).
+196 fonctions natives, 12 fonctions du langage, 12 modules standard. Pour une première approche, lisez plutôt le [tutoriel](TUTORIEL.md).
 
 ## Sommaire
 
@@ -43,6 +43,13 @@ Ces fonctions font partie du langage : elles s'écrivent comme les autres (nom s
 ```fadera
 afficher pause(0)
 # → 0
+```
+
+**`parler(texte)`** — Prononce le texte à voix haute, en français (voix du système ; dans le navigateur, après un clic sur la page), et renvoie le texte. Sans voix installée, le programme continue en silence.
+
+```fadera
+afficher parler("")
+# → 
 ```
 
 **`chrono()`** — Heure actuelle en millisecondes ; sert à mesurer une durée en faisant la différence de deux appels.

@@ -3,6 +3,7 @@ use std::io::{BufRead, Write};
 
 mod paquets;
 mod reseau;
+mod voix;
 
 struct HoteCli {
     base: std::path::PathBuf,
@@ -49,6 +50,9 @@ impl Hote for HoteCli {
     fn http(&mut self, methode: &str, url: &str, corps: Option<&str>, entetes: &[(String, String)]) -> Result<(u16, String), HoteErr> {
         reseau::requete(methode, url, corps, entetes).map_err(HoteErr::Msg)
     }
+    fn parler(&mut self, texte: &str) {
+        voix::dire(texte);
+    }
 }
 
 /// Hôte de débogage en ligne de commande. `plan` : commandes successives (une par réponse ; « continuer » quand il est épuisé) ;
@@ -91,6 +95,11 @@ impl Hote for HoteDebug {
     }
     fn ecrire_fichier(&mut self, p: &str, c: &str) -> Result<(), HoteErr> {
         self.base.ecrire_fichier(p, c)
+    }
+    fn parler(&mut self, texte: &str) {
+        if !self.trace {
+            self.base.parler(texte);
+        }
     }
     fn debogage(&mut self, json: &str) -> String {
         let v = fadera::util::json_lire(json).unwrap_or(Valeur::Rien);
@@ -252,7 +261,7 @@ fn main() {
                 0
             }
             Some("--version") | Some("-v") => {
-                println!("Fadéra {} (moteur Rust)", env!("CARGO_PKG_VERSION"));
+                println!("Fadéra {} (moteur Fadéra)", env!("CARGO_PKG_VERSION"));
                 0
             }
             Some("--aide") | Some("--help") | Some("-h") => {
@@ -366,6 +375,7 @@ fn main() {
             },
         }
     });
+    voix::attendre_fin();
     std::process::exit(code);
 }
 

@@ -1,0 +1,93 @@
+# Exemple 40 — Un essaim de robots : plusieurs robots, une mission
+# Notions : classe, héritage, polymorphisme, listes d'objets, trier_par, est_instance
+
+classe Robot
+  fonction creer(nom)
+    soi.nom = nom
+    soi.colis = 0
+    soi.distance = 0
+  fin
+
+  fonction capacite()
+    renvoyer 2
+  fin
+
+  fonction vitesse()
+    renvoyer 1
+  fin
+
+  fonction livrer(nombre)
+    # le robot fait des allers-retours de 10 mètres, `capacite` colis à la fois
+    tantque nombre > 0 faire
+      soit lot = minimum(nombre, soi.capacite())
+      soi.colis = soi.colis + lot
+      soi.distance = soi.distance + 20 / soi.vitesse()
+      nombre = nombre - lot
+    fin
+  fin
+
+  fonction rapport()
+    renvoyer texte_remplir_droite(soi.nom, 10, " ") + soi.colis + " colis, effort " + arrondir(soi.distance, 0)
+  fin
+fin
+
+classe RobotRapide herite Robot
+  fonction creer(nom)
+    soi.nom = nom
+    soi.colis = 0
+    soi.distance = 0
+  fin
+
+  fonction vitesse()
+    renvoyer 2
+  fin
+fin
+
+classe RobotCostaud herite Robot
+  fonction creer(nom)
+    soi.nom = nom
+    soi.colis = 0
+    soi.distance = 0
+  fin
+
+  fonction capacite()
+    renvoyer 5
+  fin
+fin
+
+soit equipe = [Robot("Aya"), RobotRapide("Éclair"), RobotCostaud("Hercule"), Robot("Mina")]
+soit colis_a_livrer = 23
+
+parler("L'essaim de robots commence la livraison de " + colis_a_livrer + " colis.")
+
+# Chaque robot prend sa part, proportionnelle à sa capacité et à sa vitesse
+soit poids_total = 0
+pour chaque r dans equipe faire
+  poids_total = poids_total + r.capacite() * r.vitesse()
+fin
+soit restant = colis_a_livrer
+pour i allantde 0 a taille(equipe) - 1 faire
+  soit r = lireElement(equipe, i)
+  soit part = arrondir(colis_a_livrer * r.capacite() * r.vitesse() / poids_total, 0)
+  si i == taille(equipe) - 1 alors
+    part = restant
+  fin
+  part = minimum(part, restant)
+  r.livrer(part)
+  restant = restant - part
+fin
+
+soit classement = trier_par(equipe, r => 0 - r.colis)
+pour chaque r dans classement faire
+  afficher r.rapport()
+fin
+
+soit econome = lireElement(classement, 0)
+soit total = 0
+pour chaque r dans equipe faire
+  total = total + r.colis
+fin
+afficher ""
+afficher "Colis livrés : " + total + " sur " + colis_a_livrer
+afficher "Plus chargé : " + econome.nom + " ; costauds dans l'équipe : " + taille(filtrer(equipe, r => est_instance(r, "RobotCostaud")))
+parler("Mission terminée : " + total + " colis livrés.")

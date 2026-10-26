@@ -5,7 +5,19 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et la nu
 
 ## [Non publié]
 
+## [0.7.1] — 2026-10-26
+
 ### Ajouté
+- **`parler(texte)`** : le programme parle en français et renvoie le texte. Voix du système dans `fadera.exe` (Windows, macOS, Linux),
+  voix du navigateur dans le terrain de jeu (après un clic sur la page). Sans voix installée, le programme continue en silence.
+  Le bouton ■ Stop coupe la parole. Aucun nouveau mot-clé.
+- **Dix exemples de robotique** (31 à 40) : robot qui marche en parlant, qui présente Fadéra, qui court, qui lit, qui fait le ménage, navigation dans un labyrinthe, capteur et régulation, bras articulé, machine à états, essaim de robots.
+
+### Modifié
+- Les messages vus par les utilisateurs parlent de « moteur Fadéra » et de « moteur de secours » ; les noms Rust et JavaScript ne restent que
+  dans la commande `moteur` (vue développeur) et la documentation technique. `fadera --version` affiche « Fadéra 0.7.1 (moteur Fadéra) ».
+
+### Ajouté (suite)
 - `docs/PAQUETS_CONNUS.md` : la liste des paquets publiés (`geometrie`, `notes`) et comment ajouter le sien.
 - Banc d'essai de vitesse du moteur Rust (`fadera-rs/tests/vitesse.js`), lancé par `node verifier_tout.js` et donc par la CI :
   12 programmes avec des limites très larges, pour détecter une régression catastrophique de performance.

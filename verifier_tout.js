@@ -32,7 +32,7 @@ const etapes = [
   ["Formateur JS ≡ Rust (parité, idempotence, comportement conservé)", "node", [path.join(rs, "tests", "parite_fmt.js"), path.join(ici, "index.html"), path.join(rs, "target", "release", "fadera" + exe)], ici],
   ["Parité du débogueur JS/Rust (pauses, variables, pile)", "node", [path.join(rs, "tests", "parite_debogueur.js"), path.join(ici, "index.html"), path.join(rs, "target", "release", "fadera" + exe)], ici],
   ["Spécification exécutable (SPEC_FADERA.md)", "node", ["verifier_spec.js", "SPEC_FADERA.md", "index.html", path.join(rs, "target", "release", "fadera" + exe)], ici],
-  ["Documentation : 30 exemples identiques sur les deux moteurs", "node", [path.join("docs", "verifier_exemples.js")], ici, { FADERA_BIN: path.join(rs, "target", "release", "fadera" + exe) }],
+  ["Documentation : 40 exemples identiques sur les deux moteurs", "node", [path.join("docs", "verifier_exemples.js")], ici, { FADERA_BIN: path.join(rs, "target", "release", "fadera" + exe) }],
   ["Documentation : référence des fonctions à jour et complète", "node", [path.join("docs", "generer_reference.js"), "--verifier"], ici, { FADERA_BIN: path.join(rs, "target", "release", "fadera" + exe) }],
   ["Documentation : tutoriel à jour (tous les exemples exécutés)", "node", [path.join("docs", "generer_tutoriel.js"), "--verifier"], ici, { FADERA_BIN: path.join(rs, "target", "release", "fadera" + exe) }],
   ["IDE dans un vrai navigateur (onglets, coloration, complétion, recherche, IndexedDB, zip) — facultatif", "node", [path.join(rs, "tests", "verifier_ide.js"), path.join(ici, "index.html")], ici, null, true],

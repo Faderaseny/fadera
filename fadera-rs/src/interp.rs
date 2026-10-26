@@ -46,6 +46,8 @@ pub trait Hote {
     fn http(&mut self, _methode: &str, _url: &str, _corps: Option<&str>, _entetes: &[(String, String)]) -> Result<(u16, String), HoteErr> {
         Err(HoteErr::Indisponible)
     }
+    /// Prononce un texte à voix haute (synthèse vocale). Sans effet par défaut : un programme qui parle reste exécutable partout.
+    fn parler(&mut self, _texte: &str) {}
     /// Débogueur : appelé à chaque pause avec l'instantané JSON ; renvoie la commande (voir `debogueur.rs`).
     fn debogage(&mut self, _etat: &str) -> String {
         "continuer".to_string()

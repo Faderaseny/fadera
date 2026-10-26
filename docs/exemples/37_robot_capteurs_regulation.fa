@@ -1,0 +1,35 @@
+# Exemple 37 — Capteur de distance et régulation : s'arrêter devant un mur
+# Notions : simulation par pas de temps, capteur bruité (graine fixe), régulateur proportionnel, absolu
+
+soit graine = 2026
+fonction bruit()
+  # petit nombre pseudo-aléatoire entre -1 et 1 (centimètres), toujours le même avec cette graine
+  graine = (graine * 1103515245 + 12345) % 2147483648
+  renvoyer (plancher(graine / 65536) % 21 - 10) / 10
+fin
+
+soit mur = 300          # le mur est à 300 cm
+soit position = 0       # le robot part de 0
+soit consigne = 30      # il doit s'arrêter à 30 cm du mur
+soit gain = 0.4        # force de la correction
+soit vitesse_max = 40   # cm par pas de temps
+
+parler("Je m'approche du mur et je m'arrête à trente centimètres.")
+pour t allantde 1 a 16 faire
+  soit mesure = arrondir((mur - position) + bruit(), 1)
+  soit erreur = mesure - consigne
+  soit commande = minimum(vitesse_max, maximum(-vitesse_max, gain * erreur))
+  position = position + commande
+  afficher "t=" + texte_remplir_gauche(texte(t), 2, " ") + "  capteur " + texte_remplir_gauche(texte(mesure), 6, " ") + " cm   commande " + texte_remplir_gauche(texte(arrondir(commande, 1)), 5, " ") + "   position " + arrondir(position, 1)
+fin
+
+soit reste = mur - position
+afficher ""
+afficher "Distance finale au mur : " + arrondir(reste, 1) + " cm (objectif : " + consigne + " cm)"
+si absolu(reste - consigne) < 2 alors
+  afficher "✔ Le robot s'est arrêté au bon endroit."
+  parler("Je suis arrêté au bon endroit.")
+sinon
+  afficher "✘ Le robot est mal placé."
+  parler("Je suis mal placé.")
+fin

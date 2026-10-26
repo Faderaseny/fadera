@@ -1,0 +1,37 @@
+# Exemple 38 — Un bras de robot à deux segments : cinématique inverse
+# Notions : trigonométrie (cosinus, arc_cosinus, arc_tangente), radians / degres, fonctions, structures
+
+soit L1 = 10   # longueur du premier segment (cm)
+soit L2 = 8    # longueur du second segment (cm)
+
+# Position de la pince quand on connaît les deux angles (cinématique directe)
+fonction pince(a1, a2)
+  soit x = L1 * cosinus(a1) + L2 * cosinus(a1 + a2)
+  soit y = L1 * sinus(a1) + L2 * sinus(a1 + a2)
+  renvoyer { x: x, y: y }
+fin
+
+# Angles à donner aux moteurs pour atteindre (x, y) (cinématique inverse)
+fonction angles_pour(x, y)
+  soit d2 = x * x + y * y
+  soit c2 = (d2 - L1 * L1 - L2 * L2) / (2 * L1 * L2)
+  si c2 > 1 ou c2 < -1 alors
+    lever("Point inatteignable : (" + x + ", " + y + ")")
+  fin
+  soit a2 = arc_cosinus(c2)
+  soit a1 = arc_tangente(y / x) - arc_tangente((L2 * sinus(a2)) / (L1 + L2 * cosinus(a2)))
+  renvoyer { a1: a1, a2: a2 }
+fin
+
+soit cibles = [[12, 6], [8, 10], [15, 3], [30, 5]]
+pour chaque cible dans cibles faire
+  essayer
+    soit a = angles_pour(lireElement(cible, 0), lireElement(cible, 1))
+    soit verif = pince(a.a1, a.a2)
+    afficher "Cible (" + lireElement(cible, 0) + ", " + lireElement(cible, 1) + ") → épaule " + arrondir(degres(a.a1), 1) + "°, coude " + arrondir(degres(a.a2), 1) + "° → pince en (" + arrondir(verif.x, 2) + ", " + arrondir(verif.y, 2) + ")"
+  attraper erreur
+    afficher "Cible (" + lireElement(cible, 0) + ", " + lireElement(cible, 1) + ") → " + erreur
+    parler("Je ne peux pas atteindre ce point.")
+  fin
+fin
+parler("Le bras a fini ses mouvements.")

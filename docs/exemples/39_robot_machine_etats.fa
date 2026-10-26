@@ -1,0 +1,68 @@
+# Exemple 39 — Le cerveau d'un robot : une machine à états
+# Notions : états (veille, patrouille, alerte, recharge), selon, simulation avec une graine fixe
+
+soit graine = 12
+fonction tirage(m)
+  graine = (graine * 1103515245 + 12345) % 2147483648
+  renvoyer plancher(graine / 65536) % m
+fin
+
+soit etat = "veille"
+soit batterie = 60
+soit alertes = 0
+
+fonction icone(e)
+  selon e faire
+    cas "veille" alors
+      renvoyer "😴"
+    cas "patrouille" alors
+      renvoyer "🚶"
+    cas "alerte" alors
+      renvoyer "🚨"
+    cas "recharge" alors
+      renvoyer "🔌"
+    defaut alors
+      renvoyer "?"
+  fin
+fin
+
+parler("Mise en route du robot gardien.")
+pour minute allantde 1 a 16 faire
+  soit evenement = tirage(10)   # 0 = intrus détecté, 1 à 3 = rien de spécial
+  soit avant = etat
+  selon etat faire
+    cas "veille" alors
+      batterie = minimum(100, batterie + 1)
+      si evenement < 4 alors
+        etat = "patrouille"
+      fin
+    cas "patrouille" alors
+      batterie = batterie - 8
+      si evenement == 0 alors
+        etat = "alerte"
+        alertes = alertes + 1
+      sinon si batterie < 25 alors
+        etat = "recharge"
+      fin
+    cas "alerte" alors
+      batterie = batterie - 5
+      etat = "patrouille"
+    cas "recharge" alors
+      batterie = batterie + 25
+      si batterie >= 80 alors
+        etat = "veille"
+      fin
+  fin
+  soit marque = ""
+  si etat != avant alors
+    marque = "  ← " + avant + " → " + etat
+    si etat == "alerte" alors
+      parler("Alerte, intrus détecté !")
+    fin
+  fin
+  afficher "minute " + texte_remplir_gauche(texte(minute), 2, " ") + "  " + icone(etat) + " " + texte_remplir_droite(etat, 10, " ") + " batterie " + texte_remplir_gauche(texte(batterie), 3, " ") + " %" + marque
+fin
+
+afficher ""
+afficher "Alertes déclenchées : " + alertes + ", état final : " + etat
+parler("Fin de la surveillance.")

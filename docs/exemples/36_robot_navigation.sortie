@@ -1,0 +1,11 @@
+🗺️  Carte 9 × 7 ; le plus court chemin fait 26 cases.
+  ↻ tourner à droite, cap sud
+  ↻ tourner à droite, cap ouest
+  ↺ tourner à gauche, cap sud
+  ↺ tourner à gauche, cap est
+  ↺ tourner à gauche, cap nord
+  ↺ tourner à gauche, cap ouest
+  ↻ tourner à droite, cap nord
+  ↻ tourner à droite, cap est
+  ↻ tourner à droite, cap sud
+  ⇒ 26 pas, 9 virages.

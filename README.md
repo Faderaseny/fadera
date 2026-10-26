@@ -42,9 +42,9 @@ Sous Windows : décompresser l'archive, puis dans l'invite de commandes `fadera.
 ## Apprendre
 
 - [**Tutoriel pas à pas**](docs/TUTORIEL.md) : de « Bonjour le monde » aux classes, aux fichiers et au réseau.
-- [**30 exemples**](docs/exemples/) : calculs, jeux (devine le nombre, pendu, morpion, jeu de la vie, labyrinthe…), textes, CSV/JSON, dates, réseau, classes.
+- [**40 exemples**](docs/exemples/) : calculs, jeux (devine le nombre, pendu, morpion, jeu de la vie, labyrinthe…), textes, CSV/JSON, dates, réseau, classes, **robotique** (robot qui marche en parlant, navigation, capteurs, bras articulé, essaim).
 - [**Paquets**](docs/PAQUETS.md) (liste : [paquets connus](docs/PAQUETS_CONNUS.md)) et [**services en ligne**](docs/SERVICES.md) : installer du code d'autres personnes (`fadera paquet installer`), interroger des API et des bases hébergées.
-- [**Référence des fonctions**](docs/REFERENCE.md) : les 195 fonctions natives et les 12 modules standard, avec un exemple vérifié pour chacune.
+- [**Référence des fonctions**](docs/REFERENCE.md) : les 196 fonctions natives et les 12 modules standard, avec un exemple vérifié pour chacune.
 
 ## Compiler soi-même
 
@@ -59,7 +59,7 @@ cd fadera-rs && cargo build --release        # → target/release/fadera  (fader
 | `index.html` | l'IDE et le moteur JavaScript (un seul fichier) |
 | `fadera-rs/` | le moteur Rust, la ligne de commande, la cible WebAssembly |
 | `GUIDE_FADERA.md`, `SPEC_FADERA.md` | guide d'utilisation ; spécification exécutable |
-| `docs/` | tutoriel, 30 exemples, référence des fonctions (générés et vérifiés par la CI) |
+| `docs/` | tutoriel, 40 exemples, référence des fonctions (générés et vérifiés par la CI) |
 | `tests_fadera.js`, `verifier_*.js` | tests JavaScript ; vérification complète (`node verifier_tout.js`) |
 | `.github/workflows/` | CI, publication des versions, playground |
 

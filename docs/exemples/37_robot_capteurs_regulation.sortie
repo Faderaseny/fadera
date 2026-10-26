@@ -1,0 +1,19 @@
+t= 1  capteur  299.1 cm   commande    40   position 40
+t= 2  capteur  259.9 cm   commande    40   position 80
+t= 3  capteur  219.6 cm   commande    40   position 120
+t= 4  capteur  180.9 cm   commande    40   position 160
+t= 5  capteur  139.3 cm   commande    40   position 200
+t= 6  capteur    101 cm   commande  28.4   position 228.4
+t= 7  capteur   71.5 cm   commande  16.6   position 245
+t= 8  capteur   54.7 cm   commande   9.9   position 254.9
+t= 9  capteur   44.3 cm   commande   5.7   position 260.6
+t=10  capteur     40 cm   commande     4   position 264.6
+t=11  capteur   35.8 cm   commande   2.3   position 266.9
+t=12  capteur   32.6 cm   commande     1   position 268
+t=13  capteur   32.8 cm   commande   1.1   position 269.1
+t=14  capteur   31.9 cm   commande   0.8   position 269.8
+t=15  capteur   29.7 cm   commande  -0.1   position 269.7
+t=16  capteur   30.5 cm   commande   0.2   position 269.9
+
+Distance finale au mur : 30.1 cm (objectif : 30 cm)
+✔ Le robot s'est arrêté au bon endroit.

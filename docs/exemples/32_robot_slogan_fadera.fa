@@ -1,0 +1,32 @@
+# Exemple 32 — Le robot qui présente Fadéra
+# Notions : parler, listes de structures, boucle « pour chaque », texte_remplir_droite
+
+soit slogan = "Fadéra : programmer en français, sans détour."
+
+soit forces = [
+  { titre: "Des mots que l'on comprend", preuve: "Les mots-clés sont français : soit, si, alors, tantque, fonction." },
+  { titre: "Un résultat sûr", preuve: "Deux moteurs, Rust et le moteur de secours, donnent exactement les mêmes résultats." },
+  { titre: "Du code vérifié", preuve: "Les tests sont intégrés au langage : tester, verifier, verifier_egal." },
+  { titre: "Suivi de près", preuve: "Un banc d'essai de vitesse est vérifié à chaque nouvelle version." },
+  { titre: "Ouvert aux autres", preuve: "Un gestionnaire de paquets installe les bibliothèques depuis GitHub." },
+  { titre: "Il parle", preuve: "La fonction parler lit un texte à voix haute, en français." }
+]
+
+fonction annoncer(phrase)
+  afficher "🤖 " + phrase
+  parler(phrase)
+fin
+
+annoncer("Bonjour ! Je suis un robot programmé avec Fadéra.")
+annoncer(slogan)
+afficher ""
+
+soit numero = 0
+pour chaque force dans forces faire
+  numero = numero + 1
+  afficher texte_remplir_droite(numero + ". " + force.titre, 32, " ") + "→ " + force.preuve
+  parler(force.titre + ". " + force.preuve)
+fin
+
+afficher ""
+annoncer("Six forces, un seul langage. À vous de jouer !")

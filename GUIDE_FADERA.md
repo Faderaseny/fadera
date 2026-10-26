@@ -475,7 +475,7 @@ afficher "le programme continue"
 
 ## 13. Catalogue des fonctions natives
 
-> La liste **complète** (195 fonctions, chacune avec un exemple vérifié) est dans [docs/REFERENCE.md](docs/REFERENCE.md). Cette section en présente les familles principales.
+> La liste **complète** (196 fonctions, chacune avec un exemple vérifié) est dans [docs/REFERENCE.md](docs/REFERENCE.md). Cette section en présente les familles principales.
 
 Toutes ces fonctions s'utilisent comme des fonctions normales : `nomFonction(arguments)`, dans une expression (`soit x = fonction(...)`) ou avec `afficher`.
 

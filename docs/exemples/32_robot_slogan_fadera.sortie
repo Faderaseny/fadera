@@ -1,0 +1,11 @@
+🤖 Bonjour ! Je suis un robot programmé avec Fadéra.
+🤖 Fadéra : programmer en français, sans détour.
+
+1. Des mots que l'on comprend   → Les mots-clés sont français : soit, si, alors, tantque, fonction.
+2. Un résultat sûr              → Deux moteurs, Rust et le moteur de secours, donnent exactement les mêmes résultats.
+3. Du code vérifié              → Les tests sont intégrés au langage : tester, verifier, verifier_egal.
+4. Suivi de près                → Un banc d'essai de vitesse est vérifié à chaque nouvelle version.
+5. Ouvert aux autres            → Un gestionnaire de paquets installe les bibliothèques depuis GitHub.
+6. Il parle                     → La fonction parler lit un texte à voix haute, en français.
+
+🤖 Six forces, un seul langage. À vous de jouer !

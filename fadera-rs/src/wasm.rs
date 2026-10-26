@@ -73,7 +73,7 @@ fn resultat(code: &str, it: Option<&crate::Interp>, err: Option<crate::ErreurFad
 // bloquer (Atomics.wait) le temps que le fil principal réponde (saisie, fichiers, réseau…).
 //   hote.afficher(texte)                       hote.saisir(invite) -> texte | null
 //   hote.lire(chemin) -> texte (lève Error)    hote.ecrire(chemin, contenu) (lève Error)
-//   hote.pause(ms)                             hote.http(methode, url, corps|null, entetesJSON) -> '{"statut":200,"corps":"…"}'
+//   hote.pause(ms)   hote.parler(texte)        hote.http(methode, url, corps|null, entetesJSON) -> '{"statut":200,"corps":"…"}'
 // Une méthode absente => fonctionnalité « indisponible » côté Fadéra.
 // ---------------------------------------------------------------------------------------------
 struct HoteJs {
@@ -114,6 +114,10 @@ impl Hote for HoteJs {
     }
     fn pause(&mut self, ms: f64) {
         let _ = self.appeler("pause", &[JsValue::from_f64(ms)]);
+    }
+    fn parler(&mut self, texte: &str) {
+        // hote.parler(texte) : synthèse vocale du navigateur ; absent => silence
+        let _ = self.appeler("parler", &[JsValue::from_str(texte)]);
     }
     fn http(&mut self, methode: &str, url: &str, corps: Option<&str>, entetes: &[(String, String)]) -> Result<(u16, String), HoteErr> {
         let h: Vec<Valeur> = entetes.iter().map(|(k, v)| Valeur::liste(vec![Valeur::texte(k), Valeur::texte(v)])).collect();

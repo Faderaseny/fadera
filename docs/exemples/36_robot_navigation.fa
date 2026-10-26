@@ -1,0 +1,110 @@
+# Exemple 36 — Simulation robotique : le robot trouve son chemin et l'annonce
+# Notions : parcours en largeur, grille, orientation (N/E/S/O), commandes avancer / tourner, parler
+
+soit carte = [
+  "R...#....",
+  ".##.#.##.",
+  ".#..#..#.",
+  ".#.###.#.",
+  ".#.....#.",
+  ".#####.#.",
+  ".......#C"
+]
+soit lignes = taille(carte)
+soit colonnes = taille(lireElement(carte, 0))
+# directions : 0 = nord, 1 = est, 2 = sud, 3 = ouest
+soit noms = ["nord", "est", "sud", "ouest"]
+soit dl = [-1, 0, 1, 0]
+soit dc = [0, 1, 0, -1]
+
+fonction case(l, c)
+  renvoyer caractere(lireElement(carte, l), c)
+fin
+
+fonction trouver(symbole)
+  pour l allantde 0 a lignes - 1 faire
+    pour c allantde 0 a colonnes - 1 faire
+      si case(l, c) == symbole alors
+        renvoyer [l, c]
+      fin
+    fin
+  fin
+  renvoyer []
+fin
+
+fonction cle(l, c)
+  renvoyer l + "," + c
+fin
+
+# Le robot « lit » sa carte et cherche le plus court chemin
+fonction plan(depart, arrivee)
+  soit vu = { }
+  soit avant = { }
+  soit file = [depart]
+  modifierCle(vu, cle(lireElement(depart, 0), lireElement(depart, 1)), vrai)
+  soit tete = 0
+  tantque tete < taille(file) faire
+    soit courant = lireElement(file, tete)
+    tete = tete + 1
+    soit l = lireElement(courant, 0)
+    soit c = lireElement(courant, 1)
+    si l == lireElement(arrivee, 0) et c == lireElement(arrivee, 1) alors
+      soit chemin = [courant]
+      soit p = lireElement(chemin, 0)
+      tantque cle(lireElement(p, 0), lireElement(p, 1)) != cle(lireElement(depart, 0), lireElement(depart, 1)) faire
+        p = lireCle(avant, cle(lireElement(p, 0), lireElement(p, 1)))
+        chemin = [p] + chemin
+      fin
+      renvoyer chemin
+    fin
+    pour d allantde 0 a 3 faire
+      soit nl = l + lireElement(dl, d)
+      soit nc = c + lireElement(dc, d)
+      si nl >= 0 et nl < lignes et nc >= 0 et nc < colonnes alors
+        si case(nl, nc) != "#" et non a_cle(vu, cle(nl, nc)) alors
+          modifierCle(vu, cle(nl, nc), vrai)
+          modifierCle(avant, cle(nl, nc), [l, c])
+          ajouter(file, [nl, nc])
+        fin
+      fin
+    fin
+  fin
+  renvoyer []
+fin
+
+soit depart = trouver("R")
+soit arrivee = trouver("C")
+soit chemin = plan(depart, arrivee)
+afficher "🗺️  Carte " + colonnes + " × " + lignes + " ; le plus court chemin fait " + (taille(chemin) - 1) + " cases."
+parler("J'ai trouvé un chemin de " + (taille(chemin) - 1) + " cases.")
+
+# Le robot exécute le plan : il tourne si besoin, puis avance
+soit cap = 1
+soit avances = 0
+soit virages = 0
+pour i allantde 1 a taille(chemin) - 1 faire
+  soit a = lireElement(chemin, i - 1)
+  soit b = lireElement(chemin, i)
+  soit voulu = 0
+  pour d allantde 0 a 3 faire
+    si lireElement(a, 0) + lireElement(dl, d) == lireElement(b, 0) et lireElement(a, 1) + lireElement(dc, d) == lireElement(b, 1) alors
+      voulu = d
+    fin
+  fin
+  si voulu != cap alors
+    soit quart = modulo(voulu - cap, 4)
+    si quart == 1 alors
+      afficher "  ↻ tourner à droite, cap " + lireElement(noms, voulu)
+    sinon si quart == 3 alors
+      afficher "  ↺ tourner à gauche, cap " + lireElement(noms, voulu)
+    sinon
+      afficher "  ↩ faire demi-tour, cap " + lireElement(noms, voulu)
+    fin
+    virages = virages + 1
+    cap = voulu
+  fin
+  avances = avances + 1
+fin
+
+afficher "  ⇒ " + avances + " pas, " + virages + " virages."
+parler("Arrivé à destination après " + avances + " pas et " + virages + " virages.")

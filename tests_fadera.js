@@ -91,6 +91,8 @@ await t("frequences",'soit f = liste_frequences(["a","b","a"])\nafficher lireCle
 await t("csv_lire",'soit m = csv_lire("nom;age\nAna;30\nLi;25", ";")\nafficher lireElement(lireElement(m,2),0) + " " + (lireElement(lireElement(m,1),1) + 1)',"Li 31");
 await t("csv_texte",'afficher csv_texte([["a","b,c"],[1,2]])','a,"b,c"\n1,2');
 await t("pause",'soit t0 = chrono()\npause(30)\nafficher chrono() - t0 >= 25',"vrai");
+await t("parler renvoie le texte",'afficher parler("")',"");
+await t("parler refuse un nombre",'essayer\n  parler(5)\nattraper e\n  afficher e\nfin',"parler : l\'argument 1 doit être un texte (reçu : nombre).");
 await t("http hors-ligne",'afficher http_obtenir("http://127.0.0.1:1/")',/ERR:.*requête impossible/);
 await t("err fn inconnue",'afficher foo(1)',/ERR:Ligne 1 : Fonction "foo" inconnue/);
 await t("err réseau arg",'afficher iaPredire(5,[1])',/doit être un réseau/);

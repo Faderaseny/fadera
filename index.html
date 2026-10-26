@@ -1519,7 +1519,7 @@ fin</textarea
               id="btn-stop"
               style="display: none"
               onclick="arreterExecution()"
-              title="Arrêter l'exécution (moteur Rust)"
+              title="Arrêter l'exécution"
               >■</span
             >
           </div>
@@ -1955,7 +1955,7 @@ fin</textarea
                 cmdPrincipale === "uname" ||
                 cmdPrincipale === "systeme_info"
               ) {
-                ligneReponse.innerText = `🐧 Linux fadera-souverain 6.1.0-FADERA-CORE-v1.9 #1 SMP PREEMPT_DYNAMIC x86_64 Rust-Native GNU/Linux`;
+                ligneReponse.innerText = `🐧 Linux fadera-souverain 6.1.0-FADERA-CORE-v1.9 #1 SMP PREEMPT_DYNAMIC x86_64 GNU/Linux`;
               } else if (
                 cmdPrincipale === "date" ||
                 cmdPrincipale === "date_heure"
@@ -2118,7 +2118,7 @@ fin</textarea
                   `Tasks: 3 total, 1 running, 2 sleeping, 0 stopped<br>` +
                   `%Cpu(s): <strong>12.4% us</strong>, 2.1% sy, 0.0% ni, 85.5% id<br>` +
                   `MiB Mem : <strong>16384 total</strong>, 4128 free, 8142 used, 4114 buff/cache<br>` +
-                  `⚙️ Noyau Rust AOT : Stable | Threads asynchrones Tokio : Actifs [8]`;
+                  `⚙️ Noyau Fadéra : Stable | Tâches asynchrones : Actives [8]`;
               } else if (
                 cmdPrincipale === "tar" ||
                 cmdPrincipale === "archiver_dossier"
@@ -2509,7 +2509,7 @@ fin</textarea
                   `📊 <strong>STATISTIQUES DES SOCKETS ACTIFS (SS ENGINE) :</strong><br>` +
                   `Netid  State      Recv-Q  Send-Q  Local Address:Port  Peer Address:Port<br>` +
                   `u_str  ESTAB      0       0       * 18420             * 18421<br>` +
-                  `tcp    LISTEN     0       50      127.0.0.1:8080      0.0.0.0:* (Noyau Rust)<br>` +
+                  `tcp    LISTEN     0       50      127.0.0.1:8080      0.0.0.0:* (Noyau Fadéra)<br>` +
                   `tcp    ESTAB      0       0       127.0.0.1:8080      127.0.0.1:5500 (Hyper-IDE)`;
               } else if (
                 cmdPrincipale === "dig" ||
@@ -10192,6 +10192,13 @@ fin
             );
             return ms;
           },
+          // Prononce un texte à voix haute. L'éditeur branche la synthèse vocale du navigateur (globalThis.faderaVoix) ;
+          // sans elle (tests, ligne de commande Node), la fonction ne fait rien. Renvoie le texte, comme le moteur Rust.
+          parler(texte) {
+            T(texte, "parler");
+            if (typeof globalThis.faderaVoix === "function") globalThis.faderaVoix(texte);
+            return texte;
+          },
           chrono() {
             return typeof performance !== "undefined"
               ? performance.now()
@@ -16543,6 +16550,33 @@ fin
       }
 
       // Hôte du moteur : lecture/écriture de fichiers = le même système de fichiers que les commandes
+      // ---------- Voix : la fonction parler("texte") utilise la synthèse vocale du navigateur, en français ----------
+      const VOIX = {
+        choisir() {
+          try {
+            const v = window.speechSynthesis.getVoices() || [];
+            return v.find((x) => /^fr[-_]FR/i.test(x.lang)) || v.find((x) => /^fr/i.test(x.lang)) || null;
+          } catch (e) {
+            return null;
+          }
+        },
+        dire(texte) {
+          try {
+            if (!window.speechSynthesis || typeof SpeechSynthesisUtterance === "undefined") return;
+            const u = new SpeechSynthesisUtterance(String(texte).slice(0, 2000));
+            u.lang = "fr-FR";
+            const v = this.choisir();
+            if (v) u.voice = v;
+            window.speechSynthesis.speak(u); // les phrases se suivent dans l'ordre
+          } catch (e) {}
+        },
+        arreter() {
+          try {
+            if (window.speechSynthesis) window.speechSynthesis.cancel();
+          } catch (e) {}
+        },
+      };
+      window.faderaVoix = (t) => VOIX.dire(t);
       function creerHote(sortie, muet) {
         return {
           afficher: (t) => {
@@ -16677,7 +16711,7 @@ fin
         etat() {
           const m = this.mode();
           let s =
-            "Moteur de référence : Rust/WebAssembly  ·  JavaScript : moteur de secours (utilisé seulement si Rust n'est pas chargé)\n" +
+            "Vue développeur : le moteur rapide de Fadéra est écrit en Rust/WebAssembly ; le moteur de secours est écrit en JavaScript (utilisé seulement si le moteur rapide n'est pas chargé).\n" +
             "Mode : " +
             m +
             "   ·   Rust/WebAssembly : " +
@@ -16799,7 +16833,7 @@ fin
         ecrireTerminal(
           "<span class='suc-txt'>✓ Terminé en " +
             Math.round(performance.now() - t0) +
-            " ms</span> <span style='color:#6c7086;'>(moteur Rust/WASM)</span>",
+            " ms</span> <span style='color:#6c7086;'>(moteur Fadéra)</span>",
         );
         majEtat("Prêt", "#3ddc97");
         return true;
@@ -16821,6 +16855,7 @@ fin
           lire: (p) => String(fich.lireFichier(p)),
           ecrire: (p, c) => fich.ecrireFichier(p, c),
           pause: () => {},
+          parler: (t) => VOIX.dire(t),
           http: (methode, url, corps, entetes) => {
             const x = new XMLHttpRequest();
             x.open(methode, url, false);
@@ -16846,7 +16881,7 @@ fin
           return false;
         }
         ecrireTerminal(
-          "<span class='suc-txt'>✓ Terminé en " + Math.round(performance.now() - t0) + " ms</span> <span style='color:#6c7086;'>(moteur Rust/WASM · dans la page)</span>",
+          "<span class='suc-txt'>✓ Terminé en " + Math.round(performance.now() - t0) + " ms</span> <span style='color:#6c7086;'>(moteur Fadéra)</span>",
         );
         majEtat("Prêt", "#3ddc97");
         return true;
@@ -16889,6 +16924,7 @@ fin
               lire: (chemin) => rpc("lire", chemin),
               ecrire: (chemin, contenu) => { rpc("ecrire", chemin, contenu); },
               pause: (ms) => { vider(); Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, Math.max(0, ms)); },
+              parler: (s) => { vider(); postMessage({ t: "parler", m: String(s) }); },
               http: (methode, url, corps, entetes) => {
                 vider();
                 const x = new XMLHttpRequest();
@@ -16942,6 +16978,7 @@ fin
       }
       window.prechauffer = prechauffer;
       function arreterExecution() {
+        VOIX.arreter();
         if (DEBOGUEUR && !(DEBOGUEUR.rust && !DEBOGUEUR.enPause)) {
           DEBOGUEUR.arreter(); // JS : drapeau d'arrêt ; Rust en pause : commande « stop »
           return;
@@ -16956,7 +16993,7 @@ fin
           if (_workerFin) _workerFin({ stoppe: true });
         } else
           notifier(
-            "Rien à arrêter (le moteur JavaScript ne peut pas être interrompu).",
+            "Rien à arrêter : le moteur de secours ne peut pas interrompre un programme en cours.",
             "warn",
           );
       }
@@ -17021,6 +17058,7 @@ fin
                 sortie.push(l);
                 if (!muet) ecrireTerminal(echapper(l));
               });
+            else if (m.t === "parler") VOIX.dire(m.m);
             else if (m.t === "fin") terminer(JSON.parse(m.r), null, true);
             else if (m.t === "plante")
               terminer(null, Object.assign(new Error(m.m), { pret }));
@@ -17086,7 +17124,7 @@ fin
         ecrireTerminal(
           "<span class='suc-txt'>✓ Terminé en " +
             Math.round(performance.now() - t0) +
-            " ms</span> <span style='color:#6c7086;'>(moteur Rust/WASM · Worker" + (debog ? " · débogage" : "") + ")</span>",
+            " ms</span> <span style='color:#6c7086;'>(moteur Fadéra" + (debog ? " · débogage" : "") + ")</span>",
         );
         majEtat("Prêt", "#3ddc97");
         return true;
@@ -17094,6 +17132,7 @@ fin
 
       // Exécute du code Fadéra ; la sortie va au terminal ET dans ~/sortie.log
       async function executerSource(code, options) {
+        VOIX.arreter(); // une nouvelle exécution coupe la parole de la précédente
         const debug = !!(options && options.debug);
         const sortie = [];
         let it = null,
@@ -17102,7 +17141,7 @@ fin
         if (debug && MOTEUR.mode() !== "js" && MOTEUR.worker() && !window.moteurRust.debogage && !window._avisPkgAncien) {
           window._avisPkgAncien = true;
           ecrireTerminal(
-            "<span style='color:#f5c451;'>ℹ Votre dossier pkg/ est ancien (sans débogueur Rust) : débogage avec le moteur JavaScript. Relancez : wasm-pack build --release --target web -- --features wasm</span>",
+            "<span style='color:#f5c451;'>ℹ Votre moteur rapide est ancien (sans débogueur) : le débogage utilise le moteur de secours. Reconstruisez le dossier pkg/ (voir le guide, section distribution).</span>",
           );
         }
         if (debug && MOTEUR.mode() !== "js" && MOTEUR.worker() && window.moteurRust.debogage) {
@@ -17116,12 +17155,12 @@ fin
             return succes;
           } catch (e) {
             if (e && e.pret) {
-              ecrireTerminal("<span class='err-txt'>💥 Le moteur Rust a planté : " + echapper(e.message) + "</span>");
+              ecrireTerminal("<span class='err-txt'>💥 Le moteur Fadéra a rencontré un problème : " + echapper(e.message) + "</span>");
               majEtat("Erreur", "#ff5f56");
               return false;
             }
             ecrireTerminal(
-              "<span style='color:#f5c451;'>⚠ moteur Rust indisponible (" + echapper(e.message) + ") : débogage avec le moteur JavaScript.</span>",
+              "<span style='color:#f5c451;'>⚠ moteur rapide indisponible (" + echapper(e.message) + ") : débogage avec le moteur de secours.</span>",
             );
             sortie.length = 0;
           } finally {
@@ -17147,7 +17186,7 @@ fin
             if (e && e.pret) {
               // le Worker a démarré puis planté : ne pas rejouer le programme (effets de bord déjà faits)
               ecrireTerminal(
-                "<span class='err-txt'>💥 Le moteur Rust a planté : " +
+                "<span class='err-txt'>💥 Le moteur Fadéra a rencontré un problème : " +
                   echapper(e.message) +
                   "</span>",
               );
@@ -17162,9 +17201,9 @@ fin
               return false;
             }
             ecrireTerminal(
-              "<span style='color:#f5c451;'>⚠ moteur Rust indisponible (" +
+              "<span style='color:#f5c451;'>⚠ moteur rapide indisponible (" +
                 echapper(e.message) +
-                ") : repli sur le moteur JavaScript.</span>",
+                ") : repli sur le moteur de secours.</span>",
             );
             sortie.length = 0;
           }
@@ -17172,7 +17211,7 @@ fin
           if (!window._secoursSignale) {
             window._secoursSignale = true;
             ecrireTerminal(
-              "<span style='color:#f5c451;'>⚠ Moteur de secours JavaScript utilisé : le moteur de référence Rust/WebAssembly n'est pas chargé (" +
+              "<span style='color:#f5c451;'>⚠ Moteur de secours utilisé : le moteur rapide n'est pas chargé (" +
                 echapper(MOTEUR.raisonAbsence()) +
                 "). Tapez « moteur » pour les détails.</span>",
             );
@@ -17185,7 +17224,7 @@ fin
           MOTEUR.incompatible(code)
         ) {
           ecrireTerminal(
-            "<span style='color:#f5c451;'>⚠ ce programme utilise saisir / importer / fichiers : exécuté avec le moteur JavaScript.</span>",
+            "<span style='color:#f5c451;'>⚠ ce programme utilise saisir / importer / fichiers : exécuté avec le moteur de secours.</span>",
           );
         }
         try {
@@ -17498,7 +17537,7 @@ fin
           majEtat("Débogage...", "#f5c451");
           const nb = pointsDe(editeurChemin).size;
           enteteTerminal(
-            "<span class='sys-txt'>🐞 Débogage de " + echapper(cheminRelatif(editeurChemin)) + " (" + (MOTEUR.mode() !== "js" && MOTEUR.worker() && window.moteurRust.debogage ? "moteur Rust/WebAssembly" : "moteur JavaScript") + ") — " +
+            "<span class='sys-txt'>🐞 Débogage de " + echapper(cheminRelatif(editeurChemin)) + " (" + (MOTEUR.mode() !== "js" && MOTEUR.worker() && window.moteurRust.debogage ? "moteur Fadéra" : "moteur de secours") + ") — " +
               (nb ? nb + " point(s) d'arrêt : arrêt au premier atteint" : "arrêt sur la première instruction") + "</span>",
           );
           await executerSource(document.getElementById("editeur").value, { debug: true });
@@ -17615,7 +17654,7 @@ fin
           const rust = MOTEUR.mode() !== "js" && MOTEUR.worker() && window.moteurRust.tests;
           const rustP = !rust && MOTEUR.mode() !== "js" && !!(window.moteurRust && window.moteurRust.testerHote);
           enteteTerminal(
-            "<span class='sys-txt'>🧪 Tests de " + echapper(typeof titreImpose === "string" ? titreImpose : cheminRelatif(editeurChemin)) + " (" + (rust || rustP ? "moteur Rust/WebAssembly" : "moteur JavaScript") + ")</span>",
+            "<span class='sys-txt'>🧪 Tests de " + echapper(typeof titreImpose === "string" ? titreImpose : cheminRelatif(editeurChemin)) + " (" + (rust || rustP ? "moteur Fadéra" : "moteur de secours") + ")</span>",
           );
           let b = null,
             erreur = null;
@@ -19209,14 +19248,14 @@ fin
         };
         if (window.ecrireTerminal)
           window.ecrireTerminal(
-            "<span style='color:#3ddc97;'>⚡ Moteur Rust/WebAssembly chargé (v" +
+            "<span style='color:#3ddc97;'>⚡ Moteur Fadéra chargé (v" +
               m.version() +
               ") — tapez « moteur » pour les options.</span>",
           );
         if (window.MOTEUR && window.MOTEUR.worker() && window.prechauffer) window.prechauffer();
     if (window.ecrireTerminal && window.MOTEUR && window.MOTEUR.worker())
           window.ecrireTerminal(
-            "<span style='color:#3ddc97;'>🧵 Worker actif : saisir, fichiers, réseau et bouton ■ Stop fonctionnent aussi avec le moteur Rust.</span>",
+            "<span style='color:#3ddc97;'>🧵 Prêt : saisie, fichiers, réseau, voix et bouton ■ Stop fonctionnent.</span>",
           );
         else if (
           window.ecrireTerminal &&
@@ -19224,16 +19263,16 @@ fin
           window.crossOriginIsolated !== true
         )
           window.ecrireTerminal(
-            "<span style='color:#f5c451;'>ℹ Rust tourne dans la page (saisir, fichiers et importer fonctionnent). Pour le bouton ■ Stop et le débogage avec Rust : lancez « python serveur.py » (au lieu de http.server).</span>",
+            "<span style='color:#f5c451;'>ℹ Saisie, fichiers, importation et voix fonctionnent. Pour activer aussi le bouton ■ Stop et le débogage pas à pas, lancez le serveur fourni avec Fadéra (fichier serveur.py).</span>",
           );
       } catch (e) {
         // pas de pkg/ (ou chargement impossible) : le moteur JavaScript de secours reste utilisé, et on le dit
         window.moteurRustErreur = e && e.message ? e.message : String(e);
         if (window.ecrireTerminal)
           window.ecrireTerminal(
-            "<span style='color:#f5c451;'>⚠ Moteur Rust/WebAssembly non chargé (" +
+            "<span style='color:#f5c451;'>⚠ Le moteur rapide n'est pas chargé (" +
               String(window.moteurRustErreur).replace(/</g, "&lt;") +
-              ") — Fadéra utilise le moteur JavaScript de secours. Placez le dossier pkg/ à côté de index.html et lancez « python serveur.py ».</span>",
+              ") — Fadéra utilise son moteur de secours (plus lent). Placez le dossier pkg/ à côté de index.html et lancez le serveur fourni (serveur.py).</span>",
           );
       }
     </script>

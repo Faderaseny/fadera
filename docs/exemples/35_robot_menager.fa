@@ -1,0 +1,46 @@
+# Exemple 35 — Un robot qui fait plein de choses : une liste de tâches
+# Notions : file de tâches, trier_par, structures, batterie, essayer / attraper, lever
+
+soit batterie = 70
+soit journal = []
+
+soit taches = [
+  { nom: "Passer l'aspirateur", duree: 30, energie: 25, priorite: 2 },
+  { nom: "Arroser les plantes", duree: 10, energie: 5, priorite: 1 },
+  { nom: "Préparer le café", duree: 8, energie: 4, priorite: 1 },
+  { nom: "Laver le sol", duree: 45, energie: 40, priorite: 3 },
+  { nom: "Ranger le salon", duree: 20, energie: 15, priorite: 2 },
+  { nom: "Faire le tour de la maison", duree: 15, energie: 10, priorite: 3 }
+]
+
+fonction realiser(tache)
+  si tache.energie > batterie alors
+    lever("batterie trop faible pour « " + tache.nom + " » (" + batterie + " % restants, " + tache.energie + " % nécessaires)")
+  fin
+  batterie = batterie - tache.energie
+  ajouter(journal, tache.nom)
+  afficher "✔ " + tache.nom + " (" + tache.duree + " min) — batterie : " + batterie + " %"
+fin
+
+# D'abord les tâches les plus urgentes (priorité 1), puis les plus courtes
+soit ordre = trier_par(taches, t => t.priorite * 1000 + t.duree)
+parler("Je commence ma journée de travail.")
+
+soit minutes = 0
+pour chaque tache dans ordre faire
+  essayer
+    realiser(tache)
+    minutes = minutes + tache.duree
+  attraper erreur
+    afficher "✘ Impossible : " + erreur
+    parler("Je dois me recharger.")
+    batterie = 100
+    afficher "🔌 Rechargé à 100 %"
+    realiser(tache)
+    minutes = minutes + tache.duree
+  fin
+fin
+
+afficher ""
+afficher taille(journal) + " tâches faites en " + minutes + " minutes, batterie finale : " + batterie + " %"
+parler("Toutes les tâches sont terminées.")

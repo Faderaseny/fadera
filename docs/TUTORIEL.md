@@ -964,7 +964,7 @@ Voici les erreurs que tout le monde fait au début, et comment les reconnaître.
 
 - La [**référence**](REFERENCE.md) liste toutes les fonctions avec un exemple vérifié pour chacune.
 - Le [**guide**](../GUIDE_FADERA.md) détaille la grammaire complète du langage.
-- Les [**30 exemples**](exemples/) sont des programmes complets, de 5 à 80 lignes, classés du plus simple au plus riche.
+- Les [**40 exemples**](exemples/) sont des programmes complets, de 5 à 80 lignes, classés du plus simple au plus riche.
 - La [**spécification**](../SPEC_FADERA.md) décrit précisément le comportement du langage, pour qui voudrait écrire un autre moteur.
 
 Bonne programmation !

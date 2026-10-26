@@ -1,0 +1,18 @@
+minute  1  🚶 patrouille batterie  61 %  ← veille → patrouille
+minute  2  🚶 patrouille batterie  53 %
+minute  3  🚶 patrouille batterie  45 %
+minute  4  🚨 alerte     batterie  37 %  ← patrouille → alerte
+minute  5  🚶 patrouille batterie  32 %  ← alerte → patrouille
+minute  6  🔌 recharge   batterie  24 %  ← patrouille → recharge
+minute  7  🔌 recharge   batterie  49 %
+minute  8  🔌 recharge   batterie  74 %
+minute  9  😴 veille     batterie  99 %  ← recharge → veille
+minute 10  😴 veille     batterie 100 %
+minute 11  😴 veille     batterie 100 %
+minute 12  😴 veille     batterie 100 %
+minute 13  😴 veille     batterie 100 %
+minute 14  😴 veille     batterie 100 %
+minute 15  😴 veille     batterie 100 %
+minute 16  🚶 patrouille batterie 100 %  ← veille → patrouille
+
+Alertes déclenchées : 1, état final : patrouille
