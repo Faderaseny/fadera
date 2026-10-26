@@ -1272,7 +1272,7 @@
     <div id="boot">
       <div class="logo-boot">✵ FADERA</div>
       <div class="barre-charge"></div>
-      <div class="texte-boot">Démarrage de l'IDE v0.2...</div>
+      <div class="texte-boot" id="texteBoot">Démarrage de Fadéra v0.7.4…</div>
     </div>
 
     <div class="topbar">
@@ -11683,9 +11683,13 @@ fin
         }
       }
 
+      // Version de Fadéra affichée à l'écran de démarrage et ici : elle doit être la même que fadera-rs/Cargo.toml
+      // (le test verifier_ide.js le vérifie ; à changer à chaque nouvelle version avec le texte de #texteBoot).
+      const VERSION_FADERA = "0.7.4";
+      window.VERSION_FADERA = VERSION_FADERA;
       function afficherInfoVersion() {
         ecrireTerminal(
-          "<span class='sys-txt'>🌿 Fadéra · moteur unique lexer/parser/interpréteur · chiffrement AES-256-GCM / RSA-2048 · build web</span>",
+          "<span class='sys-txt'>🌿 Fadéra v" + VERSION_FADERA + " · moteur unique lexer/parser/interpréteur · chiffrement AES-256-GCM / RSA-2048 · build web</span>",
         );
       }
       function majStatutCode() {

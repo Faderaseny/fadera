@@ -336,6 +336,13 @@ const eq = (nom, obtenu, att) => {
   await p.evaluate(() => fermerModal());
   await p.setViewportSize({ width: 1400, height: 900 });
 
+  // ---------- version affichée = version publiée (fadera-rs/Cargo.toml) ----------
+  const versionCargo = (fs.readFileSync(path.join(__dirname, "..", "Cargo.toml"), "utf8").match(/^version\s*=\s*"([^"]+)"/m) || [])[1];
+  eq("version : l'écran de démarrage affiche la version de Cargo.toml", await p.evaluate(() => document.getElementById("texteBoot").textContent), "Démarrage de Fadéra v" + versionCargo + "…");
+  eq("version : la constante de l'IDE est celle de Cargo.toml", await p.evaluate(() => window.VERSION_FADERA), versionCargo);
+  await p.evaluate(() => afficherInfoVersion());
+  eq("version : « Infos du langage » (🌿) l'indique", await p.evaluate(() => document.getElementById("terminalContent").innerText), new RegExp("Fadéra v" + versionCargo.replace(/\./g, "\\.")));
+
   // ---------- paquets : installer / utiliser / retirer depuis l'IDE (faux serveur GitHub) ----------
   const FAUX = {
     "u/outils@v1/fadera-paquet.json": JSON.stringify({ nom: "outils", version: "1.2.0", principal: "principal.fa", fichiers: ["principal.fa", "aide.fa", "docs/LISEZMOI.md"] }),

@@ -5,6 +5,14 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et la nu
 
 ## [Non publié]
 
+## [0.7.4] — 2026-10-26
+
+### Corrigé
+- L'écran de démarrage de l'éditeur affichait « Démarrage de l'IDE v0.2… » : il affiche maintenant la vraie version (« Démarrage de Fadéra v0.7.4… »), et le bouton 🌿 (infos du langage) l'indique aussi.
+
+### Amélioré
+- Un test (`verifier_ide.js`) vérifie que la version affichée dans l'éditeur est toujours celle de `fadera-rs/Cargo.toml` : on ne peut plus publier une version avec un ancien numéro à l'écran.
+
 ## [0.7.3] — 2026-10-26
 
 ### Corrigé
