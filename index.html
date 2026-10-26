@@ -382,6 +382,80 @@
         transform: scale(1.12);
       }
 
+      .activite-icone:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+      .activite-icone.actif {
+        background: var(--accent);
+        border-color: var(--accent);
+      }
+      /* menus flottants (Nouveau, Enregistrer) : posés sur la page, jamais coupés par la fenêtre */
+      .menu-flottant {
+        position: fixed;
+        z-index: 95;
+        min-width: 240px;
+        max-width: calc(100vw - 16px);
+        background: var(--panel-2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 6px;
+        box-shadow: 0 18px 40px #000000aa;
+        font-family: var(--sans);
+        display: none;
+      }
+      .menu-flottant.ouvert {
+        display: block;
+        animation: mf-apparition 0.12s ease both;
+      }
+      @keyframes mf-apparition {
+        from { opacity: 0; transform: translateX(-4px); }
+        to { opacity: 1; transform: none; }
+      }
+      .mf-titre {
+        font-size: 11px;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+        padding: 4px 10px 6px;
+      }
+      .mf-sep {
+        height: 1px;
+        background: var(--border);
+        margin: 5px 4px;
+      }
+      .mf-item {
+        all: unset;
+        box-sizing: border-box;
+        display: flex;
+        width: 100%;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 10px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 13px;
+        color: var(--text);
+      }
+      .mf-item:hover,
+      .mf-item:focus-visible {
+        background: var(--accent);
+        color: #fff;
+      }
+      .mf-ico {
+        width: 18px;
+        text-align: center;
+      }
+      .mf-nom {
+        flex: 1;
+        white-space: nowrap;
+      }
+      .mf-item kbd {
+        font-family: var(--mono);
+        font-size: 11px;
+        opacity: 0.7;
+      }
+
       .zone-code {
         flex: 1;
         display: flex;
@@ -1225,8 +1299,9 @@
           Applications ▾
         </div>
         <div class="menu-deroulant" id="menuApps">
-          <button onclick="nouveauProjet()">📄 Nouveau projet</button>
-          <button onclick="enregistrerProjet()">💾 Enregistrer</button>
+          <button onclick="nouveauProjet()" title="Ctrl+Alt+N">📄 Nouveau fichier</button>
+          <button onclick="enregistrerProjet()" title="Ctrl+S">💾 Enregistrer</button>
+          <button onclick="enregistrerProjetSous()" title="Ctrl+Maj+S">📝 Enregistrer sous…</button>
           <button onclick="ouvrirProjet()">📂 Ouvrir un projet</button>
           <button onclick="supprimerProjet()">🗑️ Supprimer un projet</button>
           <div class="menu-sep"></div>
@@ -1287,7 +1362,6 @@
               title="Fichier actuel"
               >script.fa</span
             >
-            >
           </div>
           <span class="titre-fenetre">script.fa - Éditeur</span>
         </div>
@@ -1296,121 +1370,23 @@
             <div
               class="activite-icone"
               onclick="toggleMenuNew(event)"
-              title="Options de nouveau projet"
-              style="position: relative"
+              title="Nouveau (Ctrl+Alt+N)" aria-label="Nouveau" aria-haspopup="menu" aria-expanded="false"
             >
               <!-- Ligne 693 (votre icône de fichier actuelle) -->
               📄
 
-              <!-- Petit menu contextuel qui s'ouvre sur le côté droit de la barre -->
-              <ul
-                id="menu-new-options"
-                style="
-                  display: none;
-                  position: absolute;
-                  top: 0;
-                  left: 100%;
-                  background-color: #1e1e1e;
-                  border: 1px solid #444444;
-                  list-style: none;
-                  padding: 5px 0;
-                  margin: 0 0 0 8px;
-                  border-radius: 4px;
-                  z-index: 1000;
-                  min-width: 160px;
-                  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
-                  text-align: left;
-                "
-              >
-                <li
-                  onclick="executerNouveauVierge(event)"
-                  style="
-                    padding: 8px 12px;
-                    color: #ffffff;
-                    cursor: pointer;
-                    font-size: 0.9em;
-                    white-space: nowrap;
-                  "
-                  onmouseover="this.style.backgroundColor = '#333333'"
-                  onmouseout="this.style.backgroundColor = 'transparent'"
-                >
-                  Projet vierge
-                </li>
-                <li
-                  onclick="executerNouveauModele(event)"
-                  style="
-                    padding: 8px 12px;
-                    color: #ffffff;
-                    cursor: pointer;
-                    font-size: 0.9em;
-                    white-space: nowrap;
-                  "
-                  onmouseover="this.style.backgroundColor = '#333333'"
-                  onmouseout="this.style.backgroundColor = 'transparent'"
-                >
-                  Avec modèle de base
-                </li>
-              </ul>
+              
             </div>
 
             <div
               class="activite-icone"
               onclick="toggleMenuSave(event)"
-              title="Options d'enregistrement"
-              style="position: relative"
+              title="Enregistrer (Ctrl+S)" aria-label="Enregistrer" aria-haspopup="menu" aria-expanded="false"
             >
               <!-- Ligne 701 (votre icône de disquette actuelle) -->
               💾
 
-              <!-- Petit menu contextuel qui va s'ouvrir sur le côté droit de la barre -->
-              <ul
-                id="menu-save-options"
-                style="
-                  display: none;
-                  position: absolute;
-                  top: 0;
-                  left: 100%;
-                  background-color: #1e1e1e;
-                  border: 1px solid #444444;
-                  list-style: none;
-                  padding: 5px 0;
-                  margin: 0 0 0 8px;
-                  border-radius: 4px;
-                  z-index: 1000;
-                  min-width: 140px;
-                  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
-                  text-align: left;
-                "
-              >
-                <li
-                  onclick="executerEnregistrer(event)"
-                  style="
-                    padding: 8px 12px;
-                    color: #ffffff;
-                    cursor: pointer;
-                    font-size: 0.9em;
-                    white-space: nowrap;
-                  "
-                  onmouseover="this.style.backgroundColor = '#333333'"
-                  onmouseout="this.style.backgroundColor = 'transparent'"
-                >
-                  Enregistrer
-                </li>
-                <li
-                  onclick="executerEnregistrerSous(event)"
-                  style="
-                    padding: 8px 12px;
-                    color: #ffffff;
-                    cursor: pointer;
-                    font-size: 0.9em;
-                    white-space: nowrap;
-                  "
-                  onmouseover="this.style.backgroundColor = '#333333'"
-                  onmouseout="this.style.backgroundColor = 'transparent'"
-                >
-                  Enregistrer sous...
-                </li>
-              </ul>
+              
             </div>
 
             <div
@@ -11175,9 +11151,9 @@ fin
         );
       }
 
-      function demanderTexte(titre, valeurDefaut, onValider, onAnnuler) {
+      function demanderTexte(titre, valeurDefaut, onValider, onAnnuler, indice) {
         _annulerModalCourant = onAnnuler || (() => {});
-        ouvrirModal(`<h3>${titre}</h3><input type="text" id="modalInput" value="${(valeurDefaut || "").replace(/"/g, "&quot;")}" placeholder="Tapez votre réponse…" />
+        ouvrirModal(`<h3>${titre}</h3><input type="text" id="modalInput" value="${(valeurDefaut || "").replace(/"/g, "&quot;")}" placeholder="${(indice || "Tapez votre réponse…").replace(/"/g, "&quot;")}" />
           <div class="modal-actions"><button class="modal-btn annuler" id="modalAnnulerBtn">Annuler</button><button class="modal-btn valider" id="modalValider">OK</button></div>`);
         const input = document.getElementById("modalInput");
         input.focus();
@@ -18482,6 +18458,10 @@ fin
             e.preventDefault();
             e.stopImmediatePropagation();
             enregistrerProjet();
+          } else if (ctrl && e.shiftKey && !e.altKey && e.key.toLowerCase() === "s") {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            enregistrerProjetSous();
           } else if (ctrl && e.key === " ") {
             e.preventDefault();
             e.stopImmediatePropagation();
@@ -18761,9 +18741,9 @@ fin
             return null;
           }
           if (FadFS.noeud(chemin)) {
-            notifier("« " + cheminRelatif(chemin) + " » existe déjà : il est ouvert.", "warn");
+            notifier("« " + cheminRelatif(chemin) + " » existe déjà : il est ouvert, rien n'a été remplacé.", "warn");
             activerOnglet(chemin);
-            return chemin;
+            return null;
           }
           const dir = chemin.slice(0, chemin.lastIndexOf("/"));
           try {
@@ -18778,18 +18758,18 @@ fin
         }
         window.nouveauProjet = function () {
           demanderTexte("Nom du nouveau fichier", "", (nom) => {
-            if (!nom) return;
+            if (!nom) return notifier("Entrez un nom de fichier, par exemple « exercice1 » (l'extension .fa est ajoutée).", "warn");
             if (creerFichier(nom, "")) notifier('« ' + cheminRelatif(editeurChemin) + ' » créé.', "succes");
-          });
+          }, null, "exercice1  ou  projet/outils  (.fa ajouté)");
         };
         window.executerNouveauModele = function (event) {
           if (event) event.stopPropagation();
           const m = $("menu-new-options");
           if (m) m.style.display = "none";
           demanderTexte("Nom du fichier avec modèle", "", (nom) => {
-            if (!nom) return;
+            if (!nom) return notifier("Entrez un nom de fichier, par exemple « exercice1 » (l'extension .fa est ajoutée).", "warn");
             if (creerFichier(nom, '# Modèle Fadéra\nsoit message = "Bonjour Fadéra !"\nafficher message\n')) notifier('« ' + cheminRelatif(editeurChemin) + ' » créé avec modèle.', "succes");
-          });
+          }, null, "exercice1  ou  projet/outils  (.fa ajouté)");
         };
         window.enregistrerProjet = function () {
           FS_syncAvant();
@@ -18798,7 +18778,7 @@ fin
         };
         window.enregistrerProjetSous = function () {
           demanderTexte("Enregistrer sous (nom du fichier)", cheminRelatif(editeurChemin), (nom) => {
-            if (!nom) return;
+            if (!nom) return notifier("Entrez un nom de fichier.", "warn");
             const chemin = cheminProjet(nom);
             if (!chemin) return notifier("Nom de fichier invalide.", "erreur");
             FS_syncAvant();
@@ -19388,85 +19368,127 @@ fin
     </script>
 
     <script>
-      // Affiche ou masque le sous-menu de sauvegarde
-      function toggleMenuSave(event) {
-        event.stopPropagation();
-        const menu = document.getElementById("menu-save-options");
-        if (menu.style.display === "none" || menu.style.display === "") {
-          menu.style.display = "block";
-        } else {
-          menu.style.display = "none";
+      // ---------- Menus flottants des boutons de la barre latérale (📄 Nouveau, 💾 Enregistrer) ----------
+      // Le menu est posé sur la page (position: fixed) et non dans la fenêtre de l'éditeur, dont les bords le coupaient.
+      const MENU_FLOTTANT = (() => {
+        let el = null,
+          ancre = null;
+        const creer = () => {
+          el = document.createElement("div");
+          el.className = "menu-flottant";
+          el.setAttribute("role", "menu");
+          document.body.appendChild(el);
+          el.addEventListener("keydown", (e) => {
+            const items = [...el.querySelectorAll(".mf-item")];
+            const i = items.indexOf(document.activeElement);
+            if (e.key === "ArrowDown") {
+              e.preventDefault();
+              items[(i + 1) % items.length].focus();
+            } else if (e.key === "ArrowUp") {
+              e.preventDefault();
+              items[(i - 1 + items.length) % items.length].focus();
+            } else if (e.key === "Home") {
+              e.preventDefault();
+              items[0].focus();
+            } else if (e.key === "End") {
+              e.preventDefault();
+              items[items.length - 1].focus();
+            } else if (e.key === "Escape") {
+              e.preventDefault();
+              const a = ancre;
+              fermer();
+              if (a) a.focus();
+            } else if (e.key === "Tab") fermer();
+          });
+        };
+        function fermer() {
+          if (el) el.classList.remove("ouvert");
+          if (ancre) {
+            ancre.classList.remove("actif");
+            ancre.setAttribute("aria-expanded", "false");
+          }
+          ancre = null;
         }
-      }
+        function ouvrir(a, titre, items) {
+          if (!el) creer();
+          if (ancre === a) return fermer();
+          fermer();
+          el.innerHTML = "";
+          const t = document.createElement("div");
+          t.className = "mf-titre";
+          t.textContent = titre;
+          el.appendChild(t);
+          for (const it of items) {
+            if (it === "-") {
+              const sep = document.createElement("div");
+              sep.className = "mf-sep";
+              el.appendChild(sep);
+              continue;
+            }
+            const b = document.createElement("button");
+            b.type = "button";
+            b.className = "mf-item";
+            b.setAttribute("role", "menuitem");
+            b.innerHTML = '<span class="mf-ico"></span><span class="mf-nom"></span><kbd></kbd>';
+            b.children[0].textContent = it.ico;
+            b.children[1].textContent = it.nom;
+            b.children[2].textContent = it.raccourci || "";
+            if (it.aide) b.title = it.aide;
+            b.onclick = () => {
+              fermer();
+              it.action();
+            };
+            el.appendChild(b);
+          }
+          ancre = a;
+          a.classList.add("actif");
+          a.setAttribute("aria-expanded", "true");
+          el.classList.add("ouvert");
+          const r = a.getBoundingClientRect();
+          const w = el.offsetWidth,
+            h = el.offsetHeight;
+          let gauche = r.right + 10;
+          if (gauche + w > window.innerWidth - 8) gauche = Math.max(8, r.left - w - 10);
+          let haut = Math.min(r.top, window.innerHeight - h - 8);
+          el.style.left = gauche + "px";
+          el.style.top = Math.max(8, haut) + "px";
+          el.querySelector(".mf-item").focus();
+        }
+        document.addEventListener("mousedown", (e) => {
+          if (el && ancre && !el.contains(e.target) && !ancre.contains(e.target)) fermer();
+        });
+        window.addEventListener("resize", fermer);
+        window.addEventListener("blur", fermer);
+        document.addEventListener("scroll", fermer, true);
+        return { ouvrir, fermer };
+      })();
+      window.MENU_FLOTTANT = MENU_FLOTTANT;
 
-      // Déclenche l'enregistrement normal
-      function executerEnregistrer(event) {
-        event.stopPropagation();
-        document.getElementById("menu-save-options").style.display = "none";
-        enregistrerProjet();
-      }
-
-      // Déclenche l'enregistrement sous
-      function executerEnregistrerSous(event) {
-        event.stopPropagation();
-        document.getElementById("menu-save-options").style.display = "none";
-        enregistrerProjetSous(); // Assurez-vous que cette fonction est bien présente dans votre script global
-      }
-
-      // Ferme automatiquement le sous-menu si on clique ailleurs sur l'écran
-      window.addEventListener("click", () => {
-        const menu = document.getElementById("menu-save-options");
-        if (menu) menu.style.display = "none";
-      });
-    </script>
-    <script>
-      // Affiche ou masque le sous-menu de création
       function toggleMenuNew(event) {
         event.stopPropagation();
-        const menu = document.getElementById("menu-new-options");
-        if (menu.style.display === "none" || menu.style.display === "") {
-          menu.style.display = "block";
-        } else {
-          menu.style.display = "none";
-        }
+        MENU_FLOTTANT.ouvrir(event.currentTarget, "Nouveau", [
+          { ico: "📄", nom: "Fichier vierge", raccourci: "Ctrl+Alt+N", aide: "Crée un fichier vide dans un nouvel onglet", action: () => nouveauProjet() },
+          { ico: "🧩", nom: "Avec modèle de base", aide: "Crée un nouveau fichier contenant un petit programme de départ", action: () => executerNouveauModele() },
+        ]);
       }
-
-      // Option 1 : Lance votre fonction de création classique
-      function executerNouveauVierge(event) {
+      function toggleMenuSave(event) {
         event.stopPropagation();
-        document.getElementById("menu-new-options").style.display = "none";
-        nouveauProjet(); // Votre fonction existante
+        MENU_FLOTTANT.ouvrir(event.currentTarget, "Enregistrer", [
+          { ico: "💾", nom: "Enregistrer", raccourci: "Ctrl+S", aide: "Enregistre le fichier ouvert", action: () => enregistrerProjet() },
+          { ico: "📝", nom: "Enregistrer sous…", raccourci: "Ctrl+Maj+S", aide: "Enregistre le fichier sous un autre nom", action: () => enregistrerProjetSous() },
+        ]);
       }
-
-      // Option 2 : Crée un projet pré-rempli avec un modèle algorithmique FADERA
-      function executerNouveauModele(event) {
-        event.stopPropagation();
-        document.getElementById("menu-new-options").style.display = "none";
-
-        demanderTexte("Nom du projet avec modèle", "", (nom) => {
-          const editeur = document.getElementById("editeur");
-          if (editeur) {
-            // Structure de base de votre langage en français
-            editeur.value =
-              '// Modèle algorithmique FADERA\nsoit message = "Bonjour FADERA !"\nafficher message\n';
+      // Les boutons de la barre latérale s'utilisent aussi au clavier (Tab, puis Entrée ou Espace).
+      document.querySelectorAll(".barre-activite .activite-icone").forEach((b) => {
+        if (!b.hasAttribute("tabindex")) b.tabIndex = 0;
+        if (!b.hasAttribute("role")) b.setAttribute("role", "button");
+        if (!b.hasAttribute("aria-label") && b.title) b.setAttribute("aria-label", b.title);
+        b.addEventListener("keydown", (e) => {
+          if (e.target === b && (e.key === "Enter" || e.key === " " || (e.key === "ArrowRight" && b.hasAttribute("aria-haspopup")))) {
+            e.preventDefault();
+            b.click();
           }
-          projetActuel = nom || "Sans_nom";
-
-          // Mise à jour du texte vert en haut à gauche
-          const emplacementNom = document.getElementById("nom-fichier-ouvert");
-          if (emplacementNom) {
-            emplacementNom.textContent = projetActuel + ".fa";
-          }
-
-          majStatutCode();
-          notifier('Projet "' + projetActuel + '" créé avec modèle.', "succes");
         });
-      }
-
-      // Ferme aussi ce menu si on clique n'importe où ailleurs sur l'écran
-      window.addEventListener("click", () => {
-        const menuNew = document.getElementById("menu-new-options");
-        if (menuNew) menuNew.style.display = "none";
       });
     </script>
     <script type="module">

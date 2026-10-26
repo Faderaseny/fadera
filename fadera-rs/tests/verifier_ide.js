@@ -287,6 +287,55 @@ const eq = (nom, obtenu, att) => {
   eq("partage annulé : rien d'écrit, lien effacé", await q3.evaluate(() => [!!FadFS.noeud(FadFS.HOME + "/partage"), location.hash]), [false, ""]);
   await ctx2.browser().close();
 
+  // ---------- boutons 📄 Nouveau et 💾 Enregistrer : menus complets, clavier, noms ----------
+  await p.setViewportSize({ width: 800, height: 600 });
+  const dansEcran = () => p.evaluate(() => { const r = document.querySelector(".menu-flottant").getBoundingClientRect(); return r.left >= 0 && r.top >= 0 && r.right <= innerWidth && r.bottom <= innerHeight && r.width > 150 && r.height > 60; });
+  await p.click(".barre-activite .activite-icone:nth-child(1)");
+  eq("menu Nouveau : ouvert et entièrement visible (petite fenêtre)", [await p.locator(".menu-flottant.ouvert .mf-item").count(), await dansEcran()], [2, true]);
+  eq("menu Nouveau : premier choix actif au clavier", await p.evaluate(() => document.activeElement.textContent.includes("Fichier vierge")), true);
+  eq("menu Nouveau : le bouton est marqué ouvert", await p.evaluate(() => document.querySelector(".barre-activite .activite-icone").getAttribute("aria-expanded")), "true");
+  await p.keyboard.press("Escape");
+  eq("menu Nouveau : Échap le ferme et rend le focus au bouton", await p.evaluate(() => [!document.querySelector(".menu-flottant.ouvert"), document.activeElement === document.querySelector(".barre-activite .activite-icone")]), [true, true]);
+  await p.keyboard.press("Enter");
+  eq("menu Nouveau : Entrée sur le bouton l'ouvre", await p.locator(".menu-flottant.ouvert").count(), 1);
+  await p.keyboard.press("ArrowDown");
+  eq("menu Nouveau : flèche bas passe au choix suivant", await p.evaluate(() => document.activeElement.textContent.includes("modèle")), true);
+  await p.mouse.click(700, 300);
+  eq("menu Nouveau : un clic ailleurs le ferme", await p.locator(".menu-flottant.ouvert").count(), 0);
+  await p.click(".barre-activite .activite-icone:nth-child(2)");
+  eq("menu Enregistrer : ouvert et entièrement visible", [await p.locator(".menu-flottant.ouvert .mf-item").count(), await dansEcran()], [2, true]);
+  await p.click(".barre-activite .activite-icone:nth-child(1)");
+  eq("ouvrir un menu ferme l'autre", await p.evaluate(() => [document.querySelectorAll(".menu-flottant.ouvert").length, document.querySelector(".menu-flottant").textContent.includes("Fichier vierge")]), [1, true]);
+  // création : nom vide, nouveau nom, nom déjà pris
+  await p.click(".menu-flottant .mf-item:nth-child(2)");
+  await p.fill("#modalInput", ""); await p.keyboard.press("Enter");
+  eq("Nouveau : un nom vide est signalé", await p.locator("#toast").textContent(), /Entrez un nom/);
+  await p.click(".barre-activite .activite-icone:nth-child(1)"); await p.click(".menu-flottant .mf-item:nth-child(2)");
+  eq("Nouveau : la saisie du nom explique l'extension", await p.locator("#modalInput").getAttribute("placeholder"), /\.fa ajouté/);
+  await p.fill("#modalInput", "menus/essai1"); await p.keyboard.press("Enter"); await p.waitForTimeout(150);
+  eq("Nouveau : fichier créé dans un sous-dossier et ouvert", await p.evaluate(() => [!!FadFS.noeud(FadFS.HOME + "/menus/essai1.fa"), editeurChemin]), [true, "/home/fadera/menus/essai1.fa"]);
+  eq("Nouveau : message « créé »", await p.locator("#toast").textContent(), /créé/);
+  await rempl(p, "# mon contenu");
+  await p.click(".barre-activite .activite-icone:nth-child(1)"); await p.click(".menu-flottant .mf-item:nth-child(2)");
+  await p.fill("#modalInput", "menus/essai1"); await p.keyboard.press("Enter"); await p.waitForTimeout(150);
+  eq("Nouveau : un nom déjà pris ouvre le fichier sans rien remplacer", await val(p), "# mon contenu");
+  eq("Nouveau : un nom déjà pris est signalé (pas de « créé »)", await p.locator("#toast").textContent(), /existe déjà/);
+  await p.click(".barre-activite .activite-icone:nth-child(1)"); await p.click(".menu-flottant .mf-item:nth-child(3)");
+  await p.fill("#modalInput", "menus/modele"); await p.keyboard.press("Enter"); await p.waitForTimeout(150);
+  eq("Nouveau avec modèle : contenu de départ", await val(p), /Modèle Fadéra/);
+  eq("Nouveau avec modèle : l'ancien fichier n'est pas écrasé", await p.evaluate(() => FadFS.lire(FadFS.HOME + "/menus/essai1.fa")), "# mon contenu");
+  // enregistrement
+  await rempl(p, "# modèle modifié");
+  await p.click(".barre-activite .activite-icone:nth-child(2)"); await p.click(".menu-flottant .mf-item:nth-child(2)");
+  await p.waitForTimeout(150);
+  eq("Enregistrer : le message cite le fichier", await p.locator("#toast").textContent(), /menus\/modele\.fa.*enregistré/);
+  await p.focus("#editeur");
+  await p.keyboard.press("Control+Shift+S");
+  eq("Ctrl+Maj+S ouvre « Enregistrer sous »", await p.locator("#modalCorps h3").textContent(), /Enregistrer sous/);
+  await p.keyboard.press("Escape");
+  await p.evaluate(() => fermerModal());
+  await p.setViewportSize({ width: 1400, height: 900 });
+
   // ---------- paquets : installer / utiliser / retirer depuis l'IDE (faux serveur GitHub) ----------
   const FAUX = {
     "u/outils@v1/fadera-paquet.json": JSON.stringify({ nom: "outils", version: "1.2.0", principal: "principal.fa", fichiers: ["principal.fa", "aide.fa", "docs/LISEZMOI.md"] }),

@@ -5,6 +5,19 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et la nu
 
 ## [Non publié]
 
+## [0.7.3] — 2026-10-26
+
+### Corrigé
+- **Boutons 📄 Nouveau et 💾 Enregistrer** de la barre latérale : leurs petits menus étaient coupés par le bord de la fenêtre de l'éditeur (une moitié de menu seulement à l'écran). Ils s'affichent maintenant par-dessus la page, toujours en entier, même dans une petite fenêtre.
+- « Avec modèle de base » remplaçait le contenu du fichier ouvert sans prévenir ; il crée maintenant un nouveau fichier, comme « Fichier vierge ».
+- Un nom de fichier déjà pris affichait en plus « créé » ; le message dit désormais que le fichier existe déjà et que rien n'a été remplacé.
+- Un caractère « > » parasite s'affichait dans la barre de titre de l'éditeur.
+
+### Amélioré
+- Menus utilisables au clavier (Tab, Entrée, Espace, flèches, Échap) et fermés par un clic ailleurs ; raccourcis affichés (Ctrl+Alt+N, Ctrl+S, Ctrl+Maj+S).
+- Nouveau raccourci **Ctrl+Maj+S** (Enregistrer sous) et entrée « Enregistrer sous… » dans le menu Applications.
+- La fenêtre de saisie du nom explique que l'extension `.fa` est ajoutée ; un nom vide est signalé au lieu d'être ignoré.
+
 ## [0.7.2] — 2026-10-26
 
 ### Ajouté
