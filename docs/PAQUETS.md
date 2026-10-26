@@ -3,7 +3,7 @@
 Un **paquet** est un dossier de fichiers Fadéra que d'autres personnes peuvent installer en une commande.
 Il n'y a ni nouveau mot-clé ni nouvelle fonction : un paquet s'utilise avec `importer`, comme n'importe quel module.
 
-> Les paquets s'installent avec la ligne de commande (`fadera`). Le terrain de jeu en ligne n'a pas de dossier de projet : il utilise les modules standard (`importer "std/maths"`) et les fichiers que vous y importez.
+> Les paquets s'installent soit avec la ligne de commande (`fadera`), soit **dans l'éditeur** (terrain de jeu) avec le menu **Applications → 📦 Paquets…** (voir plus bas).
 
 Les paquets déjà publiés sont listés dans [PAQUETS_CONNUS.md](PAQUETS_CONNUS.md).
 
@@ -43,6 +43,16 @@ afficher o.doubler(21)
 | `fadera paquet creer nom` | crée le squelette d'un nouveau paquet (code, tests, mode d'emploi) |
 
 Conseil : mettez `paquets/` dans votre `.gitignore` et gardez `fadera.json` ; chacun réinstalle avec `fadera paquet installer`.
+
+## Installer un paquet dans l'éditeur
+
+Dans le terrain de jeu : menu **Applications → 📦 Paquets…**.
+
+1. Tapez `utilisateur/depot` (ou `utilisateur/depot@version`), ou cliquez sur un paquet connu (`geometrie`, `notes`), puis **Installer**.
+2. Le paquet est copié dans `paquets/<nom>/` du dossier personnel de l'éditeur et noté dans `fadera.json`, exactement comme avec la ligne de commande.
+3. **Utiliser** ajoute la ligne `importer "paquets/<nom>/principal" comme <nom>` au script ouvert ; **Retirer** supprime le paquet.
+
+Dans l'éditeur, seules les sources GitHub (`utilisateur/depot[@version]`) et les adresses `https://` sont acceptées (pas de dossier local). Les règles de sécurité ci-dessous s'appliquent à l'identique : tout est téléchargé et vérifié avant la première écriture.
 
 ## Créer et partager un paquet
 

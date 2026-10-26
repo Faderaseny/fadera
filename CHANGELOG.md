@@ -5,6 +5,11 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et la nu
 
 ## [Non publié]
 
+## [0.7.2] — 2026-10-26
+
+### Ajouté
+- **Installer un paquet dans l'éditeur** : menu Applications → 📦 Paquets… (installer depuis GitHub ou une adresse https, utiliser, retirer ; paquets connus en un clic). Mêmes règles de sécurité que `fadera paquet`.
+
 ## [0.7.1] — 2026-10-26
 
 ### Ajouté

@@ -805,6 +805,19 @@
       .modal-btn.valider:hover {
         filter: brightness(1.1);
       }
+      .pq-aide { font-size: 12px; color: var(--text-dim); margin-bottom: 10px; line-height: 1.45; max-width: 460px; }
+      .pq-aide code { font-family: var(--mono); color: var(--text); }
+      .pq-avert { color: #e0b050; }
+      .pq-titre { font-size: 12px; font-weight: 600; margin: 4px 0 6px; color: var(--text); }
+      .pq-message { min-height: 18px; font-size: 12.5px; margin-bottom: 10px; max-width: 460px; word-break: break-word; }
+      .pq-message.ok { color: #6cc070; }
+      .pq-message.ko { color: #ff7b7b; }
+      .pq-connus { max-height: 120px; }
+      .pq-liste { margin-bottom: 14px; }
+      .pq-ligne { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+      .pq-ligne .pq-nom { flex: 1; font-family: var(--mono); font-size: 12.5px; color: var(--text); }
+      .pq-ligne small { color: var(--text-dim); }
+      .pq-vide { font-size: 12px; color: var(--text-dim); margin-bottom: 6px; }
       .modal-liste {
         display: flex;
         flex-direction: column;
@@ -1226,6 +1239,7 @@
           <div class="menu-sep"></div>
           <button onclick="exporterZip(false)" title="Tous les fichiers du dossier personnel dans une archive .zip">⬇ Exporter tous les projets (.zip)</button>
           <button onclick="exporterZip(true)" title="Seulement les onglets ouverts">⬇ Exporter les onglets ouverts (.zip)</button>
+          <button onclick="ouvrirPaquets()" title="Installer, utiliser ou retirer un paquet (bibliothèque publiée sur GitHub)">📦 Paquets…</button>
           <button onclick="importerFichiers()" title="Un .zip, ou un ou plusieurs fichiers .fa (glisser-déposer possible)">⬆ Importer (.zip ou .fa)</button>
           <button onclick="partagerLien()" title="Crée un lien qui contient les onglets ouverts : toute personne qui l'ouvre peut les copier chez elle">🔗 Partager (lien)</button>
           <div class="menu-sep"></div>
@@ -11268,6 +11282,235 @@ fin
         } else {
           enregistrerSous(projetActuel);
         }
+      }
+
+      // ---------- PAQUETS : installer / lister / retirer depuis l'IDE (mêmes règles que « fadera paquet ») ----------
+      // Un paquet est un dossier de fichiers Fadéra avec un fadera-paquet.json ; il est installé dans paquets/<nom>/
+      // (dossier personnel) et s'utilise avec : importer "paquets/<nom>/principal" comme <nom>
+      const PAQUETS_IDE = (() => {
+        const MANIFESTE = "fadera-paquet.json",
+          PROJET = "fadera.json",
+          DOSSIER = "paquets",
+          MAX_FICHIERS = 200,
+          MAX_OCTETS = 1000000,
+          EXTENSIONS = ["fa", "md", "txt", "json", "sortie"],
+          CONNUS = [
+            ["geometrie", "Faderaseny/geometrie", "Points, distances, aires et périmètres"],
+            ["notes", "Faderaseny/notes", "Calculs de notes et de moyennes"],
+          ];
+        const nomValide = (n) => typeof n === "string" && /^[a-z0-9_][a-z0-9_-]{0,39}$/.test(n);
+        function cheminValide(p) {
+          if (typeof p !== "string" || !p || p.length > 120 || /^[\\/]/.test(p) || /[:\\\0]/.test(p))
+            throw new Error("chemin de fichier refusé : « " + p + " ».");
+          for (const part of p.split("/"))
+            if (part === "" || part === "." || part === "..") throw new Error("chemin de fichier refusé : « " + p + " ».");
+          const ext = p.includes(".") ? p.split(".").pop() : "";
+          if (!EXTENSIONS.includes(ext))
+            throw new Error("« " + p + " » : seuls les fichiers " + EXTENSIONS.map((e) => "." + e).join(", ") + " sont acceptés dans un paquet.");
+        }
+        function lireManifeste(texte) {
+          let v;
+          try {
+            v = JSON.parse(texte);
+          } catch (e) {
+            throw new Error(MANIFESTE + " n'est pas du JSON valide.");
+          }
+          if (!v || typeof v !== "object" || Array.isArray(v) || typeof v.nom !== "string")
+            throw new Error(MANIFESTE + " : le champ \"nom\" est obligatoire.");
+          if (!nomValide(v.nom))
+            throw new Error("nom de paquet « " + v.nom + " » invalide : lettres minuscules sans accent, chiffres, _ et - seulement (40 signes au plus).");
+          const version = typeof v.version === "string" ? v.version : "0.0.0";
+          const principal = typeof v.principal === "string" ? v.principal : "principal.fa";
+          const fichiers = v.fichiers;
+          if (!Array.isArray(fichiers) || fichiers.length === 0)
+            throw new Error(MANIFESTE + " : la liste \"fichiers\" est vide ou absente.");
+          if (fichiers.length > MAX_FICHIERS) throw new Error(MANIFESTE + " : trop de fichiers (" + MAX_FICHIERS + " au plus).");
+          for (const f of fichiers) {
+            if (typeof f !== "string") throw new Error(MANIFESTE + " : \"fichiers\" doit contenir uniquement des noms de fichiers.");
+            cheminValide(f);
+          }
+          cheminValide(principal);
+          if (!fichiers.includes(principal))
+            throw new Error(MANIFESTE + " : le fichier principal « " + principal + " » n'est pas dans la liste \"fichiers\".");
+          return { nom: v.nom, version, principal, fichiers };
+        }
+        function analyserSource(s) {
+          s = String(s || "").trim();
+          if (/^https:\/\//i.test(s)) return s.replace(/\/+$/, "");
+          if (/^http:\/\//i.test(s)) throw new Error("seules les adresses https:// sont acceptées dans l'éditeur.");
+          const at = s.indexOf("@");
+          const depot = at < 0 ? s : s.slice(0, at),
+            version = at < 0 ? "main" : s.slice(at + 1);
+          const parts = depot.split("/");
+          const ok = (p) => /^[A-Za-z0-9._-]+$/.test(p);
+          if (parts.length === 2 && ok(parts[0]) && ok(parts[1]) && /^[A-Za-z0-9._\/-]+$/.test(version))
+            return "https://raw.githubusercontent.com/" + parts[0] + "/" + parts[1] + "/" + version;
+          throw new Error("source « " + s + " » non reconnue : attendu utilisateur/depot[@version] ou une adresse https://…");
+        }
+        async function telecharger(base, fichier) {
+          const url = base + "/" + fichier;
+          const ctl = typeof AbortController !== "undefined" ? new AbortController() : null;
+          const minuteur = ctl ? setTimeout(() => ctl.abort(), 20000) : null;
+          let rep;
+          try {
+            rep = await fetch(url, ctl ? { signal: ctl.signal } : undefined);
+          } catch (e) {
+            throw new Error("téléchargement impossible de " + url + " (" + (e && e.name === "AbortError" ? "délai dépassé" : "réseau ou autorisation du serveur") + ").");
+          } finally {
+            if (minuteur) clearTimeout(minuteur);
+          }
+          if (!rep.ok) throw new Error(url + " : le serveur a répondu " + rep.status + ".");
+          const texte = await rep.text();
+          if (texte.length > MAX_OCTETS) throw new Error("« " + fichier + " » dépasse " + MAX_OCTETS / 1000 + " Ko.");
+          return texte;
+        }
+        const racine = () => FadFS.HOME + "/" + DOSSIER;
+        function lireProjet() {
+          const p = FadFS.HOME + "/" + PROJET;
+          const n = FadFS.noeud(p);
+          if (!n || n.t !== "f") return {};
+          try {
+            const v = JSON.parse(n.c);
+            return v && v.dependances && typeof v.dependances === "object" ? v.dependances : {};
+          } catch (e) {
+            throw new Error(PROJET + " n'est pas du JSON valide : corrigez-le ou supprimez-le.");
+          }
+        }
+        function ecrireProjet(deps) {
+          FadFS.ecrire(FadFS.HOME + "/" + PROJET, JSON.stringify({ dependances: deps }, null, 2) + "\n", false);
+        }
+        // Tout est téléchargé et vérifié avant la première écriture.
+        async function installer(source) {
+          const base = analyserSource(source);
+          const texteMan = await telecharger(base, MANIFESTE);
+          const m = lireManifeste(texteMan);
+          const contenus = [];
+          for (const f of m.fichiers) contenus.push([f, await telecharger(base, f)]);
+          const deps = lireProjet();
+          const dest = racine() + "/" + m.nom;
+          if (FadFS.noeud(dest)) FadFS.supprimer(dest);
+          FadFS.mkdirP(dest);
+          for (const [f, c] of contenus) {
+            const abs = dest + "/" + f;
+            FadFS.mkdirP(abs.slice(0, abs.lastIndexOf("/")));
+            FadFS.ecrire(abs, c, false);
+          }
+          FadFS.ecrire(dest + "/" + MANIFESTE, texteMan, false);
+          deps[m.nom] = String(source).trim();
+          ecrireProjet(deps);
+          return { nom: m.nom, version: m.version, principal: m.principal, fichiers: contenus.length };
+        }
+        function lister() {
+          return FadFS.noms(racine())
+            .filter((n) => FadFS.noeud(racine() + "/" + n).t === "d")
+            .map((n) => {
+              let version = "?",
+                principal = "principal.fa";
+              try {
+                const m = lireManifeste(FadFS.lire(racine() + "/" + n + "/" + MANIFESTE));
+                version = m.version;
+                principal = m.principal;
+              } catch (e) {}
+              return { nom: n, version, principal };
+            });
+        }
+        function retirer(nom) {
+          if (!nomValide(nom)) throw new Error("nom de paquet « " + nom + " » invalide.");
+          const dest = racine() + "/" + nom;
+          const deps = lireProjet();
+          if (!FadFS.noeud(dest) && !(nom in deps)) throw new Error("le paquet « " + nom + " » n'est pas installé.");
+          if (FadFS.noeud(dest)) FadFS.supprimer(dest);
+          if (nom in deps) {
+            delete deps[nom];
+            ecrireProjet(deps);
+          }
+        }
+        const ligneImport = (p) => 'importer "' + DOSSIER + "/" + p.nom + "/" + p.principal.replace(/\.fa$/, "") + '" comme ' + p.nom.replace(/-/g, "_");
+        return { installer, lister, retirer, ligneImport, analyserSource, lireManifeste, nomValide, CONNUS, racine };
+      })();
+      window.PAQUETS_IDE = PAQUETS_IDE;
+
+      function ouvrirPaquets(message) {
+        const att = (s) => String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+        const installes = PAQUETS_IDE.lister();
+        const lignes = installes.length
+          ? installes
+              .map(
+                (p) =>
+                  `<div class="pq-ligne"><span class="pq-nom">📦 ${att(p.nom)} <small>${att(p.version)}</small></span>` +
+                  `<button class="modal-btn annuler" data-pq-inserer="${att(p.nom)}" title="Ajoute la ligne importer … dans le script">Utiliser</button>` +
+                  `<button class="modal-btn annuler" data-pq-retirer="${att(p.nom)}">Retirer</button></div>`,
+              )
+              .join("")
+          : '<div class="pq-vide">Aucun paquet installé.</div>';
+        const connus = PAQUETS_IDE.CONNUS.map(
+          (c) => `<button class="modal-item" data-pq-source="${att(c[1])}" title="${att(c[2])}">${att(c[0])} — ${att(c[2])}</button>`,
+        ).join("");
+        _annulerModalCourant = () => {};
+        ouvrirModal(
+          `<h3>📦 Paquets</h3>
+          <div class="pq-aide">Un paquet est une bibliothèque de fonctions Fadéra publiée sur GitHub. Entrez <code>utilisateur/depot</code> (ou <code>utilisateur/depot@version</code>).</div>
+          <input type="text" id="pqSource" placeholder="utilisateur/depot@version" autocomplete="off" />
+          <div class="pq-aide pq-avert">⚠ Un paquet est du code qui s'exécute dans votre éditeur : n'installez que des paquets dont vous avez confiance en l'auteur.</div>
+          <div id="pqMessage" class="pq-message${message ? " ok" : ""}" role="status">${message ? att(message) : ""}</div>
+          <div class="pq-titre">Paquets connus</div><div class="modal-liste pq-connus">${connus}</div>
+          <div class="pq-titre">Installés</div><div id="pqListe" class="pq-liste">${lignes}</div>
+          <div class="modal-actions"><button class="modal-btn annuler" id="pqFermer">Fermer</button><button class="modal-btn valider" id="pqInstaller">Installer</button></div>`,
+        );
+        const champ = document.getElementById("pqSource"),
+          msg = document.getElementById("pqMessage");
+        const dire = (t, ok) => {
+          msg.textContent = t;
+          msg.className = "pq-message " + (ok ? "ok" : "ko");
+        };
+        const installer = async () => {
+          const src = champ.value.trim();
+          if (!src) return dire("Entrez une source, par exemple Faderaseny/geometrie.", false);
+          const bouton = document.getElementById("pqInstaller");
+          bouton.disabled = true;
+          dire("Téléchargement…", true);
+          try {
+            const r = await PAQUETS_IDE.installer(src);
+            notifier("Paquet « " + r.nom + " » installé.", "succes");
+            ouvrirPaquets("✓ " + r.nom + " " + r.version + " installé (" + r.fichiers + " fichier(s)). Dans un programme : " + PAQUETS_IDE.ligneImport(r));
+          } catch (e) {
+            bouton.disabled = false;
+            dire("✘ " + e.message, false);
+          }
+        };
+        document.getElementById("pqInstaller").onclick = installer;
+        document.getElementById("pqFermer").onclick = fermerModal;
+        champ.onkeydown = (e) => {
+          if (e.key === "Enter") installer();
+          if (e.key === "Escape") fermerModal();
+        };
+        champ.focus();
+        document.querySelectorAll("[data-pq-source]").forEach((b) => {
+          b.onclick = () => {
+            champ.value = b.getAttribute("data-pq-source");
+            champ.focus();
+          };
+        });
+        document.querySelectorAll("[data-pq-retirer]").forEach((b) => {
+          b.onclick = () => {
+            try {
+              PAQUETS_IDE.retirer(b.getAttribute("data-pq-retirer"));
+              ouvrirPaquets("✓ Paquet retiré.");
+            } catch (e) {
+              dire("✘ " + e.message, false);
+            }
+          };
+        });
+        document.querySelectorAll("[data-pq-inserer]").forEach((b) => {
+          b.onclick = () => {
+            const p = installes.find((x) => x.nom === b.getAttribute("data-pq-inserer"));
+            if (!p) return;
+            fermerModal();
+            const z = document.getElementById("editeur");
+            insererTexte(z, PAQUETS_IDE.ligneImport(p) + "\n");
+            notifier("Ligne d'importation ajoutée.", "succes");
+          };
+        });
       }
 
       function ouvrirProjet() {

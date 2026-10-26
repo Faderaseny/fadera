@@ -287,6 +287,55 @@ const eq = (nom, obtenu, att) => {
   eq("partage annulé : rien d'écrit, lien effacé", await q3.evaluate(() => [!!FadFS.noeud(FadFS.HOME + "/partage"), location.hash]), [false, ""]);
   await ctx2.browser().close();
 
+  // ---------- paquets : installer / utiliser / retirer depuis l'IDE (faux serveur GitHub) ----------
+  const FAUX = {
+    "u/outils@v1/fadera-paquet.json": JSON.stringify({ nom: "outils", version: "1.2.0", principal: "principal.fa", fichiers: ["principal.fa", "aide.fa", "docs/LISEZMOI.md"] }),
+    "u/outils@v1/principal.fa": 'importer "aide" comme a\nfonction double_plus_un(x)\n  renvoyer a.double(x) + 1\nfin\n',
+    "u/outils@v1/aide.fa": "fonction double(x)\n  renvoyer x * 2\nfin\n",
+    "u/outils@v1/docs/LISEZMOI.md": "# outils\n",
+    "u/piege@main/fadera-paquet.json": JSON.stringify({ nom: "piege", fichiers: ["principal.fa", "../evil.fa"] }),
+    "u/piege@main/principal.fa": "afficher 1\n",
+    "u/mauvais@main/fadera-paquet.json": JSON.stringify({ nom: "Mauvais Nom", fichiers: ["principal.fa"] }),
+    "u/exe@main/fadera-paquet.json": JSON.stringify({ nom: "exe", fichiers: ["principal.fa", "virus.exe"] }),
+  };
+  // l'adresse GitHub brute est « utilisateur/depot/version/fichier »
+  for (const k of Object.keys(FAUX)) { const m = k.match(/^([^/]+)\/([^@/]+)@([^/]+)\/(.*)$/); FAUX[m[1] + "/" + m[2] + "/" + m[3] + "/" + m[4]] = FAUX[k]; delete FAUX[k]; }
+  await p.context().route("https://raw.githubusercontent.com/**", (route) => {
+    const cle = route.request().url().replace("https://raw.githubusercontent.com/", "");
+    const tete = { "access-control-allow-origin": "*" };
+    route.fulfill(cle in FAUX ? { status: 200, headers: tete, contentType: "text/plain", body: FAUX[cle] } : { status: 404, headers: tete, body: "absent" });
+  });
+  await p.evaluate(() => ouvrirPaquets());
+  eq("paquets : la fenêtre s'ouvre", await p.evaluate(() => document.getElementById("modalOverlay").classList.contains("ouvert") && !!document.getElementById("pqSource")), true);
+  eq("paquets : paquets connus proposés", await p.locator(".pq-connus .modal-item").count(), 2);
+  await p.fill("#pqSource", "u/outils@v1");
+  await p.click("#pqInstaller");
+  await p.waitForFunction(() => /outils 1\.2\.0 installé/.test(document.getElementById("pqMessage").textContent), null, { timeout: 8000 });
+  eq("paquets : installé, ligne d'importation proposée", await p.locator("#pqMessage").textContent(), /importer "paquets\/outils\/principal" comme outils/);
+  eq("paquets : fichiers écrits (sous-dossier compris)", await p.evaluate(() => ["principal.fa", "aide.fa", "docs/LISEZMOI.md", "fadera-paquet.json"].map((f) => !!FadFS.noeud(FadFS.HOME + "/paquets/outils/" + f))), [true, true, true, true]);
+  eq("paquets : fadera.json mis à jour", await p.evaluate(() => JSON.parse(FadFS.lire(FadFS.HOME + "/fadera.json"))), { dependances: { outils: "u/outils@v1" } });
+  eq("paquets : le paquet est listé", await p.locator("#pqListe .pq-nom").allTextContents(), [/outils/].map(() => "📦 outils 1.2.0"));
+  await p.click("[data-pq-inserer=outils]");
+  eq("paquets : « Utiliser » ajoute la ligne importer au script", (await val(p)).includes('importer "paquets/outils/principal" comme outils'), true);
+  await rempl(p, 'importer "paquets/outils/principal" comme outils\nafficher outils.double_plus_un(20)');
+  await p.evaluate(() => lancerCode());
+  await p.waitForTimeout(700);
+  eq("paquets : le programme utilise le paquet (import imbriqué compris)", await p.evaluate(() => /(^|\n)41(\n|$)/.test(document.getElementById("terminalContent").innerText)), true);
+  // refus : rien n'est écrit
+  for (const [src, motif] of [["u/piege", /chemin de fichier refusé/], ["u/mauvais", /nom de paquet .* invalide/], ["u/exe", /seuls les fichiers/], ["u/absent", /404/], ["http://exemple.org/x", /https/], ["n'importe quoi", /non reconnue/]]) {
+    await p.evaluate(() => ouvrirPaquets());
+    await p.fill("#pqSource", src);
+    await p.click("#pqInstaller");
+    await p.waitForFunction(() => /✘/.test(document.getElementById("pqMessage").textContent), null, { timeout: 8000 });
+    eq("paquets : refus de « " + src + " »", await p.locator("#pqMessage").textContent(), motif);
+  }
+  eq("paquets : aucun fichier écrit par les refus", await p.evaluate(() => [FadFS.noms(FadFS.HOME + "/paquets"), !!FadFS.noeud(FadFS.HOME + "/evil.fa")]), [["outils"], false]);
+  // retirer
+  await p.evaluate(() => ouvrirPaquets());
+  await p.click("[data-pq-retirer=outils]");
+  eq("paquets : retiré (dossier et fadera.json)", await p.evaluate(() => [!!FadFS.noeud(FadFS.HOME + "/paquets/outils"), JSON.parse(FadFS.lire(FadFS.HOME + "/fadera.json"))]), [false, { dependances: {} }]);
+  await p.evaluate(() => fermerModal());
+
   eq("aucune erreur JavaScript pendant tout le parcours", errs, []);
   await ctx.close();
   console.log("\n" + ok + " vérification(s) réussie(s), " + ko + " échouée(s).");
