@@ -1,0 +1,22 @@
+# Exercice 73 — Journal d'événements
+# Domaine : Fichiers · Niveau : ★★★
+# Énoncé :
+# Écrivez journaliser(message) qui ajoute une ligne « [n] message » à la fin du fichier « journal.log »
+# (n = numéro de la ligne). Appelez-la 3 fois puis affichez le fichier.
+# Corrigé :
+soit total = 0
+fonction journaliser(message)
+  total = total + 1
+  soit ancien = ""
+  essayer
+    ancien = lireFichier("journal.log")
+  attraper e
+    ancien = ""
+  fin
+  ecrireFichier("journal.log", ancien + "[" + total + "] " + message + "\n")
+fin
+
+journaliser("démarrage")
+journaliser("connexion de Awa")
+journaliser("arrêt")
+afficher lireFichier("journal.log")

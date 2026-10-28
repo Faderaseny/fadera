@@ -1,0 +1,11 @@
+# Exercice 33 — Doublons et fréquences
+# Domaine : Listes · Niveau : ★★
+# Énoncé :
+# Pour [3, 1, 3, 2, 1, 3, 4], affichez la liste sans doublons, puis combien de fois chaque valeur apparaît
+# (unique, liste_frequences ou compter).
+# Corrigé :
+soit l = [3, 1, 3, 2, 1, 3, 4]
+afficher unique(l)
+pour chaque v dans unique(l) faire
+  afficher v + " : " + compter(l, v) + " fois"
+fin

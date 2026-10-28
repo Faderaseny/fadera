@@ -1,0 +1,19 @@
+# Exercice 30 — Somme, minimum, maximum
+# Domaine : Listes · Niveau : ★
+# Énoncé :
+# Pour la liste [12, 7, 25, 3, 18], affichez la somme, le plus petit, le plus grand et la moyenne,
+# en parcourant la liste vous-même (sans stats_*).
+# Corrigé :
+soit valeurs = [12, 7, 25, 3, 18]
+soit total = 0
+soit petit = lireElement(valeurs, 0)
+soit grand = lireElement(valeurs, 0)
+pour chaque v dans valeurs faire
+  total = total + v
+  petit = minimum(petit, v)
+  grand = maximum(grand, v)
+fin
+afficher "Somme : " + total
+afficher "Minimum : " + petit
+afficher "Maximum : " + grand
+afficher "Moyenne : " + total / taille(valeurs)

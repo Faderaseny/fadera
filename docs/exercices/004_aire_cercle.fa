@@ -1,0 +1,9 @@
+# Exercice 4 — Surface et périmètre d'un cercle
+# Domaine : Bases · Niveau : ★
+# Énoncé :
+# Pour un rayon de 7, affichez le périmètre et l'aire d'un cercle arrondis à 2 décimales
+# (utilisez pi()).
+# Corrigé :
+soit r = 7
+afficher "Périmètre : " + arrondir(2 * pi() * r, 2)
+afficher "Aire : " + arrondir(pi() * r * r, 2)

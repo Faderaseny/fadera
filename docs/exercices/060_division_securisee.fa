@@ -1,0 +1,20 @@
+# Exercice 60 — Division sécurisée
+# Domaine : Erreurs · Niveau : ★★
+# Énoncé :
+# Écrivez diviser(a, b) qui déclenche une erreur claire (lever) si b vaut 0. Appelez-la avec (10, 2) puis (1, 0)
+# en rattrapant l'erreur avec essayer / attraper pour afficher son message.
+# Corrigé :
+fonction diviser(a, b)
+  si b == 0 alors
+    lever("Division par zéro impossible.")
+  fin
+  renvoyer a / b
+fin
+
+pour chaque couple dans [[10, 2], [1, 0]] faire
+  essayer
+    afficher "Résultat : " + diviser(lireElement(couple, 0), lireElement(couple, 1))
+  attraper erreur
+    afficher "Erreur : " + erreur
+  fin
+fin

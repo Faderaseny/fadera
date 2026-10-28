@@ -1,0 +1,13 @@
+# Exercice 22 — Le mot le plus long
+# Domaine : Texte · Niveau : ★★
+# Énoncé :
+# Trouvez le mot le plus long de « La programmation en français rend l'informatique accessible ».
+# Corrigé :
+soit mots = decouper("La programmation en français rend l'informatique accessible", " ")
+soit plus_long = ""
+pour chaque m dans mots faire
+  si taille(m) > taille(plus_long) alors
+    plus_long = m
+  fin
+fin
+afficher plus_long + " (" + taille(plus_long) + " lettres)"

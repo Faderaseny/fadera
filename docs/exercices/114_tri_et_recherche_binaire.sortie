@@ -1,0 +1,4 @@
+[3, 7, 19, 23, 42, 56, 88]
+Position de 19 : 2
+Position de 20 : -1
+Comparaisons pour un million d'éléments : 20

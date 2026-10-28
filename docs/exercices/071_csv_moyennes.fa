@@ -1,0 +1,16 @@
+# Exercice 71 — Moyenne par colonne dans un CSV
+# Domaine : Fichiers · Niveau : ★★★
+# Énoncé :
+# Le texte CSV ci-dessous contient des élèves et leurs notes (séparateur « ; »). Avec csv_lire,
+# calculez la moyenne de chaque matière et affichez l'élève qui a la meilleure moyenne générale.
+# Corrigé :
+soit brut = "nom;maths;francais\nAwa;15;12\nMoussa;9;14\nFatou;18;16"
+soit lignes = csv_lire(brut, ";")
+soit entete = lireElement(lignes, 0)
+soit donnees = tranche(lignes, 1, taille(lignes))
+pour c allantde 1 a 2 faire
+  soit colonne = transformer(donnees, l => nombre(lireElement(l, c)))
+  afficher lireElement(entete, c) + " : " + arrondir(stats_moyenne(colonne), 2)
+fin
+soit meilleur = trier_par(donnees, l => -(nombre(lireElement(l, 1)) + nombre(lireElement(l, 2))))
+afficher "Meilleure moyenne : " + lireElement(lireElement(meilleur, 0), 0)

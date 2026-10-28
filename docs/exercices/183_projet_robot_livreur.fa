@@ -1,0 +1,25 @@
+# Exercice 183 — Projet : un robot livreur
+# Domaine : Mini-projets · Niveau : ★★★
+# Énoncé :
+# Un robot doit livrer 3 colis à des adresses (x, y) d'une grille, en partant de (0, 0), en passant toujours
+# par le colis le plus proche (distance de Manhattan : |dx| + |dy|). Affichez l'ordre de livraison, la distance
+# parcourue et annoncez la fin de la tournée avec parler.
+# Corrigé :
+soit position = [0, 0]
+soit restants = [[4, 1], [1, 2], [5, 5]]
+soit distance_totale = 0
+
+fonction manhattan(a, b)
+  renvoyer absolu(lireElement(a, 0) - lireElement(b, 0)) + absolu(lireElement(a, 1) - lireElement(b, 1))
+fin
+
+tantque taille(restants) > 0 faire
+  soit proche = lireElement(trier_par(restants, p => manhattan(position, p)), 0)
+  soit d = manhattan(position, proche)
+  distance_totale = distance_totale + d
+  afficher "Livraison en (" + lireElement(proche, 0) + ", " + lireElement(proche, 1) + ") — " + d + " cases"
+  position = proche
+  restants = filtrer(restants, p => p != proche)
+fin
+afficher "Distance totale : " + distance_totale + " cases"
+parler("Tournée terminée, " + distance_totale + " cases parcourues.")

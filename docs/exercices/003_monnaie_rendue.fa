@@ -1,0 +1,16 @@
+# Exercice 3 — Rendre la monnaie
+# Domaine : Bases · Niveau : ★★
+# Énoncé :
+# Un client doit 3 650 FCFA et donne un billet de 10 000 FCFA. Calculez la monnaie à rendre
+# puis le nombre de billets de 5 000 et de 1 000 puis de pièces de 500, 100 et 50 nécessaires (le moins possible).
+# Indice : la division entière s'obtient avec plancher(a / b), le reste avec a % b.
+# Corrigé :
+soit a_rendre = 10000 - 3650
+afficher "Monnaie à rendre : " + a_rendre
+soit reste = a_rendre
+pour chaque valeur dans [5000, 1000, 500, 100, 50] faire
+  soit n = plancher(reste / valeur)
+  reste = reste % valeur
+  afficher n + " x " + valeur
+fin
+afficher "Reste non rendu : " + reste

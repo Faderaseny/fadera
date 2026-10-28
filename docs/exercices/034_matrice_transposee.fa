@@ -1,0 +1,22 @@
+# Exercice 34 — Matrice transposée
+# Domaine : Listes · Niveau : ★★★
+# Énoncé :
+# Une matrice est une liste de listes. Écrivez transposer(m) et affichez la transposée de [[1, 2, 3], [4, 5, 6]].
+# Corrigé :
+fonction transposer(m)
+  soit lignes = taille(m)
+  soit colonnes = taille(lireElement(m, 0))
+  soit resultat = []
+  pour c allantde 0 a colonnes - 1 faire
+    soit nouvelle = []
+    pour r allantde 0 a lignes - 1 faire
+      ajouter(nouvelle, lireElement(lireElement(m, r), c))
+    fin
+    ajouter(resultat, nouvelle)
+  fin
+  renvoyer resultat
+fin
+
+pour chaque ligne dans transposer([[1, 2, 3], [4, 5, 6]]) faire
+  afficher ligne
+fin

@@ -1,0 +1,15 @@
+# Exercice 131 — Le chemin le plus court
+# Domaine : Réseaux · Niveau : ★★★
+# Énoncé :
+# Construisez un réseau de 5 routeurs : A–B (4), A–C (1), C–B (2), B–D (5), C–D (8), D–E (3).
+# Trouvez avec telecom_dijkstra_routage l'itinéraire le moins coûteux de A à E et son coût.
+# Vérifiez aussi que le réseau est connexe.
+# Corrigé :
+soit reseau = telecom_creer_topologie()
+pour chaque l dans [["A", "B", 4], ["A", "C", 1], ["C", "B", 2], ["B", "D", 5], ["C", "D", 8], ["D", "E", 3]] faire
+  reseau = telecom_ajouter_liaison(reseau, { de: lireElement(l, 0), a: lireElement(l, 1), cout: lireElement(l, 2) })
+fin
+afficher "Réseau connexe ? " + telecom_verifier_connexite(reseau)
+soit chemin = telecom_dijkstra_routage(reseau, { depart: "A", arrivee: "E" })
+afficher "Itinéraire : " + joindre(lireCle(chemin, "itineraire"), " → ")
+afficher "Coût total : " + lireCle(chemin, "cout_total")

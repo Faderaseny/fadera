@@ -1,0 +1,11 @@
+# Exercice 92 — Statistiques d'une classe
+# Domaine : Mathématiques · Niveau : ★★
+# Énoncé :
+# Pour les notes [12, 15, 8, 20, 15, 9, 14], affichez la moyenne (2 décimales), la médiane, le mode
+# et l'écart-type (2 décimales) avec les fonctions stats_*.
+# Corrigé :
+soit notes = [12, 15, 8, 20, 15, 9, 14]
+afficher "Moyenne : " + arrondir(stats_moyenne(notes), 2)
+afficher "Médiane : " + stats_mediane(notes)
+afficher "Mode : " + stats_mode(notes)
+afficher "Écart-type : " + arrondir(stats_ecart_type(notes), 2)

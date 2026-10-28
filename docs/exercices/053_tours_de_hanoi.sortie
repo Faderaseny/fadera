@@ -1,0 +1,8 @@
+Disque 1 : A → C
+Disque 2 : A → B
+Disque 1 : C → B
+Disque 3 : A → C
+Disque 1 : B → A
+Disque 2 : B → C
+Disque 1 : A → C
+Total : 7 coups

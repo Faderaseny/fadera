@@ -1,0 +1,14 @@
+# Exercice 142 — Vérifier l'intégrité d'un message
+# Domaine : Chiffrement · Niveau : ★★★
+# Énoncé :
+# Deux services partagent la clé « cle-partagee ». L'un envoie un message et son HMAC-SHA256 ; l'autre
+# recalcule le HMAC pour savoir si le message a été modifié en route. Montrez les deux cas.
+# Corrigé :
+soit cle = "cle-partagee"
+soit message = "virement:5000:vers:Awa"
+soit signature = crypto_hmac_sha256(message, cle)
+fonction authentique(recu, signature_recue)
+  renvoyer crypto_hmac_sha256(recu, cle) == signature_recue
+fin
+afficher "Message intact : " + authentique(message, signature)
+afficher "Message modifié : " + authentique("virement:50000:vers:Awa", signature)

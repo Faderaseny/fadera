@@ -1,0 +1,28 @@
+# Exercice 112 — Tâches par priorité
+# Domaine : Modules standard · Niveau : ★★★
+# Énoncé :
+# Avec le tas de std/tas (tas_min), traitez des tâches { priorite, nom } dans l'ordre de priorité croissante
+# (1 = urgent). Le tas compare des nombres : poussez des paires [priorite, nom] sous forme de nombre
+# priorite × 100 + numéro d'ordre d'arrivée, et gardez les noms dans une structure.
+# Corrigé :
+importer "std/tas"
+
+soit taches = [
+  { priorite: 3, nom: "ranger le bureau" },
+  { priorite: 1, nom: "réparer le serveur" },
+  { priorite: 2, nom: "répondre aux courriels" },
+  { priorite: 1, nom: "sauvegarder la base" }
+]
+soit tas = tas_min()
+soit noms = {}
+soit ordre = 0
+pour chaque t dans taches faire
+  soit cle = t.priorite * 100 + ordre
+  modifierCle(noms, texte(cle), t.nom)
+  tas.pousser(cle)
+  ordre = ordre + 1
+fin
+tantque non tas.est_vide() faire
+  soit cle = tas.extraire()
+  afficher "P" + plancher(cle / 100) + " — " + lireCle(noms, texte(cle))
+fin

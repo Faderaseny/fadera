@@ -1,0 +1,12 @@
+# Exercice 94 — Aire sous une courbe
+# Domaine : Mathématiques · Niveau : ★★★
+# Énoncé :
+# Calculez l'intégrale de x² entre 0 et 3 (valeur exacte : 9) en construisant 31 valeurs espacées de 0,1
+# et en appelant math_integrale_trapeze. Arrondissez à 3 décimales.
+# Corrigé :
+soit valeurs = []
+pour i allantde 0 a 30 faire
+  soit x = i * 0.1
+  ajouter(valeurs, x * x)
+fin
+afficher arrondir(math_integrale_trapeze(valeurs, 0.1), 3)

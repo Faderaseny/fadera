@@ -1,0 +1,9 @@
+# Exercice 40 — Fiche d'élève
+# Domaine : Structures · Niveau : ★
+# Énoncé :
+# Créez une structure { nom, classe, notes } pour un élève, ajoutez la note 15 à ses notes,
+# puis affichez « Awa (3e A) : moyenne 13 » avec la moyenne calculée.
+# Corrigé :
+soit eleve = { nom: "Awa", classe: "3e A", notes: [12, 14, 13] }
+ajouter(lireCle(eleve, "notes"), 13)
+afficher lireCle(eleve, "nom") + " (" + lireCle(eleve, "classe") + ") : moyenne " + stats_moyenne(lireCle(eleve, "notes"))

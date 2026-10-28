@@ -1,0 +1,17 @@
+# Exercice 41 — Classement
+# Domaine : Structures · Niveau : ★★
+# Énoncé :
+# Voici des élèves { nom, note }. Triez-les du meilleur au moins bon (trier_par) et affichez
+# « 1. Fatou — 18 », « 2. Awa — 15 »… Indice : une clé négative inverse l'ordre.
+# Corrigé :
+soit eleves = [
+  { nom: "Awa", note: 15 },
+  { nom: "Moussa", note: 12 },
+  { nom: "Fatou", note: 18 },
+  { nom: "Ibrahima", note: 9 }
+]
+soit rang = 1
+pour chaque e dans trier_par(eleves, x => -lireCle(x, "note")) faire
+  afficher rang + ". " + lireCle(e, "nom") + " — " + lireCle(e, "note")
+  rang = rang + 1
+fin

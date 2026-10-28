@@ -1,0 +1,29 @@
+# Exercice 182 — Projet : un petit assistant à questions
+# Domaine : Mini-projets · Niveau : ★★★
+# Énoncé :
+# Écrivez repondre(question) : l'assistant met la question en minuscules sans accents, cherche des mots-clés
+# (contient) dans une liste de règles { mots, reponse } et répond « Je n'ai pas compris » sinon.
+# Testez-le sur 4 questions et faites lire les réponses à voix haute.
+# Corrigé :
+soit regles = [
+  { mot: "horaire", reponse: "Nous ouvrons de 8h à 18h." },
+  { mot: "prix", reponse: "Les prix sont affichés à l'entrée." },
+  { mot: "adresse", reponse: "Nous sommes au marché central." }
+]
+
+fonction repondre(question)
+  soit q = minuscule(texte_sans_accents(question))
+  pour chaque r dans regles faire
+    si contient(q, r.mot) alors
+      renvoyer r.reponse
+    fin
+  fin
+  renvoyer "Je n'ai pas compris."
+fin
+
+pour chaque q dans ["Quels sont vos horaires ?", "Quel est le PRIX du riz ?", "Quelle est votre adresse ?", "Vendez-vous du poisson ?"] faire
+  soit reponse = repondre(q)
+  afficher "Q : " + q
+  afficher "R : " + reponse
+  parler(reponse)
+fin

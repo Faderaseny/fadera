@@ -1,0 +1,24 @@
+# Exercice 61 — Valider un âge
+# Domaine : Erreurs · Niveau : ★★
+# Énoncé :
+# Écrivez lire_age(texte_saisi) : le texte doit représenter un nombre entier entre 0 et 120 (est_nombre).
+# Elle renvoie l'âge ou lève une erreur explicite. Testez-la sur « 25 », « abc », « -4 » et « 130 ».
+# Corrigé :
+fonction lire_age(t)
+  si non est_nombre(t) alors
+    lever("« " + t + " » n'est pas un nombre.")
+  fin
+  soit n = nombre(t)
+  si n < 0 ou n > 120 alors
+    lever(n + " n'est pas un âge réaliste.")
+  fin
+  renvoyer entier(n)
+fin
+
+pour chaque saisie dans ["25", "abc", "-4", "130"] faire
+  essayer
+    afficher "Âge valide : " + lire_age(saisie)
+  attraper e
+    afficher "Refusé : " + e
+  fin
+fin

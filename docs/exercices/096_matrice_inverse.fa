@@ -1,0 +1,20 @@
+# Exercice 96 — Inverser une matrice
+# Domaine : Mathématiques · Niveau : ★★★
+# Énoncé :
+# Calculez l'inverse de [[1, 2], [3, 4]] avec inverser_matrice, puis vérifiez en multipliant
+# la matrice par son inverse à la main (on doit retrouver la matrice identité).
+# Corrigé :
+soit m = [[1, 2], [3, 4]]
+soit inv = inverser_matrice(m)
+afficher inv
+pour i allantde 0 a 1 faire
+  soit ligne = []
+  pour j allantde 0 a 1 faire
+    soit somme_produits = 0
+    pour k allantde 0 a 1 faire
+      somme_produits = somme_produits + lireElement(lireElement(m, i), k) * lireElement(lireElement(inv, k), j)
+    fin
+    ajouter(ligne, arrondir(somme_produits, 6))
+  fin
+  afficher ligne
+fin

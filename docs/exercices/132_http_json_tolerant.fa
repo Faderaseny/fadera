@@ -1,0 +1,14 @@
+# Exercice 132 — Interroger une API sans planter
+# Domaine : Réseaux · Niveau : ★★★
+# Énoncé :
+# Interrogez l'adresse https://api.github.com/repos/Faderaseny/fadera avec http_json et affichez le nom et
+# la description du dépôt (json_chemin). Si le réseau est coupé, le programme doit afficher un message
+# poli au lieu de s'arrêter (essayer / attraper).
+# Corrigé :
+essayer
+  soit depot = http_json("https://api.github.com/repos/Faderaseny/fadera")
+  afficher "Dépôt : " + json_chemin(depot, "name", "?")
+  afficher "Description : " + json_chemin(depot, "description", "(aucune)")
+attraper e
+  afficher "Réseau indisponible pour le moment."
+fin

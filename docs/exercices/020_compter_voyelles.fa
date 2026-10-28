@@ -1,0 +1,13 @@
+# Exercice 20 — Compter les voyelles
+# Domaine : Texte · Niveau : ★★
+# Énoncé :
+# Comptez les voyelles (a, e, i, o, u, y) dans « Programmer en français est un plaisir ».
+# Corrigé :
+soit phrase = minuscule("Programmer en français est un plaisir")
+soit n = 0
+pour i allantde 0 a taille(phrase) - 1 faire
+  si contient("aeiouy", caractere(phrase, i)) alors
+    n = n + 1
+  fin
+fin
+afficher "Voyelles : " + n

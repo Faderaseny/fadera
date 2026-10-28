@@ -1,0 +1,14 @@
+# Exercice 93 — Prévoir avec une droite
+# Domaine : Mathématiques · Niveau : ★★★
+# Énoncé :
+# Les ventes d'une boutique sur 5 mois sont [100, 120, 138, 161, 180]. Avec stats_regression_lineaire,
+# affichez la droite obtenue puis prévoyez les ventes du mois 6. Affichez aussi le coefficient de corrélation.
+# Corrigé :
+soit mois = [1, 2, 3, 4, 5]
+soit ventes = [100, 120, 138, 161, 180]
+soit r = stats_regression_lineaire(mois, ventes)
+afficher r
+soit pente = lireCle(r, "pente")
+soit ordonnee = lireCle(r, "ordonnee_origine")
+afficher "Prévision du mois 6 : " + arrondir(pente * 6 + ordonnee, 1)
+afficher "Corrélation : " + arrondir(stats_pearson_correlation(mois, ventes), 3)

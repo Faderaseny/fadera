@@ -2,14 +2,16 @@
 // et sur le moteur Rust, et que ce résultat correspond au fichier .sortie voisin.
 //   node docs/verifier_exemples.js            vérifie
 //   node docs/verifier_exemples.js --ecrire   (re)génère les fichiers .sortie
+//   node docs/verifier_exemples.js exercices   vérifie docs/exercices/ à la place de docs/exemples/ (mêmes règles)
 // Variables : FADERA_BIN = chemin de l'exécutable Rust (défaut : fadera-rs/target/release/fadera)
 const fs = require("fs"), cp = require("child_process"), os = require("os"), path = require("path");
 const RACINE = path.join(__dirname, "..");
 const BIN = process.env.FADERA_BIN || path.join(RACINE, "fadera-rs/target/release/fadera");
-const DOSSIER = path.join(__dirname, "exemples");
+const NOM_DOSSIER = process.argv.slice(2).find(a => !a.startsWith("--")) || "exemples";
+const DOSSIER = path.join(__dirname, NOM_DOSSIER);
 const ecrire = process.argv.includes("--ecrire");
 // Exemples qui dépendent du réseau : pas de sortie de référence figée, résultat variable selon la connexion.
-const RESEAU = new Set(["24_meteo_http_json.fa", "25_verificateur_sites.fa"]);
+const RESEAU = new Set(["24_meteo_http_json.fa", "25_verificateur_sites.fa", "132_http_json_tolerant.fa", "152_xor_reseau_neurones.fa"]);
 
 const html = fs.readFileSync(path.join(RACINE, "index.html"), "utf8");
 const a = html.indexOf("      const TYPE = {"), b = html.indexOf("      // ---------- MODALE / TOAST");
@@ -51,10 +53,14 @@ process.env.TZ = "UTC";
     if (probleme) ko++;
   }
   // les blocs « tester » de l'exemple 29 ne tournent que via « fadera tester »
-  const t = cp.spawnSync(BIN, ["tester", path.join(DOSSIER, "29_tests_integres.fa")], { encoding: "utf8" });
-  const ok = t.status === 0 && /4 réussi\(s\), 0 échoué/.test(t.stdout);
-  console.log((ok ? "✓ " : "✗ ") + "29_tests_integres.fa (fadera tester)" + (ok ? "" : "  — " + t.stdout + t.stderr));
-  if (!ok) ko++;
-  console.log(ko ? `\n${ko} exemple(s) en échec sur ${n}.` : `\n✓ ${n} exemples identiques sur les deux moteurs.`);
+  // les blocs « tester » ne tournent que via « fadera tester » : on lance ceux des fichiers qui en contiennent
+  for (const f of fs.readdirSync(DOSSIER).filter(x => x.endsWith(".fa")).sort()) {
+    if (!/^tester "/m.test(fs.readFileSync(path.join(DOSSIER, f), "utf8"))) continue;
+    const t = cp.spawnSync(BIN, ["tester", path.join(DOSSIER, f)], { encoding: "utf8" });
+    const ok = t.status === 0 && /0 échoué/.test(t.stdout);
+    console.log((ok ? "✓ " : "✗ ") + f + " (fadera tester)" + (ok ? "" : "  — " + t.stdout + t.stderr));
+    if (!ok) ko++;
+  }
+  console.log(ko ? `\n${ko} fichier(s) en échec sur ${n}.` : `\n✓ ${n} programmes identiques sur les deux moteurs (${NOM_DOSSIER}).`);
   process.exit(ko ? 1 : 0);
 })();

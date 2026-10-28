@@ -1,0 +1,13 @@
+# Exercice 95 — Résoudre un système d'équations
+# Domaine : Mathématiques · Niveau : ★★★
+# Énoncé :
+# Deux cahiers et un stylo coûtent 5 (en centaines de FCFA) ; un cahier coûte 1 de plus qu'un stylo.
+# Avec x = prix d'un cahier et y = prix d'un stylo, résolvez 2x + y = 5 et x − y = 1 avec
+# math_resoudre_systeme_gauss, puis vérifiez la solution en la remplaçant dans les deux équations.
+# Corrigé :
+soit solution = math_resoudre_systeme_gauss([[2, 1, 5], [1, -1, 1]])
+soit x = lireElement(solution, 0)
+soit y = lireElement(solution, 1)
+afficher "x = " + x + ", y = " + y
+afficher "2x + y = " + (2 * x + y)
+afficher "x − y = " + (x - y)

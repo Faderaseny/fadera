@@ -1,0 +1,20 @@
+# Exercice 90 — Équation du second degré
+# Domaine : Mathématiques · Niveau : ★★
+# Énoncé :
+# Résolvez x² − 5x + 6 = 0 avec le discriminant (racine), puis vérifiez avec math_resoudre_second_degre.
+# Corrigé :
+soit a = 1
+soit b = -5
+soit c = 6
+soit delta = b * b - 4 * a * c
+afficher "Discriminant : " + delta
+si delta > 0 alors
+  soit x1 = (-b - racine(delta)) / (2 * a)
+  soit x2 = (-b + racine(delta)) / (2 * a)
+  afficher "Solutions : " + x1 + " et " + x2
+sinon si delta == 0 alors
+  afficher "Solution double : " + (-b / (2 * a))
+sinon
+  afficher "Pas de solution réelle"
+fin
+afficher math_resoudre_second_degre(a, b, c)

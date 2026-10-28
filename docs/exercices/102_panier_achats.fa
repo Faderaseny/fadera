@@ -1,0 +1,44 @@
+# Exercice 102 — Un panier d'achats
+# Domaine : Classes · Niveau : ★★★
+# Énoncé :
+# Écrivez une classe Panier avec ajouter_article(nom, prix, quantite), total() et une méthode qui affiche
+# le ticket de caisse. Une quantité négative ou nulle doit déclencher une erreur. Testez avec deux articles
+# puis un article invalide (rattrapé avec essayer).
+# Corrigé :
+classe Panier
+  fonction creer()
+    soi.articles = []
+  fin
+
+  fonction ajouter_article(nom, prix, quantite)
+    si quantite <= 0 alors
+      lever("Quantité invalide pour " + nom)
+    fin
+    ajouter(soi.articles, { nom: nom, prix: prix, quantite: quantite })
+  fin
+
+  fonction total()
+    soit t = 0
+    pour chaque a dans soi.articles faire
+      t = t + a.prix * a.quantite
+    fin
+    renvoyer t
+  fin
+
+  fonction ticket()
+    pour chaque a dans soi.articles faire
+      afficher texte_remplir_droite(a.nom, 10, " ") + texte_remplir_gauche(texte(a.quantite), 3, " ") + " x " + a.prix
+    fin
+    afficher "TOTAL : " + soi.total() + " FCFA"
+  fin
+fin
+
+soit p = Panier()
+p.ajouter_article("riz", 650, 2)
+p.ajouter_article("huile", 1800, 1)
+essayer
+  p.ajouter_article("sucre", 700, 0)
+attraper e
+  afficher "Refusé : " + e
+fin
+p.ticket()

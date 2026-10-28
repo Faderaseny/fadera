@@ -1,0 +1,15 @@
+# Exercice 141 — Chiffrer et déchiffrer
+# Domaine : Chiffrement · Niveau : ★★
+# Énoncé :
+# Chiffrez le message « Rendez-vous à 18h » avec un mot de passe, vérifiez que le texte chiffré est différent
+# du message, puis déchiffrez-le avec le bon mot de passe. Que se passe-t-il avec un mauvais mot de passe ?
+# Corrigé :
+soit message = "Rendez-vous à 18h"
+soit secret = chiffrer(message, "baobab")
+afficher "Différent du message ? " + (secret != message)
+afficher "Déchiffré : " + dechiffrer(secret, "baobab")
+essayer
+  afficher "Avec un mauvais mot de passe : " + dechiffrer(secret, "mauvais")
+attraper e
+  afficher "Déchiffrement refusé avec un mauvais mot de passe."
+fin

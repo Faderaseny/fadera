@@ -1,0 +1,18 @@
+# Exercice 171 — Feu tricolore
+# Domaine : Jeux et simulations · Niveau : ★★
+# Énoncé :
+# Simulez un feu qui passe de vert (4 s) à orange (1 s) puis rouge (3 s), en boucle, pendant 16 secondes.
+# Affichez la couleur à chaque seconde sous la forme « t=0 vert ».
+# Corrigé :
+soit couleurs = ["vert", "orange", "rouge"]
+soit durees = [4, 1, 3]
+soit etat = 0
+soit reste = lireElement(durees, 0)
+pour t allantde 0 a 15 faire
+  afficher "t=" + t + " " + lireElement(couleurs, etat)
+  reste = reste - 1
+  si reste == 0 alors
+    etat = modulo(etat + 1, 3)
+    reste = lireElement(durees, etat)
+  fin
+fin

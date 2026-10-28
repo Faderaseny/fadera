@@ -1,0 +1,10 @@
+# Exercice 130 — Plan d'adressage IP
+# Domaine : Réseaux · Niveau : ★★
+# Énoncé :
+# Un réseau 192.168.10.0/24 doit être découpé : calculez, pour 192.168.10.0/26, 192.168.10.64/26 et 192.168.10.128/25,
+# l'adresse de diffusion et le nombre d'hôtes utilisables (telecom_calculer_sous_reseau).
+# Corrigé :
+pour chaque cidr dans [["192.168.10.0", 26], ["192.168.10.64", 26], ["192.168.10.128", 25]] faire
+  soit r = telecom_calculer_sous_reseau(lireElement(cidr, 0), lireElement(cidr, 1))
+  afficher lireElement(cidr, 0) + "/" + lireElement(cidr, 1) + " : diffusion " + lireCle(r, "adresse_diffusion_broadcast") + ", " + lireCle(r, "nombre_hotes_utilisables") + " hôtes"
+fin

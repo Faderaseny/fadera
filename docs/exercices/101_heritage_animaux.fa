@@ -1,0 +1,37 @@
+# Exercice 101 — Héritage et polymorphisme
+# Domaine : Classes · Niveau : ★★★
+# Énoncé :
+# Écrivez une classe Animal (nom) avec la méthode parler() qui renvoie « … », puis Chien et Chat qui en héritent
+# et redéfinissent parler(). Parcourez une liste mixte et affichez « Rex : Ouaf », « Mina : Miaou »…
+# Affichez aussi la classe de chaque objet (classe_de) et si c'est un Animal (est_instance).
+# Corrigé :
+classe Animal
+  fonction creer(nom)
+    soi.nom = nom
+  fin
+  fonction parler()
+    renvoyer "…"
+  fin
+fin
+
+classe Chien herite Animal
+  fonction creer(nom)
+    soi.nom = nom
+  fin
+  fonction parler()
+    renvoyer "Ouaf"
+  fin
+fin
+
+classe Chat herite Animal
+  fonction creer(nom)
+    soi.nom = nom
+  fin
+  fonction parler()
+    renvoyer "Miaou"
+  fin
+fin
+
+pour chaque a dans [Chien("Rex"), Chat("Mina"), Animal("Inconnu")] faire
+  afficher a.nom + " (" + classe_de(a) + ") : " + a.parler() + " — animal ? " + est_instance(a, "Animal")
+fin

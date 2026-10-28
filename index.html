@@ -202,16 +202,24 @@
         font-size: 13px;
       }
 
+      .tb-menu {
+        position: relative;
+        height: 100%;
+        display: flex;
+        align-items: center;
+      }
       .menu-deroulant {
         position: absolute;
-        top: 34px;
-        left: 6px;
+        top: calc(100% + 2px);
+        left: 0;
+        z-index: 50;
+        max-height: calc(100vh - 70px);
+        overflow-y: auto;
         background: var(--panel-2);
         border: 1px solid var(--border);
         border-radius: 8px;
-        min-width: 210px;
+        min-width: 270px;
         box-shadow: 0 12px 30px #00000066;
-        overflow: hidden;
         display: none;
         flex-direction: column;
         padding: 6px;
@@ -228,6 +236,7 @@
         border-radius: 6px;
         color: var(--text);
         font-size: 13.5px;
+        white-space: nowrap;
         cursor: pointer;
       }
       .menu-deroulant button:hover {
@@ -1275,7 +1284,7 @@
     <div id="boot">
       <div class="logo-boot"><img class="logo-img" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 256 256%22%3E%3Crect width=%22256%22 height=%22256%22 rx=%2256%22 fill=%22%230f1b33%22/%3E%3Cpath d=%22M86 204V70a14 14 0 0 1 14-14h92M86 130h74%22 fill=%22none%22 stroke=%22%23f2a93b%22 stroke-width=%2226%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3Crect x=%22176%22 y=%22164%22 width=%2240%22 height=%2240%22 rx=%228%22 fill=%22%23fff%22/%3E%3C/svg%3E" alt="Fadéra" width="96" height="96" /></div>
       <div class="barre-charge"></div>
-      <div class="texte-boot" id="texteBoot">Démarrage de Fadéra v0.7.5…</div>
+      <div class="texte-boot" id="texteBoot">Démarrage de Fadéra v0.7.6…</div>
     </div>
 
     <div class="topbar">
@@ -1298,30 +1307,39 @@
           >
         </span>
 
-        <div class="tb-item" id="btnAppsMenu" onclick="basculerMenu(event)">
-          Applications ▾
+        <div class="tb-menu">
+          <div class="tb-item" id="btnFichierMenu" onclick="basculerMenu(event, 'menuFichier', 'btnFichierMenu')">
+            Fichier ▾
+          </div>
+          <div class="menu-deroulant" id="menuFichier">
+            <button onclick="nouveauProjet()" title="Ctrl+Alt+N">📄 Nouveau fichier</button>
+            <button onclick="enregistrerProjet()" title="Ctrl+S">💾 Enregistrer</button>
+            <button onclick="enregistrerProjetSous()" title="Ctrl+Maj+S">📝 Enregistrer sous…</button>
+            <button onclick="ouvrirProjet()">📂 Ouvrir un projet</button>
+            <button onclick="supprimerProjet()">🗑️ Supprimer un projet</button>
+            <div class="menu-sep"></div>
+            <button onclick="importerFichiers()" title="Un .zip, ou un ou plusieurs fichiers .fa (glisser-déposer possible)">⬆ Importer (.zip ou .fa)</button>
+            <button onclick="exporterZip(false)" title="Tous les fichiers du dossier personnel dans une archive .zip">⬇ Exporter tous les projets (.zip)</button>
+            <button onclick="exporterZip(true)" title="Seulement les onglets ouverts">⬇ Exporter les onglets ouverts (.zip)</button>
+            <button onclick="partagerLien()" title="Crée un lien qui contient les onglets ouverts : toute personne qui l'ouvre peut les copier chez elle">🔗 Partager (lien)</button>
+          </div>
         </div>
-        <div class="menu-deroulant" id="menuApps">
-          <button onclick="nouveauProjet()" title="Ctrl+Alt+N">📄 Nouveau fichier</button>
-          <button onclick="enregistrerProjet()" title="Ctrl+S">💾 Enregistrer</button>
-          <button onclick="enregistrerProjetSous()" title="Ctrl+Maj+S">📝 Enregistrer sous…</button>
-          <button onclick="ouvrirProjet()">📂 Ouvrir un projet</button>
-          <button onclick="supprimerProjet()">🗑️ Supprimer un projet</button>
-          <div class="menu-sep"></div>
-          <button onclick="lancerCode()">▶ Exécuter le script</button>
-          <button onclick="deboguerCode()">⏸ Déboguer le script (pas à pas)</button>
-          <button onclick="testerCode()" title='Lance les blocs tester "nom" … fin du script'>🧪 Lancer les tests du script</button>
-          <button onclick="formaterEditeur()" title="Remet le code en forme avec le formateur du langage (Maj+Alt+F)">✨ Formater le script</button>
-          <button onclick="ouvrirRecherche(false)" title="Ctrl+F">🔎 Rechercher</button>
-          <button onclick="ouvrirRecherche(true)" title="Ctrl+H">🔁 Rechercher et remplacer</button>
-          <div class="menu-sep"></div>
-          <button onclick="exporterZip(false)" title="Tous les fichiers du dossier personnel dans une archive .zip">⬇ Exporter tous les projets (.zip)</button>
-          <button onclick="exporterZip(true)" title="Seulement les onglets ouverts">⬇ Exporter les onglets ouverts (.zip)</button>
-          <button onclick="ouvrirPaquets()" title="Installer, utiliser ou retirer un paquet (bibliothèque publiée sur GitHub)">📦 Paquets…</button>
-          <button onclick="importerFichiers()" title="Un .zip, ou un ou plusieurs fichiers .fa (glisser-déposer possible)">⬆ Importer (.zip ou .fa)</button>
-          <button onclick="partagerLien()" title="Crée un lien qui contient les onglets ouverts : toute personne qui l'ouvre peut les copier chez elle">🔗 Partager (lien)</button>
-          <div class="menu-sep"></div>
-          <button onclick="testerBibliotheque()" title='Lance les tests de tous les modules std/… (pile, file, dictionnaire, ensemble, tas, tri, json, regex, dates, maths…)'>📚 Tests de la bibliothèque standard</button>
+        <div class="tb-menu">
+          <div class="tb-item" id="btnAppsMenu" onclick="basculerMenu(event, 'menuApps', 'btnAppsMenu')">
+            Applications ▾
+          </div>
+          <div class="menu-deroulant" id="menuApps">
+            <button onclick="lancerCode()">▶ Exécuter le script</button>
+            <button onclick="deboguerCode()">⏸ Déboguer le script (pas à pas)</button>
+            <button onclick="testerCode()" title='Lance les blocs tester "nom" … fin du script'>🧪 Lancer les tests du script</button>
+            <button onclick="formaterEditeur()" title="Remet le code en forme avec le formateur du langage (Maj+Alt+F)">✨ Formater le script</button>
+            <div class="menu-sep"></div>
+            <button onclick="ouvrirRecherche(false)" title="Ctrl+F">🔎 Rechercher</button>
+            <button onclick="ouvrirRecherche(true)" title="Ctrl+H">🔁 Rechercher et remplacer</button>
+            <div class="menu-sep"></div>
+            <button onclick="ouvrirPaquets()" title="Installer, utiliser ou retirer un paquet (bibliothèque publiée sur GitHub)">📦 Paquets…</button>
+            <button onclick="testerBibliotheque()" title='Lance les tests de tous les modules std/… (pile, file, dictionnaire, ensemble, tas, tri, json, regex, dates, maths…)'>📚 Tests de la bibliothèque standard</button>
+          </div>
         </div>
         <div class="tb-item">Éditeur.fa</div>
       </div>
@@ -2801,15 +2819,25 @@ fin</textarea
         }
       }
 
-      function basculerMenu(e) {
-        e.stopPropagation();
-        document.getElementById("menuApps").classList.toggle("ouvert");
-        document.getElementById("btnAppsMenu").classList.toggle("actif");
+      const MENUS_BARRE = [["menuFichier", "btnFichierMenu"], ["menuApps", "btnAppsMenu"]];
+      function fermerMenusBarre() {
+        for (const [m, b] of MENUS_BARRE) {
+          document.getElementById(m).classList.remove("ouvert");
+          document.getElementById(b).classList.remove("actif");
+        }
       }
-      document.addEventListener("click", () => {
-        document.getElementById("menuApps").classList.remove("ouvert");
-        document.getElementById("btnAppsMenu").classList.remove("actif");
-      });
+      function basculerMenu(e, menu, bouton) {
+        e.stopPropagation();
+        menu = menu || "menuApps";
+        bouton = bouton || "btnAppsMenu";
+        const etaitOuvert = document.getElementById(menu).classList.contains("ouvert");
+        fermerMenusBarre();
+        if (!etaitOuvert) {
+          document.getElementById(menu).classList.add("ouvert");
+          document.getElementById(bouton).classList.add("actif");
+        }
+      }
+      document.addEventListener("click", fermerMenusBarre);
 
       // ==========================================
       // MOTEUR FADÉRA (partagé avec la version console fadera.exe)
@@ -11689,7 +11717,7 @@ fin
       // Version de Fadéra affichée à l'écran de démarrage et ici : elle doit être la même que fadera-rs/Cargo.toml
       // (le test verifier_ide.js le vérifie ; à changer à chaque nouvelle version avec le texte de #texteBoot).
       const LOGO_FADERA = "data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 256 256%22%3E%3Crect width=%22256%22 height=%22256%22 rx=%2256%22 fill=%22%230f1b33%22/%3E%3Cpath d=%22M86 204V70a14 14 0 0 1 14-14h92M86 130h74%22 fill=%22none%22 stroke=%22%23f2a93b%22 stroke-width=%2226%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3Crect x=%22176%22 y=%22164%22 width=%2240%22 height=%2240%22 rx=%228%22 fill=%22%23fff%22/%3E%3C/svg%3E";
-      const VERSION_FADERA = "0.7.5";
+      const VERSION_FADERA = "0.7.6";
       window.VERSION_FADERA = VERSION_FADERA;
       function afficherInfoVersion() {
         ecrireTerminal(

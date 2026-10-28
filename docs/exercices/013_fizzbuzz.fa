@@ -1,0 +1,17 @@
+# Exercice 13 — FizzBuzz
+# Domaine : Décisions et boucles · Niveau : ★★
+# Énoncé :
+# De 1 à 15 : affichez « Fizz » pour les multiples de 3, « Buzz » pour les multiples de 5,
+# « FizzBuzz » pour les multiples des deux, sinon le nombre.
+# Corrigé :
+pour n allantde 1 a 15 faire
+  si n % 15 == 0 alors
+    afficher "FizzBuzz"
+  sinon si n % 3 == 0 alors
+    afficher "Fizz"
+  sinon si n % 5 == 0 alors
+    afficher "Buzz"
+  sinon
+    afficher n
+  fin
+fin

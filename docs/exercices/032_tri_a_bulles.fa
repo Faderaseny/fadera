@@ -1,0 +1,18 @@
+# Exercice 32 — Tri à bulles
+# Domaine : Listes · Niveau : ★★★
+# Énoncé :
+# Triez [64, 34, 25, 12, 22, 11, 90] par ordre croissant avec l'algorithme du tri à bulles
+# (sans la fonction trier). Affichez la liste obtenue.
+# Corrigé :
+soit l = [64, 34, 25, 12, 22, 11, 90]
+soit n = taille(l)
+pour i allantde 0 a n - 2 faire
+  pour j allantde 0 a n - 2 - i faire
+    si lireElement(l, j) > lireElement(l, j + 1) alors
+      soit temp = lireElement(l, j)
+      modifierElement(l, j, lireElement(l, j + 1))
+      modifierElement(l, j + 1, temp)
+    fin
+  fin
+fin
+afficher l

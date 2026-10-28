@@ -1,0 +1,28 @@
+# Exercice 100 — Une classe Rectangle
+# Domaine : Classes · Niveau : ★★
+# Énoncé :
+# Écrivez une classe Rectangle (largeur, hauteur) avec les méthodes aire(), perimetre() et est_carre().
+# Créez deux rectangles (3×4 et 5×5) et affichez leurs propriétés.
+# Corrigé :
+classe Rectangle
+  fonction creer(largeur, hauteur)
+    soi.largeur = largeur
+    soi.hauteur = hauteur
+  fin
+
+  fonction aire()
+    renvoyer soi.largeur * soi.hauteur
+  fin
+
+  fonction perimetre()
+    renvoyer 2 * (soi.largeur + soi.hauteur)
+  fin
+
+  fonction est_carre()
+    renvoyer soi.largeur == soi.hauteur
+  fin
+fin
+
+pour chaque r dans [Rectangle(3, 4), Rectangle(5, 5)] faire
+  afficher r.largeur + "×" + r.hauteur + " : aire " + r.aire() + ", périmètre " + r.perimetre() + ", carré ? " + r.est_carre()
+fin

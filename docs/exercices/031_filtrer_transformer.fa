@@ -1,0 +1,10 @@
+# Exercice 31 — Filtrer et transformer
+# Domaine : Listes · Niveau : ★★
+# Énoncé :
+# Avec filtrer et transformer : à partir de plage(1, 10), gardez les nombres pairs puis élevez-les au carré.
+# Affichez ensuite leur somme avec reduire.
+# Corrigé :
+soit pairs = filtrer(plage(1, 10), x => x % 2 == 0)
+soit carres = transformer(pairs, x => x * x)
+afficher carres
+afficher reduire(carres, (t, x) => t + x, 0)

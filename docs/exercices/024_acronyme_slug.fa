@@ -1,0 +1,13 @@
+# Exercice 24 — Acronyme et adresse web
+# Domaine : Texte · Niveau : ★★
+# Énoncé :
+# À partir de « Université Cheikh Anta Diop », fabriquez l'acronyme (initiales en majuscules)
+# puis un « slug » utilisable dans une adresse web (texte_slug).
+# Corrigé :
+soit nom = "Université Cheikh Anta Diop"
+soit acronyme = ""
+pour chaque mot dans decouper(nom, " ") faire
+  acronyme = acronyme + majuscule(caractere(mot, 0))
+fin
+afficher acronyme
+afficher texte_slug(nom)

@@ -1,0 +1,30 @@
+# Exercice 151 — Faire apprendre le ET à un perceptron
+# Domaine : Intelligence artificielle · Niveau : ★★★
+# Énoncé :
+# Sans bibliothèque : entraînez un perceptron (poids w1, w2 et biais b, partis de 0) avec la règle
+# « erreur = cible − sortie ; w = w + 0,1 × erreur × entrée ; b = b + 0,1 × erreur » pendant 20 passes
+# sur les 4 cas du ET. Affichez les prédictions obtenues.
+# Corrigé :
+soit exemples = [[0, 0, 0], [0, 1, 0], [1, 0, 0], [1, 1, 1]]
+soit w1 = 0
+soit w2 = 0
+soit b = 0
+fonction sortie(x1, x2)
+  si w1 * x1 + w2 * x2 + b > 0 alors
+    renvoyer 1
+  fin
+  renvoyer 0
+fin
+pour passe allantde 1 a 20 faire
+  pour chaque c dans exemples faire
+    soit x1 = lireElement(c, 0)
+    soit x2 = lireElement(c, 1)
+    soit erreur = lireElement(c, 2) - sortie(x1, x2)
+    w1 = w1 + 0.1 * erreur * x1
+    w2 = w2 + 0.1 * erreur * x2
+    b = b + 0.1 * erreur
+  fin
+fin
+pour chaque c dans exemples faire
+  afficher lireElement(c, 0) + " ET " + lireElement(c, 1) + " = " + sortie(lireElement(c, 0), lireElement(c, 1))
+fin

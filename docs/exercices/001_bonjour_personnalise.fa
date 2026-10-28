@@ -1,0 +1,9 @@
+# Exercice 1 — Bonjour personnalisé
+# Domaine : Bases · Niveau : ★
+# Énoncé :
+# Stockez votre prénom et votre âge dans deux variables, puis affichez la phrase :
+# « Bonjour, je m'appelle Awa et j'ai 17 ans. » (avec vos valeurs).
+# Corrigé :
+soit prenom = "Awa"
+soit age = 17
+afficher "Bonjour, je m'appelle " + prenom + " et j'ai " + age + " ans."

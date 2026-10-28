@@ -1,0 +1,16 @@
+# Exercice 161 — S'arrêter devant un obstacle
+# Domaine : Robotique et voix · Niveau : ★★
+# Énoncé :
+# Un robot avance de 0,5 m par pas vers un mur situé à 3 m. Il s'arrête dès que le capteur
+# indique moins de 1 m, et le dit à voix haute. Affichez chaque pas.
+# Corrigé :
+soit position = 0
+soit mur = 3
+soit pas = 0
+tantque mur - position >= 1 faire
+  position = position + 0.5
+  pas = pas + 1
+  afficher "Pas " + pas + " : distance au mur " + (mur - position) + " m"
+fin
+afficher "Obstacle proche : arrêt."
+parler("Obstacle détecté, je m'arrête.")

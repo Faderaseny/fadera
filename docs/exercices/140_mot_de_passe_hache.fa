@@ -1,0 +1,20 @@
+# Exercice 140 — Ne jamais stocker un mot de passe en clair
+# Domaine : Chiffrement · Niveau : ★★★
+# Énoncé :
+# Écrivez enregistrer(mot_de_passe, sel) qui renvoie l'empreinte SHA-256 de sel + mot_de_passe,
+# et verifier_connexion(saisie, sel, empreinte). Montrez qu'un bon mot de passe est accepté
+# et qu'un mauvais est refusé.
+# Corrigé :
+fonction enregistrer(mot_de_passe, sel)
+  renvoyer crypto_hacher_sha256(sel + mot_de_passe)
+fin
+
+fonction verifier_connexion(saisie, sel, empreinte)
+  renvoyer enregistrer(saisie, sel) == empreinte
+fin
+
+soit sel = "x7Qp"
+soit empreinte = enregistrer("fadera2026", sel)
+afficher "Empreinte : " + empreinte
+afficher "Bon mot de passe : " + verifier_connexion("fadera2026", sel, empreinte)
+afficher "Mauvais mot de passe : " + verifier_connexion("Fadera2026", sel, empreinte)

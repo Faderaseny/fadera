@@ -1,0 +1,18 @@
+# Exercice 152 — Apprendre le OU exclusif
+# Domaine : Intelligence artificielle · Niveau : ★★★
+# Énoncé :
+# Un seul neurone ne sait pas calculer le XOR, mais un petit réseau y arrive. Créez un réseau 2-6-1 (creer_reseau),
+# entraînez-le avec ia_entrainer sur les 4 cas pendant 5000 passes (taux 0,5) puis affichez ses prédictions arrondies.
+# (L'initialisation est aléatoire : le résultat peut varier d'une exécution à l'autre.)
+# Corrigé :
+soit reseau = creer_reseau(2, 6, 1)
+soit entrees = [[0, 0], [0, 1], [1, 0], [1, 1]]
+soit cibles = [[0], [1], [1], [0]]
+pour passe allantde 1 a 5000 faire
+  pour k allantde 0 a 3 faire
+    ia_entrainer(reseau, lireElement(entrees, k), lireElement(cibles, k), 0.5)
+  fin
+fin
+pour chaque x dans entrees faire
+  afficher lireElement(x, 0) + " XOR " + lireElement(x, 1) + " ≈ " + arrondir(lireElement(ia_predire(reseau, x), 0), 0)
+fin

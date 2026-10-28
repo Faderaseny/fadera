@@ -1,0 +1,12 @@
+# Exercice 25 — Extraire des numéros avec une expression régulière
+# Domaine : Texte · Niveau : ★★★
+# Énoncé :
+# Dans le texte « Appelez le 77 123 45 67 ou le 78 987 65 43, pas le 12 », extrayez les numéros sénégalais
+# (deux chiffres, puis 3, 2 et 2 chiffres, séparés par des espaces) avec regex_trouver et affichez-les sans espaces.
+# Corrigé :
+soit texte_source = "Appelez le 77 123 45 67 ou le 78 987 65 43, pas le 12"
+soit numeros = regex_trouver(texte_source, "[0-9]{2} [0-9]{3} [0-9]{2} [0-9]{2}", "")
+pour chaque n dans numeros faire
+  afficher remplacer(n, " ", "")
+fin
+afficher taille(numeros) + " numéro(s) trouvé(s)"

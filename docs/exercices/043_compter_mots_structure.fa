@@ -1,0 +1,21 @@
+# Exercice 43 — Compter les mots
+# Domaine : Structures · Niveau : ★★★
+# Énoncé :
+# Comptez les occurrences de chaque mot de « le chat et le chien et le chat » dans une structure,
+# puis affichez les mots du plus fréquent au moins fréquent (en cas d'égalité, par ordre alphabétique).
+# Indice : importer "std/tri" fournit trier_multi(liste, [cle1, cle2, …]).
+# Corrigé :
+importer "std/tri"
+
+soit comptes = {}
+pour chaque mot dans decouper("le chat et le chien et le chat", " ") faire
+  si a_cle(comptes, mot) alors
+    modifierCle(comptes, mot, lireCle(comptes, mot) + 1)
+  sinon
+    modifierCle(comptes, mot, 1)
+  fin
+fin
+soit classement = trier_multi(cles(comptes), [m => -lireCle(comptes, m), m => m])
+pour chaque m dans classement faire
+  afficher m + " : " + lireCle(comptes, m)
+fin

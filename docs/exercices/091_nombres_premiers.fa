@@ -1,0 +1,24 @@
+# Exercice 91 — Crible d'Ératosthène
+# Domaine : Mathématiques · Niveau : ★★★
+# Énoncé :
+# Listez les nombres premiers jusqu'à 50 avec le crible d'Ératosthène (une liste de booléens).
+# Corrigé :
+soit n = 50
+soit premier = []
+pour i allantde 0 a n faire
+  ajouter(premier, i >= 2)
+fin
+pour i allantde 2 a entier(racine(n)) faire
+  si lireElement(premier, i) alors
+    pour j allantde i * i a n pas i faire
+      modifierElement(premier, j, faux)
+    fin
+  fin
+fin
+soit resultat = []
+pour i allantde 2 a n faire
+  si lireElement(premier, i) alors
+    ajouter(resultat, i)
+  fin
+fin
+afficher resultat

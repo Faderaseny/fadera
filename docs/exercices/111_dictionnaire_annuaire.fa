@@ -1,0 +1,20 @@
+# Exercice 111 — Un annuaire
+# Domaine : Modules standard · Niveau : ★★
+# Énoncé :
+# Avec std/dictionnaire, créez un annuaire nom → numéro, ajoutez 3 contacts, changez un numéro,
+# supprimez un contact et affichez ce qui reste (possede, obtenir_ou, liste_paires).
+# Corrigé :
+importer "std/dictionnaire"
+
+soit annuaire = Dictionnaire()
+annuaire.definir("Awa", "77 111 11 11")
+annuaire.definir("Moussa", "78 222 22 22")
+annuaire.definir("Fatou", "70 333 33 33")
+annuaire.definir("Awa", "77 999 99 99")
+annuaire.supprimer("Moussa")
+afficher "Contacts : " + annuaire.longueur()
+afficher "Moussa existe ? " + annuaire.possede("Moussa")
+afficher "Numéro de Moussa : " + annuaire.obtenir_ou("Moussa", "inconnu")
+pour chaque paire dans annuaire.liste_paires() faire
+  afficher lireElement(paire, 0) + " → " + lireElement(paire, 1)
+fin

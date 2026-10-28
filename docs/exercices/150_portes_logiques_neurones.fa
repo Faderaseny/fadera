@@ -1,0 +1,14 @@
+# Exercice 150 — Un neurone qui calcule ET et OU
+# Domaine : Intelligence artificielle · Niveau : ★★
+# Énoncé :
+# Un neurone « tout ou rien » (activation heaviside) calcule ET avec les poids [1, 1] et le biais −1,5,
+# et OU avec les mêmes poids et le biais −0,5. Affichez les tables de vérité avec ia_activation_perceptron.
+# Corrigé :
+soit et_neurone = { poids: [1, 1], biais: -1.5, activation: "heaviside" }
+soit ou_neurone = { poids: [1, 1], biais: -0.5, activation: "heaviside" }
+afficher "a b | ET OU"
+pour chaque a dans [0, 1] faire
+  pour chaque b dans [0, 1] faire
+    afficher a + " " + b + " |  " + ia_activation_perceptron(et_neurone, [a, b]) + "  " + ia_activation_perceptron(ou_neurone, [a, b])
+  fin
+fin

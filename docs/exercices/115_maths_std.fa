@@ -1,0 +1,12 @@
+# Exercice 115 — La boîte à outils std/maths
+# Domaine : Modules standard · Niveau : ★★
+# Énoncé :
+# Avec std/maths : les nombres premiers jusqu'à 30, le PGCD et le PPCM de 12 et 18, le nombre de façons
+# de choisir 3 élèves parmi 10 (combinaisons) et les diviseurs de 36.
+# Corrigé :
+importer "std/maths"
+
+afficher premiers_jusqua(30)
+afficher "PGCD : " + pgcd(12, 18) + ", PPCM : " + ppcm(12, 18)
+afficher "C(10, 3) = " + combinaisons(10, 3)
+afficher "Diviseurs de 36 : " + diviseurs(36)

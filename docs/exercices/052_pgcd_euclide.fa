@@ -1,0 +1,17 @@
+# Exercice 52 — PGCD par l'algorithme d'Euclide
+# Domaine : Fonctions et récursivité · Niveau : ★★
+# Énoncé :
+# Écrivez pgcd(a, b) récursif : pgcd(a, 0) = a et pgcd(a, b) = pgcd(b, a % b).
+# Calculez pgcd(84, 36) et simplifiez la fraction 84/36. Vérifiez avec math_pgcd_ppcm.
+# Corrigé :
+fonction pgcd(a, b)
+  si b == 0 alors
+    renvoyer a
+  fin
+  renvoyer pgcd(b, a % b)
+fin
+
+soit d = pgcd(84, 36)
+afficher "PGCD : " + d
+afficher "Fraction simplifiée : " + 84 / d + "/" + 36 / d
+afficher "Vérification : " + lireCle(math_pgcd_ppcm(84, 36), "pgcd")

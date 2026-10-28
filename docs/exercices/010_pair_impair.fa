@@ -1,0 +1,12 @@
+# Exercice 10 — Pair ou impair
+# Domaine : Décisions et boucles · Niveau : ★
+# Énoncé :
+# Pour chaque nombre de 1 à 8, affichez s'il est pair ou impair.
+# Corrigé :
+pour n allantde 1 a 8 faire
+  si n % 2 == 0 alors
+    afficher n + " est pair"
+  sinon
+    afficher n + " est impair"
+  fin
+fin

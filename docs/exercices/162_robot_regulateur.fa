@@ -1,0 +1,13 @@
+# Exercice 162 — Régler une vitesse
+# Domaine : Robotique et voix · Niveau : ★★★
+# Énoncé :
+# Un robot doit atteindre la vitesse de 2 m/s. À chaque tour, la commande est 0,5 × (cible − vitesse)
+# et la vitesse augmente de cette commande. Simulez 10 tours et affichez la vitesse arrondie à 3 décimales.
+# Corrigé :
+soit cible = 2
+soit vitesse = 0
+pour tour allantde 1 a 10 faire
+  soit commande = 0.5 * (cible - vitesse)
+  vitesse = vitesse + commande
+  afficher "Tour " + texte_remplir_gauche(texte(tour), 2, " ") + " : " + arrondir(vitesse, 3) + " m/s"
+fin

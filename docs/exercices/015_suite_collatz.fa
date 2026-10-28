@@ -1,0 +1,22 @@
+# Exercice 15 — Suite de Syracuse
+# Domaine : Décisions et boucles · Niveau : ★★★
+# Énoncé :
+# Partez de 27 : si le nombre est pair, divisez-le par 2 ; sinon multipliez-le par 3 et ajoutez 1.
+# Comptez le nombre d'étapes avant d'atteindre 1 et affichez aussi la valeur maximale atteinte.
+# Corrigé :
+soit n = 27
+soit etapes = 0
+soit sommet = n
+tantque n != 1 faire
+  si n % 2 == 0 alors
+    n = n / 2
+  sinon
+    n = 3 * n + 1
+  fin
+  si n > sommet alors
+    sommet = n
+  fin
+  etapes = etapes + 1
+fin
+afficher "Étapes : " + etapes
+afficher "Maximum : " + sommet

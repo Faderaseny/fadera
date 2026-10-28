@@ -1,0 +1,13 @@
+# Exercice 110 — Ensembles : qui suit quoi ?
+# Domaine : Modules standard · Niveau : ★★
+# Énoncé :
+# Avec le module std/ensemble : les élèves inscrits au club de maths sont Awa, Moussa, Fatou ; au club d'informatique
+# Fatou, Ibrahima, Awa. Affichez ceux qui sont dans les deux clubs, dans au moins un, et seulement en maths.
+# Corrigé :
+importer "std/ensemble"
+
+soit maths = ensemble_depuis(["Awa", "Moussa", "Fatou"])
+soit info = ensemble_depuis(["Fatou", "Ibrahima", "Awa"])
+afficher "Les deux : " + trier_par(maths.intersection(info).en_liste(), x => x)
+afficher "Au moins un : " + taille(maths.union(info).en_liste())
+afficher "Seulement maths : " + maths.difference(info).en_liste()

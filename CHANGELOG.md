@@ -5,6 +5,15 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et la nu
 
 ## [Non publié]
 
+## [0.7.6] — 2026-10-28
+
+### Modifié
+- Le menu « Applications » de la barre du haut, devenu trop long (les dernières lignes n'étaient plus visibles), est coupé en deux : « Fichier » (nouveau, enregistrer, ouvrir, importer, exporter, partager) et « Applications » (exécuter, déboguer, tests, formater, rechercher, paquets). Un seul menu s'ouvre à la fois, et chacun défile s'il dépasse la fenêtre.
+
+### Ajouté
+- `docs/EXERCICES.md` : 79 exercices corrigés dans 19 domaines (bases, décisions et boucles, texte, listes, structures, fonctions et récursivité, erreurs, fichiers, dates, mathématiques et statistiques, classes, modules standard, tests intégrés, réseaux, chiffrement, intelligence artificielle, robotique et voix, jeux, mini-projets). Chaque corrigé est un fichier de `docs/exercices/`, exécuté sur les deux moteurs par `node docs/verifier_exemples.js exercices` ; la page est produite par `docs/generer_exercices.js` et vérifiée dans la CI.
+- `docs/verifier_exemples.js` accepte un nom de dossier (`exemples` ou `exercices`) et lance `fadera tester` sur tout fichier qui contient des blocs `tester`.
+
 ## [0.7.5] — 2026-10-28
 
 ### Corrigé

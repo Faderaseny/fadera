@@ -392,6 +392,19 @@ const eq = (nom, obtenu, att) => {
   eq("paquets : retiré (dossier et fadera.json)", await p.evaluate(() => [!!FadFS.noeud(FadFS.HOME + "/paquets/outils"), JSON.parse(FadFS.lire(FadFS.HOME + "/fadera.json"))]), [false, { dependances: {} }]);
   await p.evaluate(() => fermerModal());
 
+  // barre du haut : deux menus (Fichier, Applications), chacun entièrement visible, un seul ouvert à la fois
+  await p.setViewportSize({ width: 1100, height: 640 });
+  for (const [btn, menu, texte] of [["#btnFichierMenu", "#menuFichier", "Importer"], ["#btnAppsMenu", "#menuApps", "Tests de la bibliothèque"]]) {
+    await p.click(btn);
+    const r = await p.evaluate((m) => { const e = document.querySelector(m).getBoundingClientRect(); const dernier = [...document.querySelectorAll(m + " button")].pop().getBoundingClientRect(); return { bas: dernier.bottom <= innerHeight, ouvert: getComputedStyle(document.querySelector(m)).display !== "none" && e.height > 0 }; }, menu);
+    eq("menus : " + menu + " s'ouvre et son dernier bouton est visible (fenêtre basse)", r, { bas: true, ouvert: true });
+    eq("menus : " + menu + " contient « " + texte + " »", await p.locator(menu).textContent(), new RegExp(texte));
+  }
+  eq("menus : ouvrir Applications a fermé Fichier", await p.evaluate(() => getComputedStyle(document.getElementById("menuFichier")).display), "none");
+  await p.click("#editeur", { position: { x: 20, y: 20 } }).catch(() => {});
+  await p.evaluate(() => document.body.click());
+  eq("menus : un clic ailleurs ferme tout", await p.evaluate(() => ["menuFichier", "menuApps"].map((i) => getComputedStyle(document.getElementById(i)).display)), ["none", "none"]);
+
   // logo : favicon, barre du haut, icône sur les onglets .fa
   eq("logo : favicon présent", await p.evaluate(() => /svg\+xml/.test(document.querySelector('link[rel="icon"]')?.href || "")), true);
   eq("logo : image dans la barre du haut", await p.evaluate(() => !!document.querySelector(".tb-logo img")), true);

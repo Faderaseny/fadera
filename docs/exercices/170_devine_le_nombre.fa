@@ -1,0 +1,25 @@
+# Exercice 170 — Deviner un nombre par dichotomie
+# Domaine : Jeux et simulations · Niveau : ★★
+# Énoncé :
+# L'ordinateur choisit 73 entre 1 et 100. Un joueur « intelligent » propose toujours le milieu de l'intervalle.
+# Affichez chaque proposition (« trop petit » / « trop grand ») et le nombre d'essais.
+# Corrigé :
+soit secret = 73
+soit bas = 1
+soit haut = 100
+soit essais = 0
+soit trouve = faux
+tantque non trouve faire
+  soit proposition = plancher((bas + haut) / 2)
+  essais = essais + 1
+  si proposition == secret alors
+    afficher "Essai " + essais + " : " + proposition + " — trouvé !"
+    trouve = vrai
+  sinon si proposition < secret alors
+    afficher "Essai " + essais + " : " + proposition + " — trop petit"
+    bas = proposition + 1
+  sinon
+    afficher "Essai " + essais + " : " + proposition + " — trop grand"
+    haut = proposition - 1
+  fin
+fin

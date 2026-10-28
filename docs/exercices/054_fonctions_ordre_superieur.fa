@@ -1,0 +1,18 @@
+# Exercice 54 — Fonctions en argument
+# Domaine : Fonctions et récursivité · Niveau : ★★★
+# Énoncé :
+# Écrivez appliquer_deux_fois(f, x) qui renvoie f(f(x)). Utilisez-la avec « doubler » (x => x * 2)
+# et avec une fonction qui ajoute « ! » à un texte. Écrivez aussi composer(f, g) qui renvoie une fonction.
+# Corrigé :
+fonction appliquer_deux_fois(f, x)
+  renvoyer f(f(x))
+fin
+
+fonction composer(f, g)
+  renvoyer x => f(g(x))
+fin
+
+afficher appliquer_deux_fois(x => x * 2, 5)
+afficher appliquer_deux_fois(t => t + "!", "Fadéra")
+soit plus_un_puis_double = composer(x => x * 2, x => x + 1)
+afficher plus_un_puis_double(4)

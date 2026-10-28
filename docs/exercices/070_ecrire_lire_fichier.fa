@@ -1,0 +1,13 @@
+# Exercice 70 — Écrire puis relire un fichier
+# Domaine : Fichiers · Niveau : ★★
+# Énoncé :
+# Écrivez trois lignes dans le fichier « courses.txt », relisez-le, découpez-le en lignes
+# (texte_lignes) et affichez « 1. riz », « 2. huile »…
+# Corrigé :
+ecrireFichier("courses.txt", "riz\nhuile\nsucre")
+soit contenu = lireFichier("courses.txt")
+soit numero = 1
+pour chaque ligne dans texte_lignes(contenu) faire
+  afficher numero + ". " + ligne
+  numero = numero + 1
+fin

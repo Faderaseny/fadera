@@ -1,0 +1,47 @@
+# Exercice 181 — Projet : la caisse du jour
+# Domaine : Mini-projets · Niveau : ★★★
+# Énoncé :
+# Écrivez une classe Caisse qui enregistre des ventes { article, montant } et sait donner le total,
+# la plus grosse vente et le chiffre d'affaires par article. À la fin de la journée, enregistrez le résumé
+# dans « caisse.json » (json_texte) et relisez-le pour vérifier.
+# Corrigé :
+classe Caisse
+  fonction creer()
+    soi.ventes = []
+  fin
+
+  fonction vendre(article, montant)
+    ajouter(soi.ventes, { article: article, montant: montant })
+  fin
+
+  fonction total()
+    renvoyer reduire(soi.ventes, (t, v) => t + v.montant, 0)
+  fin
+
+  fonction plus_grosse()
+    renvoyer lireElement(trier_par(soi.ventes, v => -v.montant), 0)
+  fin
+
+  fonction par_article()
+    soit r = {}
+    pour chaque v dans soi.ventes faire
+      si a_cle(r, v.article) alors
+        modifierCle(r, v.article, lireCle(r, v.article) + v.montant)
+      sinon
+        modifierCle(r, v.article, v.montant)
+      fin
+    fin
+    renvoyer r
+  fin
+fin
+
+soit c = Caisse()
+c.vendre("riz", 1300)
+c.vendre("huile", 1800)
+c.vendre("riz", 650)
+c.vendre("sucre", 700)
+afficher "Total : " + c.total()
+afficher "Plus grosse vente : " + lireCle(c.plus_grosse(), "article")
+afficher c.par_article()
+ecrireFichier("caisse.json", json_texte({ total: c.total(), par_article: c.par_article() }, 0))
+afficher "Relu : " + lireFichier("caisse.json")

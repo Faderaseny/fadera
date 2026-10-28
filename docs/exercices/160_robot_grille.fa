@@ -1,0 +1,31 @@
+# Exercice 160 — Un robot sur une grille
+# Domaine : Robotique et voix · Niveau : ★★
+# Énoncé :
+# Un robot part de (0, 0) tourné vers le nord. Les commandes sont « A » (avancer d'une case), « G » et « D »
+# (tourner de 90°). Exécutez « AAD AA G A » (sans espaces) et affichez la position finale et l'orientation.
+# Faites-le annoncer sa position à la fin avec parler.
+# Corrigé :
+soit x = 0
+soit y = 0
+soit direction = 0   # 0 = nord, 1 = est, 2 = sud, 3 = ouest
+soit noms = ["nord", "est", "sud", "ouest"]
+pour chaque c dans decouper("AADAAGA", "") faire
+  si c == "G" alors
+    direction = modulo(direction - 1, 4)
+  sinon si c == "D" alors
+    direction = modulo(direction + 1, 4)
+  sinon si c == "A" alors
+    selon direction faire
+      cas 0 alors
+        y = y + 1
+      cas 1 alors
+        x = x + 1
+      cas 2 alors
+        y = y - 1
+      cas 3 alors
+        x = x - 1
+    fin
+  fin
+fin
+afficher "Position : (" + x + ", " + y + "), orienté vers le " + lireElement(noms, direction)
+parler("Je suis arrivé en " + x + " " + y)

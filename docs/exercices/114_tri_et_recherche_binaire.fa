@@ -1,0 +1,13 @@
+# Exercice 114 — Recherche binaire
+# Domaine : Modules standard · Niveau : ★★★
+# Énoncé :
+# Avec std/tri, triez [42, 7, 19, 3, 88, 56, 23] puis cherchez 19 et 20 avec recherche_binaire.
+# Combien de comparaisons au maximum pour 1 000 000 d'éléments ? (logarithme(x, 2), plafond)
+# Corrigé :
+importer "std/tri"
+
+soit l = trier([42, 7, 19, 3, 88, 56, 23], (a, b) => a - b)
+afficher l
+afficher "Position de 19 : " + recherche_binaire(l, 19)
+afficher "Position de 20 : " + recherche_binaire(l, 20)
+afficher "Comparaisons pour un million d'éléments : " + plafond(logarithme(1000000, 2))

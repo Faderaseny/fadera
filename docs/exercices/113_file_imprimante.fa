@@ -1,0 +1,19 @@
+# Exercice 113 — File d'impression
+# Domaine : Modules standard · Niveau : ★★
+# Énoncé :
+# Une imprimante traite les documents dans l'ordre d'arrivée (std/file). Ajoutez 4 documents,
+# traitez-en 2, ajoutez-en un cinquième puis affichez ce qui reste à imprimer.
+# Corrigé :
+importer "std/file"
+
+soit f = File()
+pour chaque d dans ["rapport.pdf", "facture.pdf", "photo.png", "cv.docx"] faire
+  f.enfiler(d)
+fin
+afficher "Impression : " + f.defiler()
+afficher "Impression : " + f.defiler()
+f.enfiler("menu.pdf")
+afficher "En attente : " + f.longueur()
+tantque non f.est_vide() faire
+  afficher "Reste : " + f.defiler()
+fin

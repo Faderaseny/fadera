@@ -1,0 +1,16 @@
+# Exercice 51 — Suite de Fibonacci
+# Domaine : Fonctions et récursivité · Niveau : ★★
+# Énoncé :
+# Affichez les 12 premiers termes de la suite de Fibonacci (0, 1, 1, 2, 3, 5…) sans récursivité,
+# avec une boucle et deux variables.
+# Corrigé :
+soit a = 0
+soit b = 1
+soit termes = []
+pour i allantde 1 a 12 faire
+  ajouter(termes, a)
+  soit suivant = a + b
+  a = b
+  b = suivant
+fin
+afficher joindre(termes, ", ")

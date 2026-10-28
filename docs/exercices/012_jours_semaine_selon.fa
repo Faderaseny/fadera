@@ -1,0 +1,28 @@
+# Exercice 12 — Jour de la semaine avec « selon »
+# Domaine : Décisions et boucles · Niveau : ★★
+# Énoncé :
+# Écrivez une fonction nom_jour(n) (1 = lundi … 7 = dimanche) avec la structure « selon ».
+# Pour 6 et 7 elle renvoie « week-end », pour un numéro invalide « inconnu ». Affichez le résultat pour 1 à 8.
+# Corrigé :
+fonction nom_jour(n)
+  selon n faire
+    cas 1 alors
+      renvoyer "lundi"
+    cas 2 alors
+      renvoyer "mardi"
+    cas 3 alors
+      renvoyer "mercredi"
+    cas 4 alors
+      renvoyer "jeudi"
+    cas 5 alors
+      renvoyer "vendredi"
+    cas 6, 7 alors
+      renvoyer "week-end"
+    defaut alors
+      renvoyer "inconnu"
+  fin
+fin
+
+pour n allantde 1 a 8 faire
+  afficher n + " : " + nom_jour(n)
+fin

@@ -1,0 +1,19 @@
+# Exercice 53 — Tours de Hanoï
+# Domaine : Fonctions et récursivité · Niveau : ★★★
+# Énoncé :
+# Écrivez hanoi(n, depart, arrivee, aide) qui affiche les déplacements pour déplacer n disques,
+# et compte les coups. Pour 3 disques il faut 7 coups.
+# Corrigé :
+soit coups = 0
+fonction hanoi(n, depart, arrivee, aide)
+  si n == 0 alors
+    renvoyer 0
+  fin
+  hanoi(n - 1, depart, aide, arrivee)
+  coups = coups + 1
+  afficher "Disque " + n + " : " + depart + " → " + arrivee
+  hanoi(n - 1, aide, arrivee, depart)
+fin
+
+hanoi(3, "A", "C", "B")
+afficher "Total : " + coups + " coups"

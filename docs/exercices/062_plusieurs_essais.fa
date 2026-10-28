@@ -1,0 +1,26 @@
+# Exercice 62 — Réessayer après une erreur
+# Domaine : Erreurs · Niveau : ★★★
+# Énoncé :
+# Une opération échoue les deux premières fois puis réussit. Écrivez une boucle qui réessaie jusqu'à
+# 5 fois et affiche le numéro de l'essai réussi. (L'opération incrémente un compteur global et lève une erreur tant qu'il est < 3.)
+# Corrigé :
+soit tentatives = 0
+fonction operation_capricieuse()
+  tentatives = tentatives + 1
+  si tentatives < 3 alors
+    lever("échec n°" + tentatives)
+  fin
+  renvoyer "succès"
+fin
+
+soit resultat = ""
+soit essai = 0
+tantque essai < 5 et resultat == "" faire
+  essai = essai + 1
+  essayer
+    resultat = operation_capricieuse()
+  attraper e
+    afficher "Essai " + essai + " : " + e
+  fin
+fin
+afficher "Essai " + essai + " : " + resultat

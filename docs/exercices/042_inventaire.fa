@@ -1,0 +1,16 @@
+# Exercice 42 — Inventaire d'une boutique
+# Domaine : Structures · Niveau : ★★
+# Énoncé :
+# Un stock est une structure produit → quantité. Ajoutez 5 sacs de riz, retirez la clé « sucre »,
+# puis affichez chaque produit avec sa quantité (cles, lireCle, supprimer_cle) et le total d'articles.
+# Corrigé :
+soit stock = { riz: 20, sucre: 8, huile: 12 }
+modifierCle(stock, "riz", lireCle(stock, "riz") + 5)
+supprimer_cle(stock, "sucre")
+soit total = 0
+pour chaque produit dans cles(stock) faire
+  afficher produit + " : " + lireCle(stock, produit)
+  total = total + lireCle(stock, produit)
+fin
+afficher "Total : " + total
+afficher "Du sucre ? " + a_cle(stock, "sucre")

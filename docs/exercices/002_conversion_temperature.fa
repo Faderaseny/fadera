@@ -1,0 +1,9 @@
+# Exercice 2 — Celsius vers Fahrenheit
+# Domaine : Bases · Niveau : ★
+# Énoncé :
+# Convertissez 0, 25, 37 et 100 degrés Celsius en Fahrenheit (F = C × 9 / 5 + 32)
+# et affichez « 25 °C = 77 °F » pour chaque valeur.
+# Corrigé :
+pour chaque c dans [0, 25, 37, 100] faire
+  afficher c + " °C = " + (c * 9 / 5 + 32) + " °F"
+fin

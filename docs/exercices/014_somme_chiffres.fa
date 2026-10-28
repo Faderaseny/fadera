@@ -1,0 +1,12 @@
+# Exercice 14 — Somme des chiffres
+# Domaine : Décisions et boucles · Niveau : ★★
+# Énoncé :
+# Avec une boucle « tantque », calculez la somme des chiffres de 98 765 (utilisez % 10 et plancher(n / 10)).
+# Corrigé :
+soit n = 98765
+soit somme_chiffres = 0
+tantque n > 0 faire
+  somme_chiffres = somme_chiffres + n % 10
+  n = plancher(n / 10)
+fin
+afficher "Somme des chiffres : " + somme_chiffres

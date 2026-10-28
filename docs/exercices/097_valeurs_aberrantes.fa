@@ -1,0 +1,12 @@
+# Exercice 97 — Repérer les valeurs aberrantes
+# Domaine : Mathématiques · Niveau : ★★★
+# Énoncé :
+# Pour les mesures [1, 2, 3, 4, 5, 6, 7, 8, 100], utilisez stats_analyse_distribution pour obtenir les seuils d'anomalie
+# puis listez les valeurs en dehors de ces seuils.
+# Corrigé :
+soit mesures = [1, 2, 3, 4, 5, 6, 7, 8, 100]
+soit a = stats_analyse_distribution(mesures)
+soit bas = lireCle(a, "seuil_anomalie_bas")
+soit haut = lireCle(a, "seuil_anomalie_haut")
+afficher "Seuils : " + bas + " à " + haut
+afficher "Aberrantes : " + filtrer(mesures, x => x < bas ou x > haut)

@@ -1,0 +1,14 @@
+# Exercice 21 — Palindrome
+# Domaine : Texte · Niveau : ★★
+# Énoncé :
+# Écrivez une fonction est_palindrome(t) qui ignore les majuscules, les espaces, les accents et la ponctuation.
+# Testez « Esope reste ici et se repose » et « Fadéra ». (Indice : texte_sans_accents, regex_remplacer, inverser.)
+# Corrigé :
+fonction est_palindrome(t)
+  soit propre = regex_remplacer(minuscule(texte_sans_accents(t)), "[^a-z0-9]", "", "")
+  renvoyer propre == inverser(propre)
+fin
+
+afficher est_palindrome("Esope reste ici et se repose")
+afficher est_palindrome("Fadéra")
+afficher est_palindrome("Engage le jeu que je le gagne")

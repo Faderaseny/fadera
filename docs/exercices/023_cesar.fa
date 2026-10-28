@@ -1,0 +1,24 @@
+# Exercice 23 — Chiffre de César
+# Domaine : Texte · Niveau : ★★★
+# Énoncé :
+# Écrivez cesar(texte, decalage) qui décale chaque lettre minuscule de l'alphabet (a→d pour un décalage de 3),
+# sans toucher aux autres caractères. Chiffrez « bonjour fadera » avec 3 puis déchiffrez le résultat.
+# Indice : code_caractere, depuis_code, modulo.
+# Corrigé :
+fonction cesar(t, decalage)
+  soit sortie = ""
+  pour i allantde 0 a taille(t) - 1 faire
+    soit c = caractere(t, i)
+    soit code = code_caractere(c)
+    si code >= 97 et code <= 122 alors
+      sortie = sortie + depuis_code(97 + modulo(code - 97 + decalage, 26))
+    sinon
+      sortie = sortie + c
+    fin
+  fin
+  renvoyer sortie
+fin
+
+soit secret = cesar("bonjour fadera", 3)
+afficher secret
+afficher cesar(secret, -3)

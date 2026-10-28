@@ -1,0 +1,22 @@
+# Exercice 11 — Mentions
+# Domaine : Décisions et boucles · Niveau : ★★
+# Énoncé :
+# Écrivez une fonction mention(moyenne) qui renvoie « Très bien » à partir de 16, « Bien » à partir de 14,
+# « Assez bien » à partir de 12, « Passable » à partir de 10, sinon « Ajourné ». Testez-la sur 17, 14.5, 12, 10 et 7.
+# Corrigé :
+fonction mention(moyenne)
+  si moyenne >= 16 alors
+    renvoyer "Très bien"
+  sinon si moyenne >= 14 alors
+    renvoyer "Bien"
+  sinon si moyenne >= 12 alors
+    renvoyer "Assez bien"
+  sinon si moyenne >= 10 alors
+    renvoyer "Passable"
+  fin
+  renvoyer "Ajourné"
+fin
+
+pour chaque m dans [17, 14.5, 12, 10, 7] faire
+  afficher m + " → " + mention(m)
+fin

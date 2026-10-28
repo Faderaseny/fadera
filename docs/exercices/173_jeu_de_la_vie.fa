@@ -1,0 +1,63 @@
+# Exercice 173 — Une génération du jeu de la vie
+# Domaine : Jeux et simulations · Niveau : ★★★
+# Énoncé :
+# Sur une grille 5×5 (liste de listes de 0 et 1) contenant un « clignotant » (trois cellules en ligne au centre),
+# calculez la génération suivante : une cellule vivante survit avec 2 ou 3 voisines vivantes,
+# une cellule morte naît avec exactement 3. Affichez les deux grilles.
+# Corrigé :
+fonction cellule(g, l, c)
+  si l < 0 ou l > 4 ou c < 0 ou c > 4 alors
+    renvoyer 0
+  fin
+  renvoyer lireElement(lireElement(g, l), c)
+fin
+
+fonction voisines(g, l, c)
+  soit n = 0
+  pour dl allantde -1 a 1 faire
+    pour dc allantde -1 a 1 faire
+      si dl != 0 ou dc != 0 alors
+        n = n + cellule(g, l + dl, c + dc)
+      fin
+    fin
+  fin
+  renvoyer n
+fin
+
+fonction suivante(g)
+  soit nouvelle = []
+  pour l allantde 0 a 4 faire
+    soit ligne = []
+    pour c allantde 0 a 4 faire
+      soit v = voisines(g, l, c)
+      si cellule(g, l, c) == 1 et (v == 2 ou v == 3) alors
+        ajouter(ligne, 1)
+      sinon si cellule(g, l, c) == 0 et v == 3 alors
+        ajouter(ligne, 1)
+      sinon
+        ajouter(ligne, 0)
+      fin
+    fin
+    ajouter(nouvelle, ligne)
+  fin
+  renvoyer nouvelle
+fin
+
+fonction dessiner(g)
+  pour chaque ligne dans g faire
+    soit texte_ligne = ""
+    pour chaque v dans ligne faire
+      si v == 1 alors
+        texte_ligne = texte_ligne + "#"
+      sinon
+        texte_ligne = texte_ligne + "."
+      fin
+    fin
+    afficher texte_ligne
+  fin
+fin
+
+soit grille = [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 1, 1, 1, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]]
+dessiner(grille)
+afficher ""
+dessiner(suivante(grille))

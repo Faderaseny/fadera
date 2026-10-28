@@ -1,0 +1,15 @@
+# Exercice 50 — Factorielle
+# Domaine : Fonctions et récursivité · Niveau : ★★
+# Énoncé :
+# Écrivez factorielle(n) de façon récursive. Affichez les factorielles de 0 à 6.
+# Corrigé :
+fonction factorielle(n)
+  si n <= 1 alors
+    renvoyer 1
+  fin
+  renvoyer n * factorielle(n - 1)
+fin
+
+pour n allantde 0 a 6 faire
+  afficher n + "! = " + factorielle(n)
+fin

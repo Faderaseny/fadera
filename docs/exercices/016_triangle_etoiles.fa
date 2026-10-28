@@ -1,0 +1,8 @@
+# Exercice 16 — Triangle d'étoiles
+# Domaine : Décisions et boucles · Niveau : ★★
+# Énoncé :
+# Affichez un triangle de 5 lignes : 1 étoile sur la première, 2 sur la deuxième… (utilisez repeter).
+# Corrigé :
+pour i allantde 1 a 5 faire
+  afficher repeter("*", i)
+fin

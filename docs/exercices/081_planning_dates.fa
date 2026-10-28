@@ -1,0 +1,11 @@
+# Exercice 81 — Planning de 4 semaines
+# Domaine : Dates · Niveau : ★★
+# Énoncé :
+# À partir du 5 janvier 2026, affichez les dates de 4 réunions hebdomadaires au format JJ/MM/AAAA
+# (date_ajouter, date_formater). Indiquez ensuite si 2028 est bissextile.
+# Corrigé :
+soit debut = date_creer(2026, 1, 5)
+pour i allantde 0 a 3 faire
+  afficher "Réunion " + (i + 1) + " : " + date_formater(date_ajouter(debut, i * 7, "jours"), "JJ/MM/AAAA")
+fin
+afficher "2028 est bissextile ? " + est_bissextile(2028)

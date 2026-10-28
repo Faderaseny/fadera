@@ -1,0 +1,30 @@
+# Exercice 180 — Projet : le bulletin de la classe
+# Domaine : Mini-projets · Niveau : ★★★
+# Énoncé :
+# À partir d'un CSV (nom;maths;francais;anglais), construisez pour chaque élève la moyenne,
+# la mention (≥ 14 « Bien », ≥ 10 « Passable », sinon « Ajourné »), classez les élèves par moyenne décroissante
+# et affichez un tableau aligné (texte_remplir_droite) avec la moyenne de la classe en bas.
+# Corrigé :
+soit brut = "nom;maths;francais;anglais\nAwa;15;12;16\nMoussa;9;14;10\nFatou;18;16;17\nIbrahima;7;9;8"
+soit lignes = tranche(csv_lire(brut, ";"), 1, 5)
+
+fonction mention(m)
+  si m >= 14 alors
+    renvoyer "Bien"
+  sinon si m >= 10 alors
+    renvoyer "Passable"
+  fin
+  renvoyer "Ajourné"
+fin
+
+soit eleves = transformer(lignes, l => {
+  nom: lireElement(l, 0),
+  moyenne: stats_moyenne([nombre(lireElement(l, 1)), nombre(lireElement(l, 2)), nombre(lireElement(l, 3))])
+})
+soit classement = trier_par(eleves, e => -e.moyenne)
+soit rang = 1
+pour chaque e dans classement faire
+  afficher rang + ". " + texte_remplir_droite(e.nom, 10, " ") + texte_remplir_gauche(texte(arrondir(e.moyenne, 2)), 6, " ") + "  " + mention(e.moyenne)
+  rang = rang + 1
+fin
+afficher "Moyenne de la classe : " + arrondir(stats_moyenne(transformer(eleves, e => e.moyenne)), 2)

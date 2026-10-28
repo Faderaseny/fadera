@@ -1,0 +1,18 @@
+# Exercice 163 — Lire un texte à voix haute
+# Domaine : Robotique et voix · Niveau : ★★
+# Énoncé :
+# Un robot lecteur reçoit un texte, le découpe en phrases (séparées par « . ») et prononce chaque phrase
+# avec parler, après l'avoir affichée. Il annonce à la fin le nombre de phrases lues.
+# Corrigé :
+soit texte_lu = "Fadéra est un langage en français. Il fonctionne dans le navigateur. Il sait aussi parler."
+soit lues = 0
+pour chaque phrase dans decouper(texte_lu, ".") faire
+  soit p = nettoyer(phrase)
+  si taille(p) > 0 alors
+    afficher p + "."
+    parler(p)
+    lues = lues + 1
+  fin
+fin
+afficher lues + " phrases lues."
+parler("J'ai lu " + lues + " phrases.")
