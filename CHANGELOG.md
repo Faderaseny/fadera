@@ -7,6 +7,9 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et la nu
 
 ## [0.7.5] — 2026-10-28
 
+### Corrigé
+- Le workflow de publication utilise le dossier `publication/` (et non `assets/`, désormais occupé par les logos du dépôt).
+
 ### Ajouté
 - Nouveau logo Fadéra (monogramme F doré avec curseur, bleu nuit) : écran de démarrage, barre du haut, favicon de l'onglet du navigateur, et petite icône devant chaque fichier `.fa` dans les onglets de l'éditeur.
 - `assets/logo/` : icône et logos (SVG, PNG, ICO) à fond sombre et à fond clair, lettres converties en tracés.
