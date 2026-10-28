@@ -1,3 +1,5 @@
+<p align="center"><img src="assets/logo/fadera-logo-sombre.svg" alt="Fadéra" width="360"></p>
+
 # Fadéra
 
 Un langage de programmation **en français**, avec un IDE dans le navigateur et un moteur en ligne de commande.

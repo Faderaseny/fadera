@@ -5,6 +5,13 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et la nu
 
 ## [Non publié]
 
+## [0.7.5] — 2026-10-28
+
+### Ajouté
+- Nouveau logo Fadéra (monogramme F doré avec curseur, bleu nuit) : écran de démarrage, barre du haut, favicon de l'onglet du navigateur, et petite icône devant chaque fichier `.fa` dans les onglets de l'éditeur.
+- `assets/logo/` : icône et logos (SVG, PNG, ICO) à fond sombre et à fond clair, lettres converties en tracés.
+- `windows/` : `associer_fadera.ps1` donne l'icône Fadéra aux fichiers `.fa` dans l'Explorateur et les ouvre avec `fadera.exe` au double-clic (sans droits administrateur) ; `retirer_association.ps1` annule.
+
 ## [0.7.4] — 2026-10-26
 
 ### Corrigé

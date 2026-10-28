@@ -6,6 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1, viewport-fit=cover"
     />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 256 256%22%3E%3Crect width=%22256%22 height=%22256%22 rx=%2256%22 fill=%22%230f1b33%22/%3E%3Cpath d=%22M86 204V70a14 14 0 0 1 14-14h92M86 130h74%22 fill=%22none%22 stroke=%22%23f2a93b%22 stroke-width=%2226%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3Crect x=%22176%22 y=%22164%22 width=%2240%22 height=%2240%22 rx=%228%22 fill=%22%23fff%22/%3E%3C/svg%3E" />
     <title>FADERA | Environnement de Développement Intégré</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -91,6 +92,7 @@
         animation: bootOut 0.6s ease-in 0.9s forwards;
       }
       #boot .logo-boot {
+        line-height: 0;
         font-size: 40px;
         color: var(--accent-2);
         text-shadow: 0 0 24px #3ddc9799;
@@ -1009,6 +1011,7 @@
         user-select: none;
         border-top: 2px solid transparent;
       }
+      #barreOnglets .onglet .o-ico { width: 14px; height: 14px; border-radius: 3px; flex: none; }
       #barreOnglets .onglet:hover {
         color: var(--text);
       }
@@ -1270,9 +1273,9 @@
   </head>
   <body>
     <div id="boot">
-      <div class="logo-boot">✵ FADERA</div>
+      <div class="logo-boot"><img class="logo-img" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 256 256%22%3E%3Crect width=%22256%22 height=%22256%22 rx=%2256%22 fill=%22%230f1b33%22/%3E%3Cpath d=%22M86 204V70a14 14 0 0 1 14-14h92M86 130h74%22 fill=%22none%22 stroke=%22%23f2a93b%22 stroke-width=%2226%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3Crect x=%22176%22 y=%22164%22 width=%2240%22 height=%2240%22 rx=%228%22 fill=%22%23fff%22/%3E%3C/svg%3E" alt="Fadéra" width="96" height="96" /></div>
       <div class="barre-charge"></div>
-      <div class="texte-boot" id="texteBoot">Démarrage de Fadéra v0.7.4…</div>
+      <div class="texte-boot" id="texteBoot">Démarrage de Fadéra v0.7.5…</div>
     </div>
 
     <div class="topbar">
@@ -1281,7 +1284,7 @@
           class="tb-logo"
           style="display: inline-flex; align-items: center; gap: 8px"
         >
-          <strong style="color: #ffffff; font-weight: bold">FADERA</strong>
+          <img src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 256 256%22%3E%3Crect width=%22256%22 height=%22256%22 rx=%2256%22 fill=%22%230f1b33%22/%3E%3Cpath d=%22M86 204V70a14 14 0 0 1 14-14h92M86 130h74%22 fill=%22none%22 stroke=%22%23f2a93b%22 stroke-width=%2226%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3Crect x=%22176%22 y=%22164%22 width=%2240%22 height=%2240%22 rx=%228%22 fill=%22%23fff%22/%3E%3C/svg%3E" alt="" width="20" height="20" style="border-radius:5px" /><strong style="color: #ffffff; font-weight: bold">FADERA</strong>
           <small
             style="
               color: #aaaaaa;
@@ -11685,7 +11688,8 @@ fin
 
       // Version de Fadéra affichée à l'écran de démarrage et ici : elle doit être la même que fadera-rs/Cargo.toml
       // (le test verifier_ide.js le vérifie ; à changer à chaque nouvelle version avec le texte de #texteBoot).
-      const VERSION_FADERA = "0.7.4";
+      const LOGO_FADERA = "data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 256 256%22%3E%3Crect width=%22256%22 height=%22256%22 rx=%2256%22 fill=%22%230f1b33%22/%3E%3Cpath d=%22M86 204V70a14 14 0 0 1 14-14h92M86 130h74%22 fill=%22none%22 stroke=%22%23f2a93b%22 stroke-width=%2226%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3Crect x=%22176%22 y=%22164%22 width=%2240%22 height=%2240%22 rx=%228%22 fill=%22%23fff%22/%3E%3C/svg%3E";
+      const VERSION_FADERA = "0.7.5";
       window.VERSION_FADERA = VERSION_FADERA;
       function afficherInfoVersion() {
         ecrireTerminal(
@@ -18560,6 +18564,13 @@ fin
             o.dataset.chemin = chemin;
             o.title = cheminRelatif(chemin);
             o.draggable = true;
+            if (/\.fa$/i.test(chemin)) {
+              const ic = document.createElement("img");
+              ic.className = "o-ico";
+              ic.alt = "";
+              ic.src = LOGO_FADERA;
+              o.appendChild(ic);
+            }
             const n = document.createElement("span");
             n.className = "o-nom";
             n.textContent = nomOnglet(chemin);

@@ -392,6 +392,11 @@ const eq = (nom, obtenu, att) => {
   eq("paquets : retiré (dossier et fadera.json)", await p.evaluate(() => [!!FadFS.noeud(FadFS.HOME + "/paquets/outils"), JSON.parse(FadFS.lire(FadFS.HOME + "/fadera.json"))]), [false, { dependances: {} }]);
   await p.evaluate(() => fermerModal());
 
+  // logo : favicon, barre du haut, icône sur les onglets .fa
+  eq("logo : favicon présent", await p.evaluate(() => /svg\+xml/.test(document.querySelector('link[rel="icon"]')?.href || "")), true);
+  eq("logo : image dans la barre du haut", await p.evaluate(() => !!document.querySelector(".tb-logo img")), true);
+  eq("logo : icône sur chaque onglet .fa", await p.evaluate(() => { const o = [...document.querySelectorAll("#barreOnglets .onglet")]; return o.length > 0 && o.every((x) => !!x.querySelector("img.o-ico")); }), true);
+
   eq("aucune erreur JavaScript pendant tout le parcours", errs, []);
   await ctx.close();
   console.log("\n" + ok + " vérification(s) réussie(s), " + ko + " échouée(s).");
