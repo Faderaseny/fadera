@@ -5,6 +5,14 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et la nu
 
 ## [Non publié]
 
+## [0.8.0] — 2026-10-29
+
+### Ajouté
+- **Installateur Windows** `Fadera-Installateur-0.8.0.exe` (Inno Setup, sans droits administrateur par défaut) : choix du dossier, raccourci sur le Bureau et dans le menu Démarrer, ajout au PATH, association des fichiers `.fa` (icône Fadéra, double-clic = ouverture dans l'éditeur, clic droit = « Exécuter avec Fadéra »), lancement de l'éditeur à la fin de l'installation, désinstallation propre. Construit automatiquement par le workflow de publication.
+- **Fadéra IDE en fenêtre native** (`Fadera-IDE.exe`, dossier `fadera-ide/`) : l'éditeur s'ouvre dans sa propre fenêtre Windows (WebView2), sans barre d'adresse ni onglets, avec l'icône Fadéra et sans console. Si WebView2 manque, repli automatique sur une fenêtre d'application Edge/Chrome.
+- **`fadera ide [fichier.fa]`** : sert l'éditeur sur `127.0.0.1:4747` (jamais accessible depuis le réseau), l'ouvre dans une fenêtre d'application et lui transmet le fichier. Une seconde commande réutilise le serveur déjà lancé ; le serveur s'arrête seul quelques minutes après la fermeture de la fenêtre.
+- CI : une tâche Windows compile `Fadera-IDE.exe` et vérifie que le serveur de l'éditeur répond et transmet le fichier.
+
 ### Amélioré
 - Windows : `fadera.ico` reconstruit en format classique (images BMP de 16 à 128 px, PNG pour 256 px) et `associer_fadera.ps1` écrit la valeur par défaut des clés du registre avec l'API .NET (le nom « Programme Fadera » et l'icône n'étaient pas lus) et rafraîchit le cache d'icônes, pour que l'icône s'affiche bien sur les fichiers `.fa`.
 - Terminal du navigateur : quand on lui donne un chemin Windows (`docs\exercices\…`) ou une lettre de lecteur introuvable, il ajoute une astuce (« ce terminal ne voit que les fichiers de l'éditeur ; utilisez Fichier → Importer »).

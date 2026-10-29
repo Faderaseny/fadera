@@ -66,6 +66,37 @@ jobs:
           echo "$sortie"
           test "$sortie" = "Bonjour Fadéra"
 
+  fenetre:
+    name: Fenêtre native Fadéra IDE (Windows)
+    runs-on: windows-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: |
+            fadera-rs
+            fadera-ide
+      - name: Compiler fadera.exe et Fadera-IDE.exe
+        run: |
+          (cd fadera-rs && cargo build --release --locked)
+          (cd fadera-ide && cargo build --release --locked)
+          ls -l fadera-rs/target/release/fadera.exe fadera-ide/target/release/fadera-ide.exe
+      - name: Le serveur de l'éditeur répond et transmet le fichier double-cliqué
+        run: |
+          mkdir -p essai/ide && cp fadera-rs/target/release/fadera.exe essai/ && cp index.html essai/ide/
+          printf 'afficher "salut"\n' > essai/x.fa
+          cd essai
+          (./fadera.exe ide --sans-navigateur --discret x.fa &) 
+          for i in 1 2 3 4 5 6 7 8 9 10; do curl -s http://127.0.0.1:4747/__fadera | grep -q fadera-ide && break; sleep 1; done
+          test "$(curl -s http://127.0.0.1:4747/__fadera)" = "fadera-ide"
+          curl -s http://127.0.0.1:4747/__ouvrir | grep -q '"nom":"x.fa"'
+          curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:4747/ | grep -q 200
+
   webassembly:
     name: Compiler le moteur WebAssembly
     runs-on: ubuntu-latest

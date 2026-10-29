@@ -38,6 +38,7 @@ const etapes = [
   ["Documentation : référence des fonctions à jour et complète", "node", [path.join("docs", "generer_reference.js"), "--verifier"], ici, { FADERA_BIN: path.join(rs, "target", "release", "fadera" + exe) }],
   ["Documentation : tutoriel à jour (tous les exemples exécutés)", "node", [path.join("docs", "generer_tutoriel.js"), "--verifier"], ici, { FADERA_BIN: path.join(rs, "target", "release", "fadera" + exe) }],
   ["IDE dans un vrai navigateur (onglets, coloration, complétion, recherche, IndexedDB, zip) — facultatif", "node", [path.join(rs, "tests", "verifier_ide.js"), path.join(ici, "index.html")], ici, null, true],
+  ["Éditeur local « fadera ide » (serveur, fichier double-cliqué, sécurité)", "node", [path.join(rs, "tests", "verifier_ide_serveur.js"), path.join(ici, "index.html"), path.join(rs, "target", "release", "fadera" + exe)], ici],
   ["Gestionnaire de paquets et réseau de la ligne de commande", "node", [path.join(rs, "tests", "verifier_paquets.js"), path.join(rs, "target", "release", "fadera" + exe)], ici],
   ["Vitesse du moteur Rust (régression catastrophique)", "node", [path.join(rs, "tests", "vitesse.js"), path.join(ici, "index.html"), path.join(rs, "target", "release", "fadera" + exe)], ici],
   ["Maths : JS ≡ Rust bit à bit + valeurs mpmath", "node", [path.join(rs, "tests", "verifier_maths.js"), path.join(ici, "index.html"), path.join(rs, "target", "release", "examples", "dump_maths" + exe)], ici],

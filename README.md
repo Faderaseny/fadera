@@ -19,6 +19,19 @@ c.incrementer()
 afficher "Bonjour Fadéra, n = " + c.n
 ```
 
+## Installer
+
+| Je veux… | Je fais… |
+|---|---|
+| **Essayer tout de suite** | ouvrir le [playground en ligne](https://faderaseny.github.io/fadera/) : rien à installer |
+| **Un vrai logiciel sous Windows** | télécharger `Fadera-Installateur-<version>.exe` dans les [versions](../../releases/latest), le double-cliquer, choisir le dossier et les raccourcis : Fadéra IDE s'ouvre à la fin |
+| **La ligne de commande** | télécharger l'archive de votre système (`windows`, `linux`, `macos`) dans les [versions](../../releases/latest) |
+| **Travailler sans internet** | ouvrir `index.html` dans un navigateur (ou `python serveur.py` pour le moteur complet) |
+
+Après l'installation Windows : double-clic sur un fichier `.fa` = ouverture dans Fadéra IDE ; clic droit = « Exécuter avec Fadéra » ;
+`fadera ide programme.fa` depuis un terminal fait la même chose. Windows peut afficher « Windows a protégé votre ordinateur »
+(l'installateur n'est pas encore signé) : *Informations complémentaires → Exécuter quand même*.
+
 ## Essayer
 
 - **Playground en ligne** : après activation de GitHub Pages (Settings → Pages → Source : *GitHub Actions*), l'IDE est publié à

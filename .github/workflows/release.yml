@@ -92,8 +92,54 @@ jobs:
           name: playground
           path: dist/*
 
+  installateur:
+    needs: ci
+    name: Installateur Windows
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: |
+            fadera-rs
+            fadera-ide
+      - uses: jetli/wasm-pack-action@v0.4.0
+      - name: Compiler fadera.exe, Fadera-IDE.exe et le moteur WebAssembly
+        run: |
+          (cd fadera-rs && cargo build --release --locked)
+          (cd fadera-ide && cargo build --release --locked)
+          (cd fadera-rs && wasm-pack build --release --target web -- --features wasm)
+      - name: Assembler le dossier d'installation
+        run: |
+          d=dist/installation
+          mkdir -p "$d/ide"
+          cp fadera-rs/target/release/fadera.exe "$d/"
+          cp fadera-ide/target/release/fadera-ide.exe "$d/Fadera-IDE.exe"
+          cp windows/fadera.ico LICENSE README.md CHANGELOG.md GUIDE_FADERA.md "$d/"
+          cp -r fadera-rs/examples "$d/examples" 2>/dev/null || true
+          cp index.html "$d/ide/"
+          cp -r fadera-rs/pkg "$d/ide/pkg" && rm -f "$d/ide/pkg/.gitignore"
+          ls -R "$d" | head -40
+      - name: Construire l'installateur (Inno Setup)
+        run: |
+          iscc="/c/Program Files (x86)/Inno Setup 6/ISCC.exe"
+          if [ ! -f "$iscc" ]; then choco install innosetup -y --no-progress; fi
+          v="${GITHUB_REF_NAME#v}"
+          "$iscc" "//DVersion=$v" "//DDossierSource=$(pwd -W)\\dist\\installation" windows/installateur/fadera.iss
+          ls -l dist/installateur
+      - uses: actions/upload-artifact@v4
+        with:
+          name: installateur
+          path: dist/installateur/*
+
   publier:
-    needs: [executables, playground]
+    needs: [executables, playground, installateur]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

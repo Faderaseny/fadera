@@ -1,6 +1,7 @@
 use fadera::*;
 use std::io::{BufRead, Write};
 
+mod ide;
 mod paquets;
 mod reseau;
 mod voix;
@@ -265,7 +266,7 @@ fn main() {
                 0
             }
             Some("--aide") | Some("--help") | Some("-h") => {
-                println!("Usage : fadera run fichier.fa      exécute un programme (ou : fadera fichier.fa)\n        fadera fmt f.fa            met le code en forme\n        fadera deboguer f.fa [3,7] débogueur pas à pas (lignes d'arrêt facultatives)\n        fadera tester f.fa         lance les blocs tester \"nom\" ... fin\n        fadera paquet ...          gestionnaire de paquets (installer, lister, retirer, creer)\n        fadera -e \"code\"          exécute du code\n        fadera                     mode interactif");
+                println!("Usage : fadera run fichier.fa      exécute un programme (ou : fadera fichier.fa)\n        fadera fmt f.fa            met le code en forme\n        fadera deboguer f.fa [3,7] débogueur pas à pas (lignes d'arrêt facultatives)\n        fadera ide [f.fa]          ouvre l'éditeur (IDE) dans une fenêtre, avec le fichier donné\n        fadera tester f.fa         lance les blocs tester \"nom\" ... fin\n        fadera paquet ...          gestionnaire de paquets (installer, lister, retirer, creer)\n        fadera -e \"code\"          exécute du code\n        fadera                     mode interactif");
                 0
             }
             Some("--parite") => {
@@ -321,6 +322,7 @@ fn main() {
                 let base = std::path::Path::new(&f).parent().map(|p| p.to_path_buf()).unwrap_or_default();
                 deboguer(code, base, plan, points, trace)
             }
+            Some("ide") | Some("editeur") => ide::commande(&args[1..]),
             Some("paquet") | Some("paquets") => paquets::commande(&args[1..]),
             Some("fmt") => formater_cmd(&args[1..]),
             Some("tester") => match args.get(1) {
