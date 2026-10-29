@@ -8,7 +8,7 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et la nu
 ## [0.7.7] — 2026-10-29
 
 ### Corrigé
-- Exercice 43 : retour à `trier_par(…, m => [-compte, m])`. Une clé de tri en liste est bien comparée élément par élément (nombres entre eux, puis textes) sur les deux moteurs ; l'exercice avait été détourné à tort vers `trier_multi`.
+- Moteur Rust : `trier` et `trier_par` comparaient les listes comme du texte (`[-1, "chien"]` passait avant `[-3, "le"]`), alors que le moteur JavaScript les comparait élément par élément. Les deux moteurs comparent maintenant les listes élément par élément (nombres entre eux, textes entre eux, la liste la plus courte d'abord à égalité de début). Cela rend possible un tri sur plusieurs critères avec une clé en liste : `trier_par(l, x => [critère1, critère2])`.
 
 ### Ajouté
 - Exercice 44 : trier selon plusieurs critères de deux façons (`trier_par` avec une clé en liste, `trier_multi` du module `std/tri`) et vérifier qu'elles donnent le même résultat.

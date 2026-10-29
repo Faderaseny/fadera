@@ -77,6 +77,17 @@ pub fn cmp_defaut(a: &Valeur, b: &Valeur) -> f64 {
                 r
             }
         }
+        // Listes : élément par élément ; à égalité de début, la plus courte d'abord.
+        (Valeur::Liste(x), Valeur::Liste(y)) => {
+            let (x, y) = (x.borrow(), y.borrow());
+            for (p, q) in x.iter().zip(y.iter()) {
+                let c = cmp_defaut(p, q);
+                if c != 0.0 && !c.is_nan() {
+                    return c;
+                }
+            }
+            x.len() as f64 - y.len() as f64
+        }
         _ => match locale_compare(&formater(a), &formater(b)) {
             std::cmp::Ordering::Less => -1.0,
             std::cmp::Ordering::Equal => 0.0,
