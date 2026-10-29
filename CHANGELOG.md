@@ -6,6 +6,7 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et la nu
 ## [Non publié]
 
 ### Amélioré
+- Windows : `fadera.ico` reconstruit en format classique (images BMP de 16 à 128 px, PNG pour 256 px) et `associer_fadera.ps1` écrit la valeur par défaut des clés du registre avec l'API .NET (le nom « Programme Fadera » et l'icône n'étaient pas lus) et rafraîchit le cache d'icônes, pour que l'icône s'affiche bien sur les fichiers `.fa`.
 - Terminal du navigateur : quand on lui donne un chemin Windows (`docs\exercices\…`) ou une lettre de lecteur introuvable, il ajoute une astuce (« ce terminal ne voit que les fichiers de l'éditeur ; utilisez Fichier → Importer »).
 
 ## [0.7.7] — 2026-10-29
