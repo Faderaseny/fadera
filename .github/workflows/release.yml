@@ -131,7 +131,9 @@ jobs:
           iscc="/c/Program Files (x86)/Inno Setup 6/ISCC.exe"
           if [ ! -f "$iscc" ]; then choco install innosetup -y --no-progress; fi
           v="${GITHUB_REF_NAME#v}"
-          "$iscc" "//DVersion=$v" "//DDossierSource=$(pwd -W)\\dist\\installation" windows/installateur/fadera.iss
+          # Git Bash transforme « /D… » en chemin : on désactive cette conversion pour Inno Setup
+          export MSYS_NO_PATHCONV=1 MSYS2_ARG_CONV_EXCL="*"
+          "$iscc" "/DVersion=$v" "/DDossierSource=$(pwd -W)/dist/installation" windows/installateur/fadera.iss
           ls -l dist/installateur
       - uses: actions/upload-artifact@v4
         with:

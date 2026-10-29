@@ -1,4 +1,4 @@
-; Installateur Windows de Fadéra (Inno Setup 6) — produit « Fadera-Installateur-<version>.exe ».
+﻿; Installateur Windows de Fadéra (Inno Setup 6) — produit « Fadera-Installateur-<version>.exe ».
 ; Construction (voir le workflow « Publication d'une version ») :
 ;   iscc /DVersion=0.7.8 /DDossierSource=dist\installation windows\installateur\fadera.iss
 ; Le dossier source contient : fadera.exe, fadera.ico, LICENSE, README.md, GUIDE_FADERA.md, CHANGELOG.md,
