@@ -483,6 +483,7 @@ await t('ls | sort -r',/^c\.txt\na\.txt$/);
 await t('head -n 1 a.txt','Bonjour Fadéra');
 await t('tail -1 a.txt','ligne2');
 await t('cat nope','E:cat : nope : Aucun fichier ou dossier de ce type');
+await t('cat docs\\x.fa',/^E:cat : docsx\.fa : Aucun fichier ou dossier de ce type\nAstuce : ce terminal/);
 await t('rm projets','E:rm : impossible de supprimer \'projets\' : Aucun fichier ou dossier de ce type');
 await t('cd ..','');
 await t('rm projets','E:rm : impossible de supprimer \'projets\' : est un dossier (utilisez -r)');

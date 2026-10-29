@@ -5,6 +5,9 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et la nu
 
 ## [Non publié]
 
+### Amélioré
+- Terminal du navigateur : quand on lui donne un chemin Windows (`docs\exercices\…`) ou une lettre de lecteur introuvable, il ajoute une astuce (« ce terminal ne voit que les fichiers de l'éditeur ; utilisez Fichier → Importer »).
+
 ## [0.7.7] — 2026-10-29
 
 ### Corrigé

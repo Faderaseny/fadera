@@ -16535,6 +16535,12 @@ fin
               } catch (ex) {
                 r = { err: cmd + " : " + ex.message, code: 1 };
               }
+              if (
+                  /Aucun fichier ou dossier de ce type/.test(r.err||'') &&
+                  /\\|(^|\s)[A-Za-z]:/.test(ligneN)
+                )
+                  r.err +=
+                    "\nAstuce : ce terminal ne voit que les fichiers de l'éditeur (pas votre disque, et il utilise « / » et non « \\ »). Pour un fichier de votre ordinateur : Fichier → Importer, puis « ls ».";
               resultat = r;
               if (r.err) afficher({ err: r.err });
               flux = r.out || "";
