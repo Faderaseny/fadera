@@ -1,0 +1,50 @@
+# Exercice 199 — Journal de sécurité d'un atelier
+# Domaine : Industrie et métiers · Niveau : ★★★
+# Énoncé :
+# Écrivez une classe Atelier qui enregistre des incidents { niveau, texte } (niveau 1 = information, 2 = avertissement,
+# 3 = danger). Un incident de niveau 3 déclenche une alarme prononcée avec parler. La méthode bilan() renvoie le
+# nombre d'incidents par niveau. Un niveau invalide doit lever une erreur, rattrapée par le programme.
+# Corrigé :
+classe Atelier
+  fonction creer()
+    soi.incidents = []
+  fin
+
+  fonction signaler(niveau, texte_incident)
+    si niveau < 1 ou niveau > 3 alors
+      lever("Niveau invalide : " + niveau)
+    fin
+    ajouter(soi.incidents, { niveau: niveau, texte: texte_incident })
+    si niveau == 3 alors
+      afficher "ALARME : " + texte_incident
+      parler("Danger. " + texte_incident)
+    fin
+  fin
+
+  fonction bilan()
+    soit r = { info: 0, avertissement: 0, danger: 0 }
+    pour chaque i dans soi.incidents faire
+      selon i.niveau faire
+        cas 1 alors
+          modifierCle(r, "info", r.info + 1)
+        cas 2 alors
+          modifierCle(r, "avertissement", r.avertissement + 1)
+        cas 3 alors
+          modifierCle(r, "danger", r.danger + 1)
+      fin
+    fin
+    renvoyer r
+  fin
+fin
+
+soit atelier = Atelier()
+atelier.signaler(1, "Prise de poste")
+atelier.signaler(2, "Casque manquant")
+atelier.signaler(3, "Fuite d'huile sur la presse 2")
+atelier.signaler(1, "Fin de poste")
+essayer
+  atelier.signaler(7, "test")
+attraper e
+  afficher "Refusé : " + e
+fin
+afficher atelier.bilan()

@@ -1,0 +1,27 @@
+# Exercice 193 — Une facture avec remise et TVA
+# Domaine : Industrie et métiers · Niveau : ★★
+# Énoncé :
+# Établissez la facture de 3 lignes (désignation, quantité, prix unitaire HT). Appliquez une remise de 10 % si le
+# total HT dépasse 100 000 FCFA, puis une TVA de 18 %. Affichez un tableau aligné et le net à payer.
+# Corrigé :
+soit lignes = [
+  { designation: "Pompe", quantite: 2, prix: 45000 },
+  { designation: "Joint", quantite: 10, prix: 1500 },
+  { designation: "Câble (m)", quantite: 50, prix: 800 }
+]
+soit total_ht = 0
+pour chaque l dans lignes faire
+  soit montant = l.quantite * l.prix
+  total_ht = total_ht + montant
+  afficher texte_remplir_droite(l.designation, 12, " ") + texte_remplir_gauche(texte(l.quantite), 4, " ") + texte_remplir_gauche(texte(montant), 10, " ")
+fin
+soit remise = 0
+si total_ht > 100000 alors
+  remise = total_ht * 0.10
+fin
+soit net_ht = total_ht - remise
+soit tva = net_ht * 0.18
+afficher "Total HT : " + total_ht
+afficher "Remise : " + remise
+afficher "TVA 18 % : " + tva
+afficher "Net à payer : " + (net_ht + tva) + " FCFA"

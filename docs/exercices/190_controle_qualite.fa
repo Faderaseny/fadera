@@ -1,0 +1,19 @@
+# Exercice 190 — Contrôle qualité sur une chaîne de production
+# Domaine : Industrie et métiers · Niveau : ★★
+# Énoncé :
+# Une machine remplit des bouteilles de 500 ml avec une tolérance de ± 5 ml. Voici 12 mesures.
+# Comptez les bouteilles conformes et les rebuts, calculez le taux de rebut (en %), la moyenne et l'écart-type,
+# et affichez « LOT ACCEPTÉ » si le taux de rebut est inférieur à 10 %, sinon « LOT REFUSÉ ».
+# Corrigé :
+soit mesures = [500, 502, 497, 509, 501, 498, 494, 500, 503, 506, 499, 500]
+soit conformes = filtrer(mesures, m => absolu(m - 500) <= 5)
+soit rebuts = taille(mesures) - taille(conformes)
+soit taux = arrondir(rebuts * 100 / taille(mesures), 1)
+afficher "Conformes : " + taille(conformes) + " — rebuts : " + rebuts
+afficher "Taux de rebut : " + taux + " %"
+afficher "Moyenne : " + arrondir(stats_moyenne(mesures), 2) + " ml, écart-type : " + arrondir(stats_ecart_type(mesures), 2)
+si taux < 10 alors
+  afficher "LOT ACCEPTÉ"
+sinon
+  afficher "LOT REFUSÉ"
+fin

@@ -1,0 +1,24 @@
+# Exercice 203 — Logistique : charger un camion
+# Domaine : Industrie et métiers · Niveau : ★★★
+# Énoncé :
+# Un camion porte 100 kg au maximum. Des colis { nom, poids, priorite } (1 = urgent) attendent. Chargez-les par priorité
+# (puis du plus léger au plus lourd) tant qu'ils tiennent, et listez ceux qui restent pour le prochain voyage.
+# Corrigé :
+soit colis = [
+  { nom: "médicaments", poids: 12, priorite: 1 },
+  { nom: "pièces moteur", poids: 45, priorite: 2 },
+  { nom: "vêtements", poids: 30, priorite: 3 },
+  { nom: "riz", poids: 50, priorite: 2 },
+  { nom: "vaccins", poids: 8, priorite: 1 }
+]
+soit charge = 0
+soit restants = []
+pour chaque c dans trier_par(colis, c => [c.priorite, c.poids]) faire
+  si charge + c.poids <= 100 alors
+    charge = charge + c.poids
+    afficher "Chargé : " + c.nom + " (" + c.poids + " kg), total " + charge + " kg"
+  sinon
+    ajouter(restants, c.nom)
+  fin
+fin
+afficher "Pour le prochain voyage : " + restants

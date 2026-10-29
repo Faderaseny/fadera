@@ -135,6 +135,8 @@ await t("filtrer",'afficher filtrer([1,2,3,4,5,6], x => x % 2 == 0)',"[2, 4, 6]"
 await t("reduire",'afficher reduire([1,2,3,4], (a, b) => a + b, 0)',"10");
 await t("trier comparateur",'afficher trier([3,1,2], (a, b) => b - a)',"[3, 2, 1]");
 await t("trier_par",'afficher trier_par(["ccc","a","bb"], t => taille(t))',/\["a", "bb", "ccc"\]/);
+await t("trier_par : clé en liste = critères comparés un par un",'soit n = { le: 3, chat: 2, ete: 2, chien: 1 }\nafficher trier_par(cles(n), m => [-lireCle(n, m), m])',/\["le", "chat", "ete", "chien"\]/);
+await t("trier : listes comparées élément par élément",'afficher trier([[2, "b"], [10, "a"], [2, "a"], [1]])',/\[\[1\], \[2, "a"\], \[2, "b"\], \[10, "a"\]\]/);
 await t("tous/existe",'afficher tous([2,4], x => x % 2 == 0)\nafficher existe([1,3], x => x > 2)',"vrai\nvrai");
 await t("type fonction",'afficher type_de(x => x)',/fonction/);
 await t("afficher fonction",'fonction f()\n renvoyer 1\nfin\nafficher f',/fonction/);

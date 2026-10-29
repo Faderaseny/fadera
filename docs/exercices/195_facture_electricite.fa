@@ -1,0 +1,24 @@
+# Exercice 195 — Facture d'électricité par tranches
+# Domaine : Industrie et métiers · Niveau : ★★★
+# Énoncé :
+# Le prix du kWh dépend de la tranche : 0–150 kWh à 80 FCFA, 150–250 à 120 FCFA, au-delà à 160 FCFA.
+# Calculez la facture pour 90, 200 et 320 kWh en parcourant un tableau de tranches { jusqua, prix }.
+# Corrigé :
+soit tranches = [{ jusqua: 150, prix: 80 }, { jusqua: 250, prix: 120 }, { jusqua: 1000000, prix: 160 }]
+
+fonction facture(kwh)
+  soit total = 0
+  soit debut = 0
+  pour chaque t dans tranches faire
+    si kwh > debut alors
+      soit dans_tranche = minimum(kwh, t.jusqua) - debut
+      total = total + dans_tranche * t.prix
+    fin
+    debut = t.jusqua
+  fin
+  renvoyer total
+fin
+
+pour chaque k dans [90, 200, 320] faire
+  afficher k + " kWh → " + facture(k) + " FCFA"
+fin

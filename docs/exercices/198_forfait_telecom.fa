@@ -1,0 +1,22 @@
+# Exercice 198 — Facturer un forfait mobile
+# Domaine : Industrie et métiers · Niveau : ★★
+# Énoncé :
+# Un forfait comprend 120 minutes et 5 Go pour 10 000 FCFA. Au-delà : 50 FCFA par minute et 2 000 FCFA par Go entamé
+# (utilisez plafond). Calculez la facture de trois clients et repérez celui qui paie le plus de dépassement.
+# Corrigé :
+soit clients = [
+  { nom: "Awa", minutes: 90, donnees: 4.2 },
+  { nom: "Moussa", minutes: 180, donnees: 5.5 },
+  { nom: "Fatou", minutes: 130, donnees: 8.1 }
+]
+soit pire = ""
+soit pire_depassement = -1
+pour chaque c dans clients faire
+  soit depassement = maximum(0, c.minutes - 120) * 50 + plafond(maximum(0, c.donnees - 5)) * 2000
+  afficher c.nom + " : " + (10000 + depassement) + " FCFA (dépassement " + depassement + ")"
+  si depassement > pire_depassement alors
+    pire_depassement = depassement
+    pire = c.nom
+  fin
+fin
+afficher "Plus gros dépassement : " + pire

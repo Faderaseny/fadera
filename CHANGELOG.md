@@ -5,6 +5,17 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et la nu
 
 ## [Non publié]
 
+## [0.7.7] — 2026-10-29
+
+### Corrigé
+- Exercice 43 : retour à `trier_par(…, m => [-compte, m])`. Une clé de tri en liste est bien comparée élément par élément (nombres entre eux, puis textes) sur les deux moteurs ; l'exercice avait été détourné à tort vers `trier_multi`.
+
+### Ajouté
+- Exercice 44 : trier selon plusieurs critères de deux façons (`trier_par` avec une clé en liste, `trier_multi` du module `std/tri`) et vérifier qu'elles donnent le même résultat.
+- Un 20e domaine d'exercices, « Industrie et métiers » (exercices 190 à 203) : contrôle qualité, surveillance d'une machine, réapprovisionnement de stock, facture avec remise et TVA, livraison au moindre coût, facture d'électricité par tranches, irrigation, prêt et amortissement, forfait mobile, journal de sécurité d'un atelier, indice de masse corporelle, horaires d'un bus, repérage d'attaques dans un journal de connexions, chargement d'un camion. La collection compte désormais 94 exercices.
+- La page des exercices présente honnêtement l'usage visé : automatiser des calculs, contrôles et rapports, et prototyper des règles métier lisibles en français (et non piloter une machine en temps réel).
+- Tests de non-régression (JS et parité Rust) : clés de tri en liste avec `trier_par`, et listes comparées élément par élément avec `trier`.
+
 ## [0.7.6] — 2026-10-28
 
 ### Modifié

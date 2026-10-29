@@ -1,0 +1,27 @@
+# Exercice 44 — Trier selon plusieurs critères
+# Domaine : Structures · Niveau : ★★★
+# Énoncé :
+# Voici des élèves { nom, classe, note }. Triez-les par classe (ordre alphabétique), puis, dans chaque classe,
+# par note décroissante, puis par nom. Faites-le deux fois : avec trier_par (une clé en liste)
+# puis avec trier_multi du module std/tri (une fonction par critère). Vérifiez que les deux résultats sont identiques.
+# Corrigé :
+importer "std/tri"
+
+soit eleves = [
+  { nom: "Awa", classe: "B", note: 15 },
+  { nom: "Moussa", classe: "A", note: 12 },
+  { nom: "Fatou", classe: "A", note: 18 },
+  { nom: "Ibrahima", classe: "B", note: 15 },
+  { nom: "Mariama", classe: "A", note: 12 }
+]
+
+# Façon 1 : une seule fonction qui renvoie la liste des critères
+soit tri1 = trier_par(eleves, e => [e.classe, -e.note, e.nom])
+
+# Façon 2 : une fonction par critère (le premier l'emporte)
+soit tri2 = trier_multi(eleves, [e => e.classe, e => -e.note, e => e.nom])
+
+pour chaque e dans tri1 faire
+  afficher e.classe + "  " + texte_remplir_droite(e.nom, 9, " ") + e.note
+fin
+afficher "Mêmes résultats ? " + (json_texte(tri1, 0) == json_texte(tri2, 0))

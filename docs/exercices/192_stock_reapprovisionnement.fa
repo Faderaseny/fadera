@@ -1,0 +1,22 @@
+# Exercice 192 — Réapprovisionner un stock
+# Domaine : Industrie et métiers · Niveau : ★★
+# Énoncé :
+# Un entrepôt a un fichier CSV (article;stock;seuil;prix). Listez les articles dont le stock est inférieur au seuil,
+# calculez pour chacun la quantité à commander pour atteindre 2 × le seuil et le coût de la commande,
+# puis le coût total.
+# Corrigé :
+soit brut = "article;stock;seuil;prix\nvis;120;200;15\nécrous;300;250;12\nrondelles;40;100;5\nboulons;10;50;40"
+soit lignes = tranche(csv_lire(brut, ";"), 1, 5)
+soit total = 0
+pour chaque l dans lignes faire
+  soit article = lireElement(l, 0)
+  soit stock = nombre(lireElement(l, 1))
+  soit seuil = nombre(lireElement(l, 2))
+  soit prix = nombre(lireElement(l, 3))
+  si stock < seuil alors
+    soit quantite = 2 * seuil - stock
+    afficher article + " : commander " + quantite + " (" + quantite * prix + " FCFA)"
+    total = total + quantite * prix
+  fin
+fin
+afficher "Coût total : " + total + " FCFA"

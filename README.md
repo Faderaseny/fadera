@@ -44,7 +44,7 @@ Sous Windows : décompresser l'archive, puis dans l'invite de commandes `fadera.
 ## Apprendre
 
 - [**Tutoriel pas à pas**](docs/TUTORIEL.md) : de « Bonjour le monde » aux classes, aux fichiers et au réseau.
-- [**79 exercices corrigés**](docs/EXERCICES.md) : dans 19 domaines, du calcul à la robotique, au chiffrement et à l'IA, avec le vrai résultat de chaque corrigé.
+- [**94 exercices corrigés**](docs/EXERCICES.md) : dans 20 domaines, du calcul à la robotique, au chiffrement, à l'IA et aux métiers de l'industrie, avec le vrai résultat de chaque corrigé.
 - [**40 exemples**](docs/exemples/) : calculs, jeux (devine le nombre, pendu, morpion, jeu de la vie, labyrinthe…), textes, CSV/JSON, dates, réseau, classes, **robotique** (robot qui marche en parlant, navigation, capteurs, bras articulé, essaim).
 - [**Paquets**](docs/PAQUETS.md) (liste : [paquets connus](docs/PAQUETS_CONNUS.md)) et [**services en ligne**](docs/SERVICES.md) : installer du code d'autres personnes (`fadera paquet installer`), interroger des API et des bases hébergées.
 - [**Référence des fonctions**](docs/REFERENCE.md) : les 196 fonctions natives et les 12 modules standard, avec un exemple vérifié pour chacune.

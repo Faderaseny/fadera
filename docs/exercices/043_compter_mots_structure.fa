@@ -3,10 +3,8 @@
 # Énoncé :
 # Comptez les occurrences de chaque mot de « le chat et le chien et le chat » dans une structure,
 # puis affichez les mots du plus fréquent au moins fréquent (en cas d'égalité, par ordre alphabétique).
-# Indice : importer "std/tri" fournit trier_multi(liste, [cle1, cle2, …]).
+# Indice : la clé de tri peut être une liste [critère 1, critère 2] : Fadéra les compare élément par élément.
 # Corrigé :
-importer "std/tri"
-
 soit comptes = {}
 pour chaque mot dans decouper("le chat et le chien et le chat", " ") faire
   si a_cle(comptes, mot) alors
@@ -15,7 +13,7 @@ pour chaque mot dans decouper("le chat et le chien et le chat", " ") faire
     modifierCle(comptes, mot, 1)
   fin
 fin
-soit classement = trier_multi(cles(comptes), [m => -lireCle(comptes, m), m => m])
+soit classement = trier_par(cles(comptes), m => [-lireCle(comptes, m), m])
 pour chaque m dans classement faire
   afficher m + " : " + lireCle(comptes, m)
 fin

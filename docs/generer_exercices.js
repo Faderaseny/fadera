@@ -14,6 +14,9 @@ const SANS_REFERENCE = {
   "132_http_json_tolerant": "Cet exercice interroge internet : le résultat dépend de votre connexion (sans réseau, le message poli s'affiche).",
   "152_xor_reseau_neurones": "L'initialisation du réseau est aléatoire : le résultat attendu est 0, 1, 1, 0, mais l'apprentissage peut parfois échouer ; relancez-le.",
 };
+const INTRO_DOMAINE = {
+  "Industrie et métiers": `Fadéra n'est pas un langage pour piloter une machine en temps réel : c'est un outil pour **automatiser les calculs, les contrôles et les rapports** d'une petite ou moyenne entreprise, et pour **prototyper des règles métier** dans un français que le responsable de production, le comptable ou le technicien peut relire. Ces exercices reprennent des situations concrètes : qualité, maintenance, stocks, facturation, logistique, énergie, agriculture, finance, télécoms et sécurité. Les chiffres sont inventés, mais les calculs sont ceux du métier.`,
+};
 const exos = [];
 for (const f of fs.readdirSync(DOSSIER).filter(x => x.endsWith(".fa")).sort()) {
   const id = f.replace(/\.fa$/, "");
@@ -34,7 +37,8 @@ let md = `# Exercices Fadéra
 
 ${exos.length} exercices corrigés, classés par domaine, avec leur niveau (★ facile, ★★ moyen, ★★★ plus long), couvrant tout ce que Fadéra sait faire :
 calculs, décisions et boucles, textes, listes, structures, fonctions, erreurs, fichiers (CSV, JSON), dates, mathématiques et statistiques,
-classes, modules standard, tests intégrés, réseau, chiffrement, intelligence artificielle, robotique et voix, jeux et mini-projets.
+classes, modules standard, tests intégrés, réseau, chiffrement, intelligence artificielle, robotique et voix, jeux, mini-projets
+et applications dans l'industrie et les métiers (qualité, maintenance, stocks, facturation, logistique, énergie, agriculture, finance, télécoms, sécurité).
 
 ## Comment s'en servir
 
@@ -54,6 +58,7 @@ for (const dom of domaines) {
 }
 for (const dom of domaines) {
   md += `\n## ${dom}\n`;
+  if (INTRO_DOMAINE[dom]) md += `\n${INTRO_DOMAINE[dom]}\n`;
   for (const e of exos.filter(x => x.domaine === dom)) {
     md += `\n### Exercice ${e.n} — ${e.titre}\n\n*Niveau : ${e.niveau}*\n\n${e.enonce.split("\n").map(l => "> " + l).join("\n")}\n\n<details>\n<summary>Corrigé</summary>\n\n\`\`\`fadera\n${e.code}\n\`\`\`\n`;
     if (e.tester) md += `\nLancez les tests avec : \`fadera tester docs/exercices/${e.id}.fa\`\n`;

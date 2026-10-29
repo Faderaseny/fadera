@@ -1,0 +1,27 @@
+# Exercice 202 — Sécurité informatique : repérer une attaque
+# Domaine : Industrie et métiers · Niveau : ★★★
+# Énoncé :
+# Un journal de connexions contient des lignes « heure utilisateur résultat ». Repérez les utilisateurs
+# qui ont 3 échecs de suite (un succès remet le compteur à zéro) et affichez une alerte pour chacun.
+# Corrigé :
+soit journal = "08:01 awa ok\n08:03 root echec\n08:03 root echec\n08:04 moussa ok\n08:05 root echec\n08:06 awa echec\n08:07 awa ok"
+soit serie = {}
+soit alertes = []
+pour chaque ligne dans texte_lignes(journal) faire
+  soit morceaux = decouper(ligne, " ")
+  soit qui = lireElement(morceaux, 1)
+  si lireElement(morceaux, 2) == "echec" alors
+    soit n = 1
+    si a_cle(serie, qui) alors
+      n = lireCle(serie, qui) + 1
+    fin
+    modifierCle(serie, qui, n)
+    si n == 3 alors
+      ajouter(alertes, qui)
+      afficher "ALERTE : 3 échecs de suite pour « " + qui + " » à " + lireElement(morceaux, 0)
+    fin
+  sinon
+    modifierCle(serie, qui, 0)
+  fin
+fin
+afficher "Comptes à surveiller : " + alertes

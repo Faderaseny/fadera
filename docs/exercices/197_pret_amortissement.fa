@@ -1,0 +1,19 @@
+# Exercice 197 — Rembourser un prêt
+# Domaine : Industrie et métiers · Niveau : ★★★
+# Énoncé :
+# Une entreprise emprunte 1 200 000 FCFA sur 6 mois à 12 % par an (1 % par mois). La mensualité constante est
+# M = C × t / (1 − (1 + t)^(−n)). Calculez M puis affichez le tableau d'amortissement : intérêts, capital remboursé et
+# capital restant dû chaque mois (arrondis à l'unité).
+# Corrigé :
+soit capital = 1200000
+soit t = 0.01
+soit n = 6
+soit mensualite = capital * t / (1 - puissance(1 + t, -n))
+afficher "Mensualité : " + arrondir(mensualite, 0) + " FCFA"
+soit restant = capital
+pour mois allantde 1 a n faire
+  soit interets = restant * t
+  soit rembourse = mensualite - interets
+  restant = restant - rembourse
+  afficher "Mois " + mois + " : intérêts " + arrondir(interets, 0) + ", capital " + arrondir(rembourse, 0) + ", reste " + arrondir(restant, 0)
+fin

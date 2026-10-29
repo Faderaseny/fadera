@@ -1,0 +1,33 @@
+# Exercice 196 — Irrigation automatique
+# Domaine : Industrie et métiers · Niveau : ★★
+# Énoncé :
+# Un système arrose un champ selon l'humidité du sol (en %) et la prévision de pluie. Règles : arroser 20 minutes si
+# l'humidité est inférieure à 30 % et qu'il ne pleut pas ; 10 minutes si elle est entre 30 et 50 % sans pluie ;
+# sinon ne pas arroser. Appliquez les règles à 5 relevés et calculez le total d'eau (débit : 15 litres par minute).
+# Corrigé :
+soit releves = [
+  { humidite: 22, pluie: faux },
+  { humidite: 35, pluie: faux },
+  { humidite: 28, pluie: vrai },
+  { humidite: 55, pluie: faux },
+  { humidite: 41, pluie: faux }
+]
+fonction minutes_arrosage(r)
+  si r.pluie alors
+    renvoyer 0
+  fin
+  si r.humidite < 30 alors
+    renvoyer 20
+  fin
+  si r.humidite <= 50 alors
+    renvoyer 10
+  fin
+  renvoyer 0
+fin
+soit total = 0
+pour chaque r dans releves faire
+  soit m = minutes_arrosage(r)
+  afficher "Humidité " + r.humidite + " %, pluie : " + r.pluie + " → " + m + " min"
+  total = total + m
+fin
+afficher "Eau consommée : " + total * 15 + " litres"

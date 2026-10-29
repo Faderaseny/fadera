@@ -1284,7 +1284,7 @@
     <div id="boot">
       <div class="logo-boot"><img class="logo-img" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 256 256%22%3E%3Crect width=%22256%22 height=%22256%22 rx=%2256%22 fill=%22%230f1b33%22/%3E%3Cpath d=%22M86 204V70a14 14 0 0 1 14-14h92M86 130h74%22 fill=%22none%22 stroke=%22%23f2a93b%22 stroke-width=%2226%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3Crect x=%22176%22 y=%22164%22 width=%2240%22 height=%2240%22 rx=%228%22 fill=%22%23fff%22/%3E%3C/svg%3E" alt="Fadéra" width="96" height="96" /></div>
       <div class="barre-charge"></div>
-      <div class="texte-boot" id="texteBoot">Démarrage de Fadéra v0.7.6…</div>
+      <div class="texte-boot" id="texteBoot">Démarrage de Fadéra v0.7.7…</div>
     </div>
 
     <div class="topbar">
@@ -9048,10 +9048,20 @@ fin
             );
           return v;
         };
-        const cmpDefaut = (a, b) =>
-          typeof a === "number" && typeof b === "number"
-            ? a - b
-            : formater(a).localeCompare(formater(b), "fr");
+        // Comparaison par défaut : nombres entre eux, listes élément par élément (la plus courte d'abord
+        // à égalité de début), sinon comparaison des textes.
+        const cmpDefaut = (a, b) => {
+          if (typeof a === "number" && typeof b === "number") return a - b;
+          if (Array.isArray(a) && Array.isArray(b)) {
+            const n = Math.min(a.length, b.length);
+            for (let i = 0; i < n; i++) {
+              const c = cmpDefaut(a[i], b[i]);
+              if (c) return c;
+            }
+            return a.length - b.length;
+          }
+          return formater(a).localeCompare(formater(b), "fr");
+        };
         async function triFusion(a, cmp) {
           if (a.length < 2) return a;
           const m = a.length >> 1;
@@ -11717,7 +11727,7 @@ fin
       // Version de Fadéra affichée à l'écran de démarrage et ici : elle doit être la même que fadera-rs/Cargo.toml
       // (le test verifier_ide.js le vérifie ; à changer à chaque nouvelle version avec le texte de #texteBoot).
       const LOGO_FADERA = "data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 256 256%22%3E%3Crect width=%22256%22 height=%22256%22 rx=%2256%22 fill=%22%230f1b33%22/%3E%3Cpath d=%22M86 204V70a14 14 0 0 1 14-14h92M86 130h74%22 fill=%22none%22 stroke=%22%23f2a93b%22 stroke-width=%2226%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3Crect x=%22176%22 y=%22164%22 width=%2240%22 height=%2240%22 rx=%228%22 fill=%22%23fff%22/%3E%3C/svg%3E";
-      const VERSION_FADERA = "0.7.6";
+      const VERSION_FADERA = "0.7.7";
       window.VERSION_FADERA = VERSION_FADERA;
       function afficherInfoVersion() {
         ecrireTerminal(

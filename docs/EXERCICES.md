@@ -1,8 +1,9 @@
 # Exercices Fadéra
 
-79 exercices corrigés, classés par domaine, avec leur niveau (★ facile, ★★ moyen, ★★★ plus long), couvrant tout ce que Fadéra sait faire :
+94 exercices corrigés, classés par domaine, avec leur niveau (★ facile, ★★ moyen, ★★★ plus long), couvrant tout ce que Fadéra sait faire :
 calculs, décisions et boucles, textes, listes, structures, fonctions, erreurs, fichiers (CSV, JSON), dates, mathématiques et statistiques,
-classes, modules standard, tests intégrés, réseau, chiffrement, intelligence artificielle, robotique et voix, jeux et mini-projets.
+classes, modules standard, tests intégrés, réseau, chiffrement, intelligence artificielle, robotique et voix, jeux, mini-projets
+et applications dans l'industrie et les métiers (qualité, maintenance, stocks, facturation, logistique, énergie, agriculture, finance, télécoms, sécurité).
 
 ## Comment s'en servir
 
@@ -19,7 +20,7 @@ Les corrigés sont **exécutés automatiquement sur les deux moteurs** de Fadér
 - [Décisions et boucles](#decisions-et-boucles) — 7 exercices (10, 11, 12, 13, 14, 15, 16)
 - [Texte](#texte) — 6 exercices (20, 21, 22, 23, 24, 25)
 - [Listes](#listes) — 5 exercices (30, 31, 32, 33, 34)
-- [Structures](#structures) — 4 exercices (40, 41, 42, 43)
+- [Structures](#structures) — 5 exercices (40, 41, 42, 43, 44)
 - [Fonctions et récursivité](#fonctions-et-recursivite) — 5 exercices (50, 51, 52, 53, 54)
 - [Erreurs](#erreurs) — 3 exercices (60, 61, 62)
 - [Fichiers](#fichiers) — 4 exercices (70, 71, 72, 73)
@@ -34,6 +35,7 @@ Les corrigés sont **exécutés automatiquement sur les deux moteurs** de Fadér
 - [Robotique et voix](#robotique-et-voix) — 4 exercices (160, 161, 162, 163)
 - [Jeux et simulations](#jeux-et-simulations) — 4 exercices (170, 171, 172, 173)
 - [Mini-projets](#mini-projets) — 4 exercices (180, 181, 182, 183)
+- [Industrie et métiers](#industrie-et-metiers) — 14 exercices (190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203)
 
 ## Bases
 
@@ -870,14 +872,12 @@ Du sucre ? faux
 
 > Comptez les occurrences de chaque mot de « le chat et le chien et le chat » dans une structure,
 > puis affichez les mots du plus fréquent au moins fréquent (en cas d'égalité, par ordre alphabétique).
-> Indice : importer "std/tri" fournit trier_multi(liste, [cle1, cle2, …]).
+> Indice : la clé de tri peut être une liste [critère 1, critère 2] : Fadéra les compare élément par élément.
 
 <details>
 <summary>Corrigé</summary>
 
 ```fadera
-importer "std/tri"
-
 soit comptes = {}
 pour chaque mot dans decouper("le chat et le chien et le chat", " ") faire
   si a_cle(comptes, mot) alors
@@ -886,7 +886,7 @@ pour chaque mot dans decouper("le chat et le chien et le chat", " ") faire
     modifierCle(comptes, mot, 1)
   fin
 fin
-soit classement = trier_multi(cles(comptes), [m => -lireCle(comptes, m), m => m])
+soit classement = trier_par(cles(comptes), m => [-lireCle(comptes, m), m])
 pour chaque m dans classement faire
   afficher m + " : " + lireCle(comptes, m)
 fin
@@ -899,6 +899,53 @@ le : 3
 chat : 2
 et : 2
 chien : 1
+```
+
+</details>
+
+### Exercice 44 — Trier selon plusieurs critères
+
+*Niveau : ★★★*
+
+> Voici des élèves { nom, classe, note }. Triez-les par classe (ordre alphabétique), puis, dans chaque classe,
+> par note décroissante, puis par nom. Faites-le deux fois : avec trier_par (une clé en liste)
+> puis avec trier_multi du module std/tri (une fonction par critère). Vérifiez que les deux résultats sont identiques.
+
+<details>
+<summary>Corrigé</summary>
+
+```fadera
+importer "std/tri"
+
+soit eleves = [
+  { nom: "Awa", classe: "B", note: 15 },
+  { nom: "Moussa", classe: "A", note: 12 },
+  { nom: "Fatou", classe: "A", note: 18 },
+  { nom: "Ibrahima", classe: "B", note: 15 },
+  { nom: "Mariama", classe: "A", note: 12 }
+]
+
+# Façon 1 : une seule fonction qui renvoie la liste des critères
+soit tri1 = trier_par(eleves, e => [e.classe, -e.note, e.nom])
+
+# Façon 2 : une fonction par critère (le premier l'emporte)
+soit tri2 = trier_multi(eleves, [e => e.classe, e => -e.note, e => e.nom])
+
+pour chaque e dans tri1 faire
+  afficher e.classe + "  " + texte_remplir_droite(e.nom, 9, " ") + e.note
+fin
+afficher "Mêmes résultats ? " + (json_texte(tri1, 0) == json_texte(tri2, 0))
+```
+
+Résultat :
+
+```
+A  Fatou    18
+A  Mariama  12
+A  Moussa   12
+B  Awa      15
+B  Ibrahima 15
+Mêmes résultats ? vrai
 ```
 
 </details>
@@ -2973,6 +3020,614 @@ Livraison en (1, 2) — 3 cases
 Livraison en (4, 1) — 4 cases
 Livraison en (5, 5) — 5 cases
 Distance totale : 12 cases
+```
+
+</details>
+
+## Industrie et métiers
+
+Fadéra n'est pas un langage pour piloter une machine en temps réel : c'est un outil pour **automatiser les calculs, les contrôles et les rapports** d'une petite ou moyenne entreprise, et pour **prototyper des règles métier** dans un français que le responsable de production, le comptable ou le technicien peut relire. Ces exercices reprennent des situations concrètes : qualité, maintenance, stocks, facturation, logistique, énergie, agriculture, finance, télécoms et sécurité. Les chiffres sont inventés, mais les calculs sont ceux du métier.
+
+### Exercice 190 — Contrôle qualité sur une chaîne de production
+
+*Niveau : ★★*
+
+> Une machine remplit des bouteilles de 500 ml avec une tolérance de ± 5 ml. Voici 12 mesures.
+> Comptez les bouteilles conformes et les rebuts, calculez le taux de rebut (en %), la moyenne et l'écart-type,
+> et affichez « LOT ACCEPTÉ » si le taux de rebut est inférieur à 10 %, sinon « LOT REFUSÉ ».
+
+<details>
+<summary>Corrigé</summary>
+
+```fadera
+soit mesures = [500, 502, 497, 509, 501, 498, 494, 500, 503, 506, 499, 500]
+soit conformes = filtrer(mesures, m => absolu(m - 500) <= 5)
+soit rebuts = taille(mesures) - taille(conformes)
+soit taux = arrondir(rebuts * 100 / taille(mesures), 1)
+afficher "Conformes : " + taille(conformes) + " — rebuts : " + rebuts
+afficher "Taux de rebut : " + taux + " %"
+afficher "Moyenne : " + arrondir(stats_moyenne(mesures), 2) + " ml, écart-type : " + arrondir(stats_ecart_type(mesures), 2)
+si taux < 10 alors
+  afficher "LOT ACCEPTÉ"
+sinon
+  afficher "LOT REFUSÉ"
+fin
+```
+
+Résultat :
+
+```
+Conformes : 9 — rebuts : 3
+Taux de rebut : 25 %
+Moyenne : 500.75 ml, écart-type : 3.81
+LOT REFUSÉ
+```
+
+</details>
+
+### Exercice 191 — Surveiller une machine
+
+*Niveau : ★★★*
+
+> Un capteur relève la température d'un moteur toutes les minutes. Calculez la moyenne glissante sur 3 relevés et
+> déclenchez une alerte (affichée et prononcée avec parler) dès que cette moyenne dépasse 80 °C.
+> Indiquez la minute de l'alerte et arrêtez la surveillance.
+
+<details>
+<summary>Corrigé</summary>
+
+```fadera
+soit releves = [62, 65, 70, 74, 79, 83, 88, 91]
+soit alerte = faux
+pour i allantde 2 a taille(releves) - 1 faire
+  si non alerte alors
+    soit moyenne = stats_moyenne(tranche(releves, i - 2, i + 1))
+    afficher "Minute " + (i + 1) + " : moyenne glissante " + arrondir(moyenne, 1) + " °C"
+    si moyenne > 80 alors
+      alerte = vrai
+      afficher "ALERTE : surchauffe à la minute " + (i + 1)
+      parler("Alerte surchauffe moteur.")
+    fin
+  fin
+fin
+```
+
+Résultat :
+
+```
+Minute 3 : moyenne glissante 65.7 °C
+Minute 4 : moyenne glissante 69.7 °C
+Minute 5 : moyenne glissante 74.3 °C
+Minute 6 : moyenne glissante 78.7 °C
+Minute 7 : moyenne glissante 83.3 °C
+ALERTE : surchauffe à la minute 7
+```
+
+</details>
+
+### Exercice 192 — Réapprovisionner un stock
+
+*Niveau : ★★*
+
+> Un entrepôt a un fichier CSV (article;stock;seuil;prix). Listez les articles dont le stock est inférieur au seuil,
+> calculez pour chacun la quantité à commander pour atteindre 2 × le seuil et le coût de la commande,
+> puis le coût total.
+
+<details>
+<summary>Corrigé</summary>
+
+```fadera
+soit brut = "article;stock;seuil;prix\nvis;120;200;15\nécrous;300;250;12\nrondelles;40;100;5\nboulons;10;50;40"
+soit lignes = tranche(csv_lire(brut, ";"), 1, 5)
+soit total = 0
+pour chaque l dans lignes faire
+  soit article = lireElement(l, 0)
+  soit stock = nombre(lireElement(l, 1))
+  soit seuil = nombre(lireElement(l, 2))
+  soit prix = nombre(lireElement(l, 3))
+  si stock < seuil alors
+    soit quantite = 2 * seuil - stock
+    afficher article + " : commander " + quantite + " (" + quantite * prix + " FCFA)"
+    total = total + quantite * prix
+  fin
+fin
+afficher "Coût total : " + total + " FCFA"
+```
+
+Résultat :
+
+```
+vis : commander 280 (4200 FCFA)
+rondelles : commander 160 (800 FCFA)
+boulons : commander 90 (3600 FCFA)
+Coût total : 8600 FCFA
+```
+
+</details>
+
+### Exercice 193 — Une facture avec remise et TVA
+
+*Niveau : ★★*
+
+> Établissez la facture de 3 lignes (désignation, quantité, prix unitaire HT). Appliquez une remise de 10 % si le
+> total HT dépasse 100 000 FCFA, puis une TVA de 18 %. Affichez un tableau aligné et le net à payer.
+
+<details>
+<summary>Corrigé</summary>
+
+```fadera
+soit lignes = [
+  { designation: "Pompe", quantite: 2, prix: 45000 },
+  { designation: "Joint", quantite: 10, prix: 1500 },
+  { designation: "Câble (m)", quantite: 50, prix: 800 }
+]
+soit total_ht = 0
+pour chaque l dans lignes faire
+  soit montant = l.quantite * l.prix
+  total_ht = total_ht + montant
+  afficher texte_remplir_droite(l.designation, 12, " ") + texte_remplir_gauche(texte(l.quantite), 4, " ") + texte_remplir_gauche(texte(montant), 10, " ")
+fin
+soit remise = 0
+si total_ht > 100000 alors
+  remise = total_ht * 0.10
+fin
+soit net_ht = total_ht - remise
+soit tva = net_ht * 0.18
+afficher "Total HT : " + total_ht
+afficher "Remise : " + remise
+afficher "TVA 18 % : " + tva
+afficher "Net à payer : " + (net_ht + tva) + " FCFA"
+```
+
+Résultat :
+
+```
+Pompe          2     90000
+Joint         10     15000
+Câble (m)     50     40000
+Total HT : 145000
+Remise : 14500
+TVA 18 % : 23490
+Net à payer : 153990 FCFA
+```
+
+</details>
+
+### Exercice 194 — Le trajet le moins coûteux pour une livraison
+
+*Niveau : ★★★*
+
+> Un transporteur relie des villes : Dakar–Thiès (70 km), Thiès–Touba (115 km), Dakar–Mbour (80 km),
+> Mbour–Kaolack (110 km), Thiès–Kaolack (150 km), Kaolack–Touba (130 km). Avec le routage de plus court chemin,
+> trouvez le meilleur trajet de Dakar à Touba et à Kaolack, puis le coût en carburant à 0,12 litre par km et 800 FCFA le litre.
+
+<details>
+<summary>Corrigé</summary>
+
+```fadera
+soit reseau = telecom_creer_topologie()
+pour chaque t dans [["Dakar", "Thies", 70], ["Thies", "Touba", 115], ["Dakar", "Mbour", 80], ["Mbour", "Kaolack", 110], ["Thies", "Kaolack", 150], ["Kaolack", "Touba", 130]] faire
+  reseau = telecom_ajouter_liaison(reseau, { de: lireElement(t, 0), a: lireElement(t, 1), cout: lireElement(t, 2) })
+fin
+pour chaque destination dans ["Touba", "Kaolack"] faire
+  soit chemin = telecom_dijkstra_routage(reseau, { depart: "Dakar", arrivee: destination })
+  soit km = lireCle(chemin, "cout_total")
+  afficher "Dakar → " + destination + " : " + joindre(lireCle(chemin, "itineraire"), " → ") + ", " + km + " km, carburant " + arrondir(km * 0.12 * 800, 0) + " FCFA"
+fin
+```
+
+Résultat :
+
+```
+Dakar → Touba : Dakar → Thies → Touba, 185 km, carburant 17760 FCFA
+Dakar → Kaolack : Dakar → Mbour → Kaolack, 190 km, carburant 18240 FCFA
+```
+
+</details>
+
+### Exercice 195 — Facture d'électricité par tranches
+
+*Niveau : ★★★*
+
+> Le prix du kWh dépend de la tranche : 0–150 kWh à 80 FCFA, 150–250 à 120 FCFA, au-delà à 160 FCFA.
+> Calculez la facture pour 90, 200 et 320 kWh en parcourant un tableau de tranches { jusqua, prix }.
+
+<details>
+<summary>Corrigé</summary>
+
+```fadera
+soit tranches = [{ jusqua: 150, prix: 80 }, { jusqua: 250, prix: 120 }, { jusqua: 1000000, prix: 160 }]
+
+fonction facture(kwh)
+  soit total = 0
+  soit debut = 0
+  pour chaque t dans tranches faire
+    si kwh > debut alors
+      soit dans_tranche = minimum(kwh, t.jusqua) - debut
+      total = total + dans_tranche * t.prix
+    fin
+    debut = t.jusqua
+  fin
+  renvoyer total
+fin
+
+pour chaque k dans [90, 200, 320] faire
+  afficher k + " kWh → " + facture(k) + " FCFA"
+fin
+```
+
+Résultat :
+
+```
+90 kWh → 7200 FCFA
+200 kWh → 18000 FCFA
+320 kWh → 35200 FCFA
+```
+
+</details>
+
+### Exercice 196 — Irrigation automatique
+
+*Niveau : ★★*
+
+> Un système arrose un champ selon l'humidité du sol (en %) et la prévision de pluie. Règles : arroser 20 minutes si
+> l'humidité est inférieure à 30 % et qu'il ne pleut pas ; 10 minutes si elle est entre 30 et 50 % sans pluie ;
+> sinon ne pas arroser. Appliquez les règles à 5 relevés et calculez le total d'eau (débit : 15 litres par minute).
+
+<details>
+<summary>Corrigé</summary>
+
+```fadera
+soit releves = [
+  { humidite: 22, pluie: faux },
+  { humidite: 35, pluie: faux },
+  { humidite: 28, pluie: vrai },
+  { humidite: 55, pluie: faux },
+  { humidite: 41, pluie: faux }
+]
+fonction minutes_arrosage(r)
+  si r.pluie alors
+    renvoyer 0
+  fin
+  si r.humidite < 30 alors
+    renvoyer 20
+  fin
+  si r.humidite <= 50 alors
+    renvoyer 10
+  fin
+  renvoyer 0
+fin
+soit total = 0
+pour chaque r dans releves faire
+  soit m = minutes_arrosage(r)
+  afficher "Humidité " + r.humidite + " %, pluie : " + r.pluie + " → " + m + " min"
+  total = total + m
+fin
+afficher "Eau consommée : " + total * 15 + " litres"
+```
+
+Résultat :
+
+```
+Humidité 22 %, pluie : faux → 20 min
+Humidité 35 %, pluie : faux → 10 min
+Humidité 28 %, pluie : vrai → 0 min
+Humidité 55 %, pluie : faux → 0 min
+Humidité 41 %, pluie : faux → 10 min
+Eau consommée : 600 litres
+```
+
+</details>
+
+### Exercice 197 — Rembourser un prêt
+
+*Niveau : ★★★*
+
+> Une entreprise emprunte 1 200 000 FCFA sur 6 mois à 12 % par an (1 % par mois). La mensualité constante est
+> M = C × t / (1 − (1 + t)^(−n)). Calculez M puis affichez le tableau d'amortissement : intérêts, capital remboursé et
+> capital restant dû chaque mois (arrondis à l'unité).
+
+<details>
+<summary>Corrigé</summary>
+
+```fadera
+soit capital = 1200000
+soit t = 0.01
+soit n = 6
+soit mensualite = capital * t / (1 - puissance(1 + t, -n))
+afficher "Mensualité : " + arrondir(mensualite, 0) + " FCFA"
+soit restant = capital
+pour mois allantde 1 a n faire
+  soit interets = restant * t
+  soit rembourse = mensualite - interets
+  restant = restant - rembourse
+  afficher "Mois " + mois + " : intérêts " + arrondir(interets, 0) + ", capital " + arrondir(rembourse, 0) + ", reste " + arrondir(restant, 0)
+fin
+```
+
+Résultat :
+
+```
+Mensualité : 207058 FCFA
+Mois 1 : intérêts 12000, capital 195058, reste 1004942
+Mois 2 : intérêts 10049, capital 197009, reste 807933
+Mois 3 : intérêts 8079, capital 198979, reste 608955
+Mois 4 : intérêts 6090, capital 200968, reste 407986
+Mois 5 : intérêts 4080, capital 202978, reste 205008
+Mois 6 : intérêts 2050, capital 205008, reste 0
+```
+
+</details>
+
+### Exercice 198 — Facturer un forfait mobile
+
+*Niveau : ★★*
+
+> Un forfait comprend 120 minutes et 5 Go pour 10 000 FCFA. Au-delà : 50 FCFA par minute et 2 000 FCFA par Go entamé
+> (utilisez plafond). Calculez la facture de trois clients et repérez celui qui paie le plus de dépassement.
+
+<details>
+<summary>Corrigé</summary>
+
+```fadera
+soit clients = [
+  { nom: "Awa", minutes: 90, donnees: 4.2 },
+  { nom: "Moussa", minutes: 180, donnees: 5.5 },
+  { nom: "Fatou", minutes: 130, donnees: 8.1 }
+]
+soit pire = ""
+soit pire_depassement = -1
+pour chaque c dans clients faire
+  soit depassement = maximum(0, c.minutes - 120) * 50 + plafond(maximum(0, c.donnees - 5)) * 2000
+  afficher c.nom + " : " + (10000 + depassement) + " FCFA (dépassement " + depassement + ")"
+  si depassement > pire_depassement alors
+    pire_depassement = depassement
+    pire = c.nom
+  fin
+fin
+afficher "Plus gros dépassement : " + pire
+```
+
+Résultat :
+
+```
+Awa : 10000 FCFA (dépassement 0)
+Moussa : 15000 FCFA (dépassement 5000)
+Fatou : 18500 FCFA (dépassement 8500)
+Plus gros dépassement : Fatou
+```
+
+</details>
+
+### Exercice 199 — Journal de sécurité d'un atelier
+
+*Niveau : ★★★*
+
+> Écrivez une classe Atelier qui enregistre des incidents { niveau, texte } (niveau 1 = information, 2 = avertissement,
+> 3 = danger). Un incident de niveau 3 déclenche une alarme prononcée avec parler. La méthode bilan() renvoie le
+> nombre d'incidents par niveau. Un niveau invalide doit lever une erreur, rattrapée par le programme.
+
+<details>
+<summary>Corrigé</summary>
+
+```fadera
+classe Atelier
+  fonction creer()
+    soi.incidents = []
+  fin
+
+  fonction signaler(niveau, texte_incident)
+    si niveau < 1 ou niveau > 3 alors
+      lever("Niveau invalide : " + niveau)
+    fin
+    ajouter(soi.incidents, { niveau: niveau, texte: texte_incident })
+    si niveau == 3 alors
+      afficher "ALARME : " + texte_incident
+      parler("Danger. " + texte_incident)
+    fin
+  fin
+
+  fonction bilan()
+    soit r = { info: 0, avertissement: 0, danger: 0 }
+    pour chaque i dans soi.incidents faire
+      selon i.niveau faire
+        cas 1 alors
+          modifierCle(r, "info", r.info + 1)
+        cas 2 alors
+          modifierCle(r, "avertissement", r.avertissement + 1)
+        cas 3 alors
+          modifierCle(r, "danger", r.danger + 1)
+      fin
+    fin
+    renvoyer r
+  fin
+fin
+
+soit atelier = Atelier()
+atelier.signaler(1, "Prise de poste")
+atelier.signaler(2, "Casque manquant")
+atelier.signaler(3, "Fuite d'huile sur la presse 2")
+atelier.signaler(1, "Fin de poste")
+essayer
+  atelier.signaler(7, "test")
+attraper e
+  afficher "Refusé : " + e
+fin
+afficher atelier.bilan()
+```
+
+Résultat :
+
+```
+ALARME : Fuite d'huile sur la presse 2
+Refusé : Niveau invalide : 7
+{ info: 2, avertissement: 1, danger: 1 }
+```
+
+</details>
+
+### Exercice 200 — Santé : indice de masse corporelle
+
+*Niveau : ★★*
+
+> Écrivez imc(poids, taille_m) puis categorie(valeur) (moins de 18,5 « maigreur », jusqu'à 25 « normal »,
+> jusqu'à 30 « surpoids », sinon « obésité »). Affichez-les pour trois personnes.
+> (Exercice de programmation : ce n'est pas un avis médical.)
+
+<details>
+<summary>Corrigé</summary>
+
+```fadera
+fonction imc(poids, taille_m)
+  renvoyer poids / (taille_m * taille_m)
+fin
+
+fonction categorie(v)
+  si v < 18.5 alors
+    renvoyer "maigreur"
+  sinon si v < 25 alors
+    renvoyer "normal"
+  sinon si v < 30 alors
+    renvoyer "surpoids"
+  fin
+  renvoyer "obésité"
+fin
+
+pour chaque p dans [["Awa", 58, 1.65], ["Moussa", 92, 1.75], ["Fatou", 47, 1.70]] faire
+  soit v = imc(lireElement(p, 1), lireElement(p, 2))
+  afficher lireElement(p, 0) + " : IMC " + arrondir(v, 1) + " (" + categorie(v) + ")"
+fin
+```
+
+Résultat :
+
+```
+Awa : IMC 21.3 (normal)
+Moussa : IMC 30 (obésité)
+Fatou : IMC 16.3 (maigreur)
+```
+
+</details>
+
+### Exercice 201 — Transport : horaires d'un bus
+
+*Niveau : ★★*
+
+> Un bus part à 06:30 et dessert des arrêts espacés de 12, 9, 15 et 7 minutes. Affichez l'heure d'arrivée à chaque arrêt
+> (date_ajouter, date_formater) et la durée totale du trajet.
+
+<details>
+<summary>Corrigé</summary>
+
+```fadera
+soit depart = date_creer(2026, 10, 29, 6, 30, 0)
+soit arrets = [["Marché", 12], ["Gare", 9], ["Université", 15], ["Hôpital", 7]]
+soit maintenant_bus = depart
+soit total = 0
+afficher "Départ : " + date_formater(depart, "hh:mm")
+pour chaque a dans arrets faire
+  maintenant_bus = date_ajouter(maintenant_bus, lireElement(a, 1), "minutes")
+  total = total + lireElement(a, 1)
+  afficher texte_remplir_droite(lireElement(a, 0), 12, " ") + date_formater(maintenant_bus, "hh:mm")
+fin
+afficher "Durée totale : " + total + " minutes"
+```
+
+Résultat :
+
+```
+Départ : 06:30
+Marché      06:42
+Gare        06:51
+Université  07:06
+Hôpital     07:13
+Durée totale : 43 minutes
+```
+
+</details>
+
+### Exercice 202 — Sécurité informatique : repérer une attaque
+
+*Niveau : ★★★*
+
+> Un journal de connexions contient des lignes « heure utilisateur résultat ». Repérez les utilisateurs
+> qui ont 3 échecs de suite (un succès remet le compteur à zéro) et affichez une alerte pour chacun.
+
+<details>
+<summary>Corrigé</summary>
+
+```fadera
+soit journal = "08:01 awa ok\n08:03 root echec\n08:03 root echec\n08:04 moussa ok\n08:05 root echec\n08:06 awa echec\n08:07 awa ok"
+soit serie = {}
+soit alertes = []
+pour chaque ligne dans texte_lignes(journal) faire
+  soit morceaux = decouper(ligne, " ")
+  soit qui = lireElement(morceaux, 1)
+  si lireElement(morceaux, 2) == "echec" alors
+    soit n = 1
+    si a_cle(serie, qui) alors
+      n = lireCle(serie, qui) + 1
+    fin
+    modifierCle(serie, qui, n)
+    si n == 3 alors
+      ajouter(alertes, qui)
+      afficher "ALERTE : 3 échecs de suite pour « " + qui + " » à " + lireElement(morceaux, 0)
+    fin
+  sinon
+    modifierCle(serie, qui, 0)
+  fin
+fin
+afficher "Comptes à surveiller : " + alertes
+```
+
+Résultat :
+
+```
+ALERTE : 3 échecs de suite pour « root » à 08:05
+Comptes à surveiller : ["root"]
+```
+
+</details>
+
+### Exercice 203 — Logistique : charger un camion
+
+*Niveau : ★★★*
+
+> Un camion porte 100 kg au maximum. Des colis { nom, poids, priorite } (1 = urgent) attendent. Chargez-les par priorité
+> (puis du plus léger au plus lourd) tant qu'ils tiennent, et listez ceux qui restent pour le prochain voyage.
+
+<details>
+<summary>Corrigé</summary>
+
+```fadera
+soit colis = [
+  { nom: "médicaments", poids: 12, priorite: 1 },
+  { nom: "pièces moteur", poids: 45, priorite: 2 },
+  { nom: "vêtements", poids: 30, priorite: 3 },
+  { nom: "riz", poids: 50, priorite: 2 },
+  { nom: "vaccins", poids: 8, priorite: 1 }
+]
+soit charge = 0
+soit restants = []
+pour chaque c dans trier_par(colis, c => [c.priorite, c.poids]) faire
+  si charge + c.poids <= 100 alors
+    charge = charge + c.poids
+    afficher "Chargé : " + c.nom + " (" + c.poids + " kg), total " + charge + " kg"
+  sinon
+    ajouter(restants, c.nom)
+  fin
+fin
+afficher "Pour le prochain voyage : " + restants
+```
+
+Résultat :
+
+```
+Chargé : vaccins (8 kg), total 8 kg
+Chargé : médicaments (12 kg), total 20 kg
+Chargé : pièces moteur (45 kg), total 65 kg
+Chargé : vêtements (30 kg), total 95 kg
+Pour le prochain voyage : ["riz"]
 ```
 
 </details>

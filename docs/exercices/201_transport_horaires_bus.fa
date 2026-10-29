@@ -1,0 +1,17 @@
+# Exercice 201 — Transport : horaires d'un bus
+# Domaine : Industrie et métiers · Niveau : ★★
+# Énoncé :
+# Un bus part à 06:30 et dessert des arrêts espacés de 12, 9, 15 et 7 minutes. Affichez l'heure d'arrivée à chaque arrêt
+# (date_ajouter, date_formater) et la durée totale du trajet.
+# Corrigé :
+soit depart = date_creer(2026, 10, 29, 6, 30, 0)
+soit arrets = [["Marché", 12], ["Gare", 9], ["Université", 15], ["Hôpital", 7]]
+soit maintenant_bus = depart
+soit total = 0
+afficher "Départ : " + date_formater(depart, "hh:mm")
+pour chaque a dans arrets faire
+  maintenant_bus = date_ajouter(maintenant_bus, lireElement(a, 1), "minutes")
+  total = total + lireElement(a, 1)
+  afficher texte_remplir_droite(lireElement(a, 0), 12, " ") + date_formater(maintenant_bus, "hh:mm")
+fin
+afficher "Durée totale : " + total + " minutes"

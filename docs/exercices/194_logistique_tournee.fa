@@ -1,0 +1,16 @@
+# Exercice 194 — Le trajet le moins coûteux pour une livraison
+# Domaine : Industrie et métiers · Niveau : ★★★
+# Énoncé :
+# Un transporteur relie des villes : Dakar–Thiès (70 km), Thiès–Touba (115 km), Dakar–Mbour (80 km),
+# Mbour–Kaolack (110 km), Thiès–Kaolack (150 km), Kaolack–Touba (130 km). Avec le routage de plus court chemin,
+# trouvez le meilleur trajet de Dakar à Touba et à Kaolack, puis le coût en carburant à 0,12 litre par km et 800 FCFA le litre.
+# Corrigé :
+soit reseau = telecom_creer_topologie()
+pour chaque t dans [["Dakar", "Thies", 70], ["Thies", "Touba", 115], ["Dakar", "Mbour", 80], ["Mbour", "Kaolack", 110], ["Thies", "Kaolack", 150], ["Kaolack", "Touba", 130]] faire
+  reseau = telecom_ajouter_liaison(reseau, { de: lireElement(t, 0), a: lireElement(t, 1), cout: lireElement(t, 2) })
+fin
+pour chaque destination dans ["Touba", "Kaolack"] faire
+  soit chemin = telecom_dijkstra_routage(reseau, { depart: "Dakar", arrivee: destination })
+  soit km = lireCle(chemin, "cout_total")
+  afficher "Dakar → " + destination + " : " + joindre(lireCle(chemin, "itineraire"), " → ") + ", " + km + " km, carburant " + arrondir(km * 0.12 * 800, 0) + " FCFA"
+fin

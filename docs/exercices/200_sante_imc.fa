@@ -1,0 +1,26 @@
+# Exercice 200 — Santé : indice de masse corporelle
+# Domaine : Industrie et métiers · Niveau : ★★
+# Énoncé :
+# Écrivez imc(poids, taille_m) puis categorie(valeur) (moins de 18,5 « maigreur », jusqu'à 25 « normal »,
+# jusqu'à 30 « surpoids », sinon « obésité »). Affichez-les pour trois personnes.
+# (Exercice de programmation : ce n'est pas un avis médical.)
+# Corrigé :
+fonction imc(poids, taille_m)
+  renvoyer poids / (taille_m * taille_m)
+fin
+
+fonction categorie(v)
+  si v < 18.5 alors
+    renvoyer "maigreur"
+  sinon si v < 25 alors
+    renvoyer "normal"
+  sinon si v < 30 alors
+    renvoyer "surpoids"
+  fin
+  renvoyer "obésité"
+fin
+
+pour chaque p dans [["Awa", 58, 1.65], ["Moussa", 92, 1.75], ["Fatou", 47, 1.70]] faire
+  soit v = imc(lireElement(p, 1), lireElement(p, 2))
+  afficher lireElement(p, 0) + " : IMC " + arrondir(v, 1) + " (" + categorie(v) + ")"
+fin

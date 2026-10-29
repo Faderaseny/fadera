@@ -217,5 +217,6 @@
  "soit s = 0\npour i allantde 1 a 40\n s = s + 1.1 ** i\nfin\nafficher s\nafficher 0 ** 0\nafficher 2.5 ** 2.5",
  "afficher 0 ** -1",
  "afficher (-8) ** 0.5",
- "afficher \"a\" ** 2"
+ "afficher \"a\" ** 2",
+ "soit n = { le: 3, chat: 2, ete: 2, chien: 1 }\nafficher trier_par(cles(n), m => [-lireCle(n, m), m])\nafficher trier([[2, \"b\"], [10, \"a\"], [2, \"a\"], [1]])\nafficher trier_par([\"bb\", \"a\", \"cc\"], m => [taille(m), m])"
 ]

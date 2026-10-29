@@ -1,0 +1,20 @@
+# Exercice 191 — Surveiller une machine
+# Domaine : Industrie et métiers · Niveau : ★★★
+# Énoncé :
+# Un capteur relève la température d'un moteur toutes les minutes. Calculez la moyenne glissante sur 3 relevés et
+# déclenchez une alerte (affichée et prononcée avec parler) dès que cette moyenne dépasse 80 °C.
+# Indiquez la minute de l'alerte et arrêtez la surveillance.
+# Corrigé :
+soit releves = [62, 65, 70, 74, 79, 83, 88, 91]
+soit alerte = faux
+pour i allantde 2 a taille(releves) - 1 faire
+  si non alerte alors
+    soit moyenne = stats_moyenne(tranche(releves, i - 2, i + 1))
+    afficher "Minute " + (i + 1) + " : moyenne glissante " + arrondir(moyenne, 1) + " °C"
+    si moyenne > 80 alors
+      alerte = vrai
+      afficher "ALERTE : surchauffe à la minute " + (i + 1)
+      parler("Alerte surchauffe moteur.")
+    fin
+  fin
+fin
