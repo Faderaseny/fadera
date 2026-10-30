@@ -96,6 +96,26 @@ jobs:
           test "$(curl -s http://127.0.0.1:4747/__fadera)" = "fadera-ide"
           curl -s http://127.0.0.1:4747/__ouvrir | grep -q '"nom":"x.fa"'
           curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:4747/ | grep -q 200
+      - name: Construire l'installateur d'essai (Inno Setup)
+        run: |
+          d=dist/installation
+          mkdir -p "$d/ide"
+          cp fadera-rs/target/release/fadera.exe "$d/"
+          cp fadera-ide/target/release/fadera-ide.exe "$d/Fadera-IDE.exe"
+          cp windows/fadera.ico LICENSE README.md CHANGELOG.md GUIDE_FADERA.md "$d/"
+          cp index.html "$d/ide/"
+          iscc="/c/Program Files (x86)/Inno Setup 6/ISCC.exe"
+          if [ ! -f "$iscc" ]; then choco install innosetup -y --no-progress; fi
+          v=$(sed -n 's/^version = "\(.*\)"/\1/p' fadera-rs/Cargo.toml | head -1)
+          export MSYS_NO_PATHCONV=1 MSYS2_ARG_CONV_EXCL="*"
+          "$iscc" "/DVersion=$v-essai" "/DDossierSource=$(pwd -W)/dist/installation" windows/installateur/fadera.iss
+          ls -l dist/installateur
+      - name: Installateur d'essai à télécharger
+        uses: actions/upload-artifact@v4
+        with:
+          name: installateur-essai
+          path: dist/installateur/*.exe
+          retention-days: 14
 
   webassembly:
     name: Compiler le moteur WebAssembly

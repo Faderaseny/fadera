@@ -34,6 +34,9 @@ UninstallDisplayIcon={app}\fadera.ico
 Compression=lzma2/max
 SolidCompression=yes
 WizardStyle=modern
+; Images aux couleurs de Fadéra (bleu nuit #0F1B33, orange #F2A93B), une par niveau de zoom de l'écran
+WizardImageFile=assistant-grand-100.bmp,assistant-grand-125.bmp,assistant-grand-150.bmp,assistant-grand-200.bmp
+WizardSmallImageFile=assistant-petit-100.bmp,assistant-petit-125.bmp,assistant-petit-150.bmp,assistant-petit-200.bmp
 ChangesAssociations=yes
 ChangesEnvironment=yes
 LicenseFile={#DossierSource}\LICENSE
@@ -81,6 +84,65 @@ Root: HKA; Subkey: "{code:CleEnvironnement}"; ValueType: expandsz; ValueName: "P
 Filename: "{app}\Fadera-IDE.exe"; Description: "Lancer Fadéra IDE maintenant"; Flags: postinstall nowait skipifsilent
 
 [Code]
+
+const
+  // couleurs de Fadéra au format Delphi $00BBGGRR
+  CFond = $331B0F;    // bleu nuit  #0F1B33
+  CBande = $26140B;   // bandeau    #0B1426
+  CTexte = $F5EDE8;   // texte      #E8EDF5
+  CDiscret = $D0B7A9; // texte discret #A9B7D0
+  COrange = $3BA9F2;  // orange     #F2A93B
+
+procedure Clair(L: TNewStaticText; Couleur: TColor);
+begin
+  L.Font.Color := Couleur;
+end;
+
+procedure InitializeWizard;
+begin
+  WizardForm.Color := CFond;
+  WizardForm.MainPanel.Color := CBande;
+  WizardForm.InnerPage.Color := CFond;
+  WizardForm.WelcomePage.Color := CFond;
+  WizardForm.FinishedPage.Color := CFond;
+  WizardForm.LicensePage.Color := CFond;
+  WizardForm.SelectDirPage.Color := CFond;
+  WizardForm.SelectTasksPage.Color := CFond;
+  WizardForm.ReadyPage.Color := CFond;
+  WizardForm.InstallingPage.Color := CFond;
+
+  // titres en orange, textes en clair
+  Clair(WizardForm.PageNameLabel, COrange);
+  Clair(WizardForm.PageDescriptionLabel, CTexte);
+  Clair(WizardForm.WelcomeLabel1, COrange);
+  Clair(WizardForm.WelcomeLabel2, CTexte);
+  Clair(WizardForm.FinishedHeadingLabel, COrange);
+  Clair(WizardForm.FinishedLabel, CTexte);
+  Clair(WizardForm.LicenseLabel1, CTexte);
+  Clair(WizardForm.SelectDirLabel, CTexte);
+  Clair(WizardForm.SelectDirBrowseLabel, CTexte);
+  Clair(WizardForm.DiskSpaceLabel, CDiscret);
+  Clair(WizardForm.SelectTasksLabel, CTexte);
+  Clair(WizardForm.ReadyLabel, CTexte);
+  Clair(WizardForm.StatusLabel, CTexte);
+  Clair(WizardForm.FilenameLabel, CDiscret);
+  Clair(WizardForm.BeveledLabel, CDiscret);
+  WizardForm.LicenseAcceptedRadio.Font.Color := CTexte;
+  WizardForm.LicenseNotAcceptedRadio.Font.Color := CTexte;
+
+  // cases à cocher : fond bleu nuit, texte clair, lignes un peu plus hautes (cases entières)
+  WizardForm.TasksList.Color := CFond;
+  WizardForm.TasksList.Font.Color := CTexte;
+  WizardForm.TasksList.MinItemHeight := ScaleY(26);
+  WizardForm.RunList.Color := CFond;
+  WizardForm.RunList.Font.Color := CTexte;
+  WizardForm.RunList.MinItemHeight := ScaleY(26);
+  WizardForm.LicenseMemo.Color := CBande;
+  WizardForm.LicenseMemo.Font.Color := CTexte;
+  WizardForm.ReadyMemo.Color := CBande;
+  WizardForm.ReadyMemo.Font.Color := CTexte;
+end;
+
 function CleEnvironnement(Param: string): string;
 begin
   if IsAdminInstallMode then
