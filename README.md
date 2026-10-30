@@ -30,7 +30,7 @@ afficher "Bonjour Fadéra, n = " + c.n
 
 Après l'installation Windows : double-clic sur un fichier `.fa` = ouverture dans Fadéra IDE ; clic droit = « Exécuter avec Fadéra » ;
 `fadera ide programme.fa` depuis un terminal fait la même chose. Windows peut afficher « Windows a protégé votre ordinateur »
-(l'installateur n'est pas encore signé) : *Informations complémentaires → Exécuter quand même*.
+(l'installateur n'est pas encore signé : voir [la signature du code](docs/SIGNATURE.md)) : *Informations complémentaires → Exécuter quand même*.
 
 ## Essayer
 

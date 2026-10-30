@@ -135,6 +135,44 @@ jobs:
           export MSYS_NO_PATHCONV=1 MSYS2_ARG_CONV_EXCL="*"
           "$iscc" "/DVersion=$v" "/DDossierSource=$(pwd -W)/dist/installation" windows/installateur/fadera.iss
           ls -l dist/installateur
+      # --- Signature du code par SignPath (gratuite pour l'open source) -----------------------------------
+      # Inactive tant que la variable de dépôt SIGNPATH_ORGANIZATION_ID n'existe pas (voir docs/SIGNATURE.md).
+      - name: Préparer l'installateur à signer
+        if: ${{ vars.SIGNPATH_ORGANIZATION_ID != '' }}
+        run: |
+          mkdir -p dist/a-signer
+          for f in dist/installateur/*.exe; do cp "$f" "dist/a-signer/A-SIGNER-$(basename "$f")"; done
+      - name: Envoyer l'installateur non signé
+        id: non-signe
+        if: ${{ vars.SIGNPATH_ORGANIZATION_ID != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: a-signer
+          path: dist/a-signer/*
+          retention-days: 1
+      - name: Demander la signature à SignPath
+        if: ${{ vars.SIGNPATH_ORGANIZATION_ID != '' }}
+        uses: signpath/github-action-submit-signing-request@v3
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG || 'fadera' }}
+          signing-policy-slug: ${{ vars.SIGNPATH_POLICY_SLUG || 'release-signing' }}
+          github-artifact-id: ${{ steps.non-signe.outputs.artifact-id }}
+          wait-for-completion: true
+          output-artifact-directory: dist/signe
+      - name: Remplacer l'installateur par la version signée
+        if: ${{ vars.SIGNPATH_ORGANIZATION_ID != '' }}
+        run: |
+          cd dist/signe
+          for z in *.zip; do [ -f "$z" ] && unzip -o -q "$z" && rm "$z"; done
+          n=0
+          for f in $(find . -name '*.exe'); do
+            b=$(basename "$f"); b="${b#A-SIGNER-}"
+            cp "$f" "../installateur/$b"; n=$((n+1))
+          done
+          echo "$n fichier(s) signé(s) remplacé(s)"
+          test "$n" -ge 1
       - uses: actions/upload-artifact@v4
         with:
           name: installateur
@@ -151,6 +189,7 @@ jobs:
           merge-multiple: true
       - name: Sommes SHA-256 et notes de version
         run: |
+          rm -f publication/A-SIGNER-*
           cd publication && sha256sum * > SHA256SUMS && cat SHA256SUMS && cd ..
           v="${GITHUB_REF_NAME#v}"
           awk -v v="$v" '$0 ~ "^## \\[" v "\\]" {on=1; next} /^## \[/ {on=0} on' CHANGELOG.md > NOTES.md

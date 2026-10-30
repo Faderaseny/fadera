@@ -8,6 +8,7 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et la nu
 ## [0.8.0] — 2026-10-29
 
 ### Ajouté
+- Signature du code par SignPath, prête mais inactive tant que la variable `SIGNPATH_ORGANIZATION_ID` n'existe pas : étapes du workflow de publication et [procédure complète](docs/SIGNATURE.md) (politique de signature comprise).
 - **Installateur Windows** `Fadera-Installateur-0.8.0.exe` (Inno Setup, sans droits administrateur par défaut) : choix du dossier, raccourci sur le Bureau et dans le menu Démarrer, ajout au PATH, association des fichiers `.fa` (icône Fadéra, double-clic = ouverture dans l'éditeur, clic droit = « Exécuter avec Fadéra »), lancement de l'éditeur à la fin de l'installation, désinstallation propre. Construit automatiquement par le workflow de publication.
 - **Fadéra IDE en fenêtre native** (`Fadera-IDE.exe`, dossier `fadera-ide/`) : l'éditeur s'ouvre dans sa propre fenêtre Windows (WebView2), sans barre d'adresse ni onglets, avec l'icône Fadéra et sans console. Si WebView2 manque, repli automatique sur une fenêtre d'application Edge/Chrome.
 - **`fadera ide [fichier.fa]`** : sert l'éditeur sur `127.0.0.1:4747` (jamais accessible depuis le réseau), l'ouvre dans une fenêtre d'application et lui transmet le fichier. Une seconde commande réutilise le serveur déjà lancé ; le serveur s'arrête seul quelques minutes après la fermeture de la fenêtre.
