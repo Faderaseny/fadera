@@ -1,6 +1,6 @@
 [package]
 name = "fadera-ide"
-version = "0.8.0"
+version = "0.8.1"
 edition = "2021"
 description = "Fadéra IDE — fenêtre native (WebView2) pour l'éditeur Fadéra"
 license = "MIT"

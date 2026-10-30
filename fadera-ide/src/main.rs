@@ -67,6 +67,28 @@ mod fenetre {
         c.spawn().map(|_| ()).map_err(|e| e.to_string())
     }
 
+    /// Note une ligne dans %LOCALAPPDATA%\Fadera\ide.log (pour comprendre un blocage : antivirus, port occupé…).
+    /// Ne doit jamais empêcher le programme de continuer : toute erreur d'écriture est ignorée.
+    fn journal(texte: &str) {
+        use std::time::{SystemTime, UNIX_EPOCH};
+        let Some(base) = std::env::var_os("LOCALAPPDATA") else {
+            return;
+        };
+        let dossier = PathBuf::from(base).join("Fadera");
+        let _ = std::fs::create_dir_all(&dossier);
+        let secondes = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .map(|d| d.as_secs())
+            .unwrap_or(0);
+        if let Ok(mut f) = std::fs::OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open(dossier.join("ide.log"))
+        {
+            let _ = writeln!(f, "[{}] {}", secondes, texte);
+        }
+    }
+
     fn message(texte: &str) {
         // dernier recours : une boîte de dialogue simple, via PowerShell (aucune dépendance)
         let script = format!(
