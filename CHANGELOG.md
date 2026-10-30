@@ -5,6 +5,12 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et la nu
 
 ## [Non publié]
 
+## [0.8.1] — 2026-10-30
+
+### Amélioré
+- Fadéra IDE : quand `fadera.exe` ne peut pas démarrer (souvent un antivirus), le message indique la vraie cause et ce qu'il faut faire (exception dans l'antivirus ou restauration depuis la quarantaine).
+- Fadéra IDE (fenêtre native) : quand le moteur `fadera.exe` ne peut pas être lancé (antivirus, Windows), le message donne maintenant la vraie raison (code Windows, chemin du fichier, quoi faire) et les problèmes sont notés dans `%LOCALAPPDATA%\Fadera\ide.log`.
+
 ## [0.8.0] — 2026-10-29
 
 ### Ajouté

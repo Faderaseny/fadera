@@ -50,7 +50,11 @@ mod fenetre {
         }
     }
 
-    fn lancer_moteur(fadera: &PathBuf, extra: &[&str], fichier: &Option<String>) -> bool {
+    fn lancer_moteur(
+        fadera: &PathBuf,
+        extra: &[&str],
+        fichier: &Option<String>,
+    ) -> Result<(), String> {
         let mut c = Command::new(fadera);
         c.arg("ide").args(extra);
         if let Some(f) = fichier {
@@ -60,7 +64,7 @@ mod fenetre {
             .stdout(Stdio::null())
             .stderr(Stdio::null())
             .creation_flags(CREATE_NO_WINDOW);
-        c.spawn().is_ok()
+        c.spawn().map(|_| ()).map_err(|e| e.to_string())
     }
 
     fn message(texte: &str) {
@@ -135,25 +139,39 @@ mod fenetre {
             });
         let fadera = dossier_exe().join("fadera.exe");
         if !fadera.is_file() {
-            message("fadera.exe est introuvable à côté de Fadera-IDE.exe. Réinstallez Fadéra.");
+            message(&format!(
+                "fadera.exe est introuvable ({}). Il a peut-être été supprimé ou mis en quarantaine par un antivirus : restaurez-le ou réinstallez Fadéra.",
+                fadera.display()
+            ));
             return;
         }
-        if !lancer_moteur(&fadera, &["--sans-navigateur", "--discret"], &fichier) {
-            message("Impossible de démarrer le moteur Fadéra.");
+        if let Err(e) = lancer_moteur(&fadera, &["--sans-navigateur", "--discret"], &fichier) {
+            journal(&format!(
+                "moteur non démarré : {} — {}",
+                fadera.display(),
+                e
+            ));
+            message(&format!(
+                "Impossible de démarrer le moteur Fadéra.\n\nRaison : {}\nFichier : {}\n\nSi la raison est « Accès refusé » ou « bloqué » : votre antivirus (Avast, Defender…) ou Windows bloque ce fichier. Ajoutez le dossier d'installation de Fadéra aux exceptions de l'antivirus, puis relancez.",
+                e,
+                fadera.display()
+            ));
             return;
         }
         let debut = Instant::now();
         while !serveur_repond() {
             if debut.elapsed() > Duration::from_secs(10) {
-                message("L'éditeur n'a pas démarré (port 4747 occupé ou éditeur introuvable). Essayez : fadera ide");
+                journal("l'éditeur n'a pas répondu sur le port 4747 en 10 secondes");
+                message("L'éditeur n'a pas démarré (port 4747 occupé, éditeur introuvable ou moteur bloqué par l'antivirus). Essayez dans un terminal : fadera ide");
                 return;
             }
             std::thread::sleep(Duration::from_millis(100));
         }
         let url = format!("http://127.0.0.1:{}/", PORT);
-        if ouvrir_fenetre(&url).is_err() {
+        if let Err(e) = ouvrir_fenetre(&url) {
             // WebView2 absent : repli sur une fenêtre d'application Edge/Chrome
-            lancer_moteur(&fadera, &["--discret"], &fichier);
+            journal(&format!("fenêtre native impossible : {}", e));
+            let _ = lancer_moteur(&fadera, &["--discret"], &fichier);
         }
     }
 }

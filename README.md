@@ -31,6 +31,8 @@ afficher "Bonjour Fadéra, n = " + c.n
 Après l'installation Windows : double-clic sur un fichier `.fa` = ouverture dans Fadéra IDE ; clic droit = « Exécuter avec Fadéra » ;
 `fadera ide programme.fa` depuis un terminal fait la même chose. Windows peut afficher « Windows a protégé votre ordinateur »
 (l'installateur n'est pas encore signé : voir [la signature du code](docs/SIGNATURE.md)) : *Informations complémentaires → Exécuter quand même*.
+Un antivirus (Avast, Defender…) peut aussi bloquer `fadera.exe`, tout nouveau programme non signé étant suspect : ajoutez le dossier d'installation
+(par défaut `%LocalAppData%\Programs\Fadera`) à ses exceptions, ou restaurez le fichier depuis la quarantaine.
 
 ## Essayer
 
