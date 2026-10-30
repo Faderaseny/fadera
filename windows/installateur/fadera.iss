@@ -92,6 +92,7 @@ const
   CTexte = $F5EDE8;   // texte      #E8EDF5
   CDiscret = $D0B7A9; // texte discret #A9B7D0
   COrange = $3BA9F2;  // orange     #F2A93B
+  CPapier = $EAF3F7;  // crème      #F7F3EA (page de licence : texte lisible)
 
 procedure Clair(L: TNewStaticText; Couleur: TColor);
 begin
@@ -105,7 +106,7 @@ begin
   WizardForm.InnerPage.Color := CFond;
   WizardForm.WelcomePage.Color := CFond;
   WizardForm.FinishedPage.Color := CFond;
-  WizardForm.LicensePage.Color := CFond;
+  WizardForm.LicensePage.Color := CPapier;
   WizardForm.SelectDirPage.Color := CFond;
   WizardForm.SelectTasksPage.Color := CFond;
   WizardForm.ReadyPage.Color := CFond;
@@ -118,7 +119,7 @@ begin
   Clair(WizardForm.WelcomeLabel2, CTexte);
   Clair(WizardForm.FinishedHeadingLabel, COrange);
   Clair(WizardForm.FinishedLabel, CTexte);
-  Clair(WizardForm.LicenseLabel1, CTexte);
+  Clair(WizardForm.LicenseLabel1, CFond);
   Clair(WizardForm.SelectDirLabel, CTexte);
   Clair(WizardForm.SelectDirBrowseLabel, CTexte);
   Clair(WizardForm.DiskSpaceLabel, CDiscret);
@@ -127,8 +128,8 @@ begin
   Clair(WizardForm.StatusLabel, CTexte);
   Clair(WizardForm.FilenameLabel, CDiscret);
   Clair(WizardForm.BeveledLabel, CDiscret);
-  WizardForm.LicenseAcceptedRadio.Font.Color := CTexte;
-  WizardForm.LicenseNotAcceptedRadio.Font.Color := CTexte;
+  WizardForm.LicenseAcceptedRadio.Font.Color := CFond;
+  WizardForm.LicenseNotAcceptedRadio.Font.Color := CFond;
 
   // cases à cocher : fond bleu nuit, texte clair, lignes un peu plus hautes (cases entières)
   WizardForm.TasksList.Color := CFond;
@@ -137,8 +138,8 @@ begin
   WizardForm.RunList.Color := CFond;
   WizardForm.RunList.Font.Color := CTexte;
   WizardForm.RunList.MinItemHeight := ScaleY(26);
-  WizardForm.LicenseMemo.Color := CBande;
-  WizardForm.LicenseMemo.Font.Color := CTexte;
+  WizardForm.LicenseMemo.Color := clWhite;
+  WizardForm.LicenseMemo.Font.Color := CFond;
   WizardForm.ReadyMemo.Color := CBande;
   WizardForm.ReadyMemo.Font.Color := CTexte;
 end;
