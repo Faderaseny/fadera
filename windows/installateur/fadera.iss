@@ -107,8 +107,9 @@ begin
   WizardForm.WelcomePage.Color := CFond;
   WizardForm.FinishedPage.Color := CFond;
   WizardForm.LicensePage.Color := CPapier;
+  WizardForm.PreparingPage.Color := CPapier;
   WizardForm.SelectDirPage.Color := CFond;
-  WizardForm.SelectTasksPage.Color := CFond;
+  WizardForm.SelectTasksPage.Color := CPapier;
   WizardForm.ReadyPage.Color := CFond;
   WizardForm.InstallingPage.Color := CFond;
 
@@ -120,16 +121,19 @@ begin
   Clair(WizardForm.FinishedHeadingLabel, COrange);
   Clair(WizardForm.FinishedLabel, CTexte);
   Clair(WizardForm.LicenseLabel1, CFond);
+  Clair(WizardForm.PreparingLabel, CFond);
   Clair(WizardForm.SelectDirLabel, CTexte);
   Clair(WizardForm.SelectDirBrowseLabel, CTexte);
   Clair(WizardForm.DiskSpaceLabel, CDiscret);
-  Clair(WizardForm.SelectTasksLabel, CTexte);
+  Clair(WizardForm.SelectTasksLabel, CFond);
   Clair(WizardForm.ReadyLabel, CTexte);
   Clair(WizardForm.StatusLabel, CTexte);
   Clair(WizardForm.FilenameLabel, CDiscret);
   Clair(WizardForm.BeveledLabel, CDiscret);
   WizardForm.LicenseAcceptedRadio.Font.Color := CFond;
   WizardForm.LicenseNotAcceptedRadio.Font.Color := CFond;
+  WizardForm.PreparingYesRadio.Font.Color := CFond;
+  WizardForm.PreparingNoRadio.Font.Color := CFond;
 
   // cases à cocher : fond bleu nuit, texte clair, lignes un peu plus hautes (cases entières)
   WizardForm.TasksList.Color := CFond;
@@ -142,6 +146,67 @@ begin
   WizardForm.LicenseMemo.Font.Color := CFond;
   WizardForm.ReadyMemo.Color := CBande;
   WizardForm.ReadyMemo.Font.Color := CTexte;
+end;
+
+var
+  CasesTaches: array of TNewCheckBox;
+  IndexTaches: array of Integer;
+  CasesFaites: Boolean;
+
+// La liste de tâches d'origine dessine ses cases à cocher avec une taille mémorisée : selon le zoom de l'écran,
+// elles apparaissent coupées. On la remplace par de vraies cases Windows, et on recopie leur état à la sortie de la page.
+procedure CurPageChanged(CurPageID: Integer);
+var
+  i, n, haut: Integer;
+  lib: TNewStaticText;
+  cb: TNewCheckBox;
+begin
+  if (CurPageID = wpSelectTasks) and (not CasesFaites) then
+  begin
+    CasesFaites := True;
+    WizardForm.TasksList.Visible := False;
+    haut := WizardForm.TasksList.Top;
+    for i := 0 to WizardForm.TasksList.Items.Count - 1 do
+    begin
+      if WizardForm.TasksList.ItemLevel[i] = 0 then
+      begin
+        lib := TNewStaticText.Create(WizardForm);
+        lib.Parent := WizardForm.SelectTasksPage;
+        lib.Left := WizardForm.TasksList.Left;
+        lib.Top := haut + ScaleY(4);
+        lib.Caption := WizardForm.TasksList.ItemCaption[i];
+        lib.Font.Color := CFond;
+        lib.Font.Style := [fsBold];
+      end else
+      begin
+        cb := TNewCheckBox.Create(WizardForm);
+        cb.Parent := WizardForm.SelectTasksPage;
+        cb.Left := WizardForm.TasksList.Left + ScaleX(18);
+        cb.Top := haut;
+        cb.Width := WizardForm.TasksList.Width - ScaleX(18);
+        cb.Height := ScaleY(20);
+        cb.Caption := WizardForm.TasksList.ItemCaption[i];
+        cb.Checked := WizardForm.TasksList.Checked[i];
+        cb.Font.Color := CFond;
+        n := GetArrayLength(CasesTaches);
+        SetArrayLength(CasesTaches, n + 1);
+        SetArrayLength(IndexTaches, n + 1);
+        CasesTaches[n] := cb;
+        IndexTaches[n] := i;
+      end;
+      haut := haut + ScaleY(26);
+    end;
+  end;
+end;
+
+function NextButtonClick(CurPageID: Integer): Boolean;
+var
+  i: Integer;
+begin
+  if CurPageID = wpSelectTasks then
+    for i := 0 to GetArrayLength(CasesTaches) - 1 do
+      WizardForm.TasksList.Checked[IndexTaches[i]] := CasesTaches[i].Checked;
+  Result := True;
 end;
 
 function CleEnvironnement(Param: string): string;
