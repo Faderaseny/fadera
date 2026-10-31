@@ -168,7 +168,8 @@ begin
     haut := WizardForm.TasksList.Top;
     for i := 0 to WizardForm.TasksList.Items.Count - 1 do
     begin
-      if WizardForm.TasksList.ItemLevel[i] = 0 then
+      // la liste alterne titre de groupe / tâche (chaque tâche de [Tasks] a un GroupDescription)
+      if (i mod 2) = 0 then
       begin
         lib := TNewStaticText.Create(WizardForm);
         lib.Parent := WizardForm.SelectTasksPage;
