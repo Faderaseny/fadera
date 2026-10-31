@@ -5,6 +5,8 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et la nu
 
 ## [Non publié]
 
+## [0.8.2] — 2026-10-30
+
 ### Amélioré
 - Installateur Windows aux couleurs de Fadéra : fond bleu nuit, titres orange, images d'accueil et de fin avec le logo (une par niveau de zoom de l'écran), cases à cocher sur des lignes plus hautes pour qu'elles ne soient plus coupées.
 - CI : chaque envoi construit un « installateur d'essai » téléchargeable (onglet Actes → la tâche → Artifacts), pour voir l'installateur sans publier de version.

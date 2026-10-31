@@ -65,7 +65,12 @@ const attendre = (ms) => new Promise((r) => setTimeout(r, ms));
     ko++; console.log("  ✗ " + e.message);
   } finally {
     serveur.kill();
-    fs.rmSync(dossier, { recursive: true, force: true });
+    // Windows garde le dossier verrouillé un instant après l'arrêt du serveur (ou le temps d'une analyse antivirus) :
+    // on réessaie quelques fois, et un échec de nettoyage n'est jamais une erreur du test.
+    for (let i = 0; i < 20; i++) {
+      try { fs.rmSync(dossier, { recursive: true, force: true }); break; }
+      catch (e) { await new Promise(r => setTimeout(r, 250)); }
+    }
   }
   console.log(`${ok} vérification(s) réussie(s), ${ko} échouée(s).`);
   process.exit(ko ? 1 : 0);
