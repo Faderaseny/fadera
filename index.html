@@ -1284,7 +1284,7 @@
     <div id="boot">
       <div class="logo-boot"><img class="logo-img" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 256 256%22%3E%3Crect width=%22256%22 height=%22256%22 rx=%2256%22 fill=%22%230f1b33%22/%3E%3Cpath d=%22M86 204V70a14 14 0 0 1 14-14h92M86 130h74%22 fill=%22none%22 stroke=%22%23f2a93b%22 stroke-width=%2226%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3Crect x=%22176%22 y=%22164%22 width=%2240%22 height=%2240%22 rx=%228%22 fill=%22%23fff%22/%3E%3C/svg%3E" alt="Fadéra" width="96" height="96" /></div>
       <div class="barre-charge"></div>
-      <div class="texte-boot" id="texteBoot">Démarrage de Fadéra v0.8.3…</div>
+      <div class="texte-boot" id="texteBoot">Démarrage de Fadéra v0.8.4…</div>
     </div>
 
     <div class="topbar">
@@ -11727,7 +11727,7 @@ fin
       // Version de Fadéra affichée à l'écran de démarrage et ici : elle doit être la même que fadera-rs/Cargo.toml
       // (le test verifier_ide.js le vérifie ; à changer à chaque nouvelle version avec le texte de #texteBoot).
       const LOGO_FADERA = "data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 256 256%22%3E%3Crect width=%22256%22 height=%22256%22 rx=%2256%22 fill=%22%230f1b33%22/%3E%3Cpath d=%22M86 204V70a14 14 0 0 1 14-14h92M86 130h74%22 fill=%22none%22 stroke=%22%23f2a93b%22 stroke-width=%2226%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3Crect x=%22176%22 y=%22164%22 width=%2240%22 height=%2240%22 rx=%228%22 fill=%22%23fff%22/%3E%3C/svg%3E";
-      const VERSION_FADERA = "0.8.3";
+      const VERSION_FADERA = "0.8.4";
       window.VERSION_FADERA = VERSION_FADERA;
       function afficherInfoVersion() {
         ecrireTerminal(
@@ -13000,12 +13000,23 @@ fin
             "  <span style='color:#f5c451'>+ Linux</span>    awk cut tr tac rev nl paste diff cmp comm xxd strings base64 md5sum/sha256sum… date seq printf bc expr test [ ] xargs tee du df file ln alias export env sudo time man type\n" +
             "  <span style='color:#f5c451'>Scripts</span>    sh script.sh (if/for/while, $1, $(cmd), $((1+2)))  ·  cmd1 || cmd2  ·  VAR=valeur  ·  $?  ·  alias ll='ls -l' (persistant)\n" +
             "  <span style='color:#f5c451'>PACKS</span>      pkg list  ·  pkg install securite | reseau | dev | tout | monpack.json | outils.sh | outil.fa  ·  pkg remove nom\n" +
+            "  <span style='color:#f5c451'>Mise à jour</span> maj  (cherche une nouvelle version, Fadéra IDE installé)  ·  maj non | oui  (vérification automatique)\n" +
             "  <span style='color:#f5c451'>Moteur</span>     moteur  (état)  ·  moteur auto|js|rust  ·  moteur bench  (compare JavaScript et Rust/WebAssembly)\n" +
             "  <span style='color:#f5c451'>PAQUETS</span>    pkg empaqueter dossier [nom] → nom.fapkg (à partager)  ·  pkg install nom.fapkg | https://…/nom.fapkg  →  importer \"lib/nom/module\"\n" +
             "  💡 Le script de l'éditeur est le fichier <b>~/script.fa</b> ; sa sortie est enregistrée dans <b>~/sortie.log</b> (essayez : cat sortie.log | grep Bonjour).",
           out: "",
         });
         CMDS.help = CMDS.aide;
+        // maj : vérifie s'il existe une version plus récente (version installée) ; « maj non » / « maj oui » règle la vérification automatique
+        CMDS.maj = async (a) => {
+          if (a[0] === "non" || a[0] === "oui") {
+            try { localStorage.setItem("fadera_maj", a[0]); } catch (e) {}
+            return { out: a[0] === "non" ? "Vérification automatique des mises à jour désactivée.\n" : "Vérification automatique des mises à jour activée.\n", err: "", code: 0 };
+          }
+          if (typeof window.verifierMiseAJour !== "function") return { out: "", err: "maj : disponible seulement dans Fadéra IDE installé (consultez les versions sur GitHub).\n", code: 1 };
+          await window.verifierMiseAJour(true);
+          return { out: "", err: "", code: 0 };
+        };
         CMDS.moteur = async (a, inp, ctx) => {
           if (!ctx.moteur)
             return err("moteur", "indisponible dans cet environnement");
@@ -19296,13 +19307,52 @@ fin
         // Lancé par « fadera ide » : le serveur local transmet le fichier double-cliqué et reçoit un signal de vie
         // (sans signal pendant 3 minutes, il s'arrête). Hors de ce serveur, ces adresses n'existent pas : rien ne se passe.
         let fadera_ide = null;
+        // Vérification de mise à jour (version installée seulement) : une seule requête, au plus une fois par jour, vers
+        // l'API publique de GitHub (aucune donnée personnelle envoyée). Désactivable : localStorage fadera_maj = "non".
+        const plusRecente = (a, b) => {
+          const x = String(a).split(".").map(Number), y = String(b).split(".").map(Number);
+          for (let i = 0; i < 3; i++) { if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) > (y[i] || 0); }
+          return false;
+        };
+        async function verifierMiseAJour(force) {
+          let dernier = 0;
+          try {
+            if (!force && localStorage.getItem("fadera_maj") === "non") return;
+            dernier = Number(localStorage.getItem("fadera_maj_date") || 0);
+          } catch (e) {}
+          if (!force && Date.now() - dernier < 24 * 3600 * 1000) return;
+          try {
+            const r = await fetch("https://api.github.com/repos/Faderaseny/fadera/releases/latest", { headers: { Accept: "application/vnd.github+json" } });
+            if (!r.ok) throw new Error(r.status);
+            const j = await r.json();
+            const derniere = String(j.tag_name || "").replace(/^v/, "");
+            if (!/^\d+\.\d+\.\d+$/.test(derniere)) return;
+            try { localStorage.setItem("fadera_maj_date", String(Date.now())); } catch (e) {}
+            if (!window.ecrireTerminal) return;
+            if (plusRecente(derniere, VERSION_FADERA)) {
+              window.ecrireTerminal(
+                "<span style='color:#f2a93b;font-weight:bold;'>⬆ Nouvelle version de Fadéra : " + derniere + " (vous avez " + VERSION_FADERA + ").</span><br>" +
+                "<span style='color:#cdd6f4;'>Téléchargez « Fadera-Installateur-" + derniere + ".exe » : <a href='https://github.com/Faderaseny/fadera/releases/latest' target='_blank' rel='noopener' style='color:#89b4fa;'>github.com/Faderaseny/fadera/releases/latest</a>. " +
+                "Vos fichiers sont conservés. (Ne plus vérifier : tapez « maj non ».)</span>"
+              );
+            } else if (force) {
+              window.ecrireTerminal("<span style='color:#3ddc97;'>✓ Fadéra " + VERSION_FADERA + " est à jour.</span>");
+            }
+          } catch (e) {
+            if (force && window.ecrireTerminal) window.ecrireTerminal("<span style='color:#f38ba8;'>Impossible de vérifier les mises à jour (pas de connexion ?).</span>");
+          }
+        }
+        window.verifierMiseAJour = verifierMiseAJour;
         async function ouvrirDepuisFadera() {
           if (location.protocol !== "http:" || !/^(127\.0\.0\.1|localhost)$/.test(location.hostname)) return;
           try {
             if (fadera_ide === null) {
               const r = await fetch("/__fadera", { cache: "no-store" });
               fadera_ide = r.ok && (await r.text()) === "fadera-ide";
-              if (fadera_ide) setInterval(() => fetch("/__vivant", { cache: "no-store" }).catch(() => {}), 5000);
+              if (fadera_ide) {
+                setInterval(() => fetch("/__vivant", { cache: "no-store" }).catch(() => {}), 5000);
+                setTimeout(verifierMiseAJour, 4000);
+              }
             }
             if (!fadera_ide) return;
             const r = await fetch("/__ouvrir", { cache: "no-store" });

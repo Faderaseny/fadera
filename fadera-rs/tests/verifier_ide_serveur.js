@@ -21,7 +21,7 @@ const requete = (methode, chemin, corps, hote = "127.0.0.1:" + PORT, plus = {}) 
 const attendre = (ms) => new Promise((r) => setTimeout(r, ms));
 
 (async () => {
-  const dossier = fs.mkdtempSync(path.join(os.tmpdir(), "fadera-ide-"));
+  const dossier = fs.mkdtempSync(path.join(path.dirname(path.resolve(exe)), "fadera-ide-")) // à côté du binaire (dossier du projet) : les antivirus laissent tranquille un test lancé là, pas dans %TEMP%;
   fs.mkdirSync(path.join(dossier, "ide"));
   fs.copyFileSync(html, path.join(dossier, "ide", "index.html"));
   const binaire = path.join(dossier, path.basename(exe));

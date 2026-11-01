@@ -5,7 +5,10 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et la nu
 
 ## [Non publié]
 
-## [0.8.3] — 2026-10-31
+## [0.8.4] — 2026-11-01
+
+### Ajouté
+- Fadéra IDE installé : vérification de mise à jour au démarrage (une requête par jour vers l'API publique de GitHub, aucune donnée envoyée) ; un message dans le terminal indique la nouvelle version et le lien de téléchargement. Commande `maj` pour vérifier à la demande, `maj non` pour désactiver.
 
 ### Ajouté
 - Terminal **PowerShell / cmd** intégré à l'éditeur installé (`fadera ide`, Fadéra IDE) : dans le terminal de l'éditeur, les commandes `powershell`, `pwsh` et `cmd` ouvrent le vrai terminal de Windows, dans le dossier de travail réel (`Documents\Fadera`, ou `--espace=DOSSIER`). `fadera run programme.fa` y fonctionne, et les fichiers créés réapparaissent dans l'éditeur (et inversement).
