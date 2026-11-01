@@ -29,7 +29,8 @@ afficher "Bonjour Fadéra, n = " + c.n
 | **Travailler sans internet** | ouvrir `index.html` dans un navigateur (ou `python serveur.py` pour le moteur complet) |
 
 Après l'installation Windows : double-clic sur un fichier `.fa` = ouverture dans Fadéra IDE ; clic droit = « Exécuter avec Fadéra » ;
-`fadera ide programme.fa` depuis un terminal fait la même chose. Windows peut afficher « Windows a protégé votre ordinateur »
+`fadera ide programme.fa` depuis un terminal fait la même chose.
+Dans Fadéra IDE (version installée), le terminal de l'éditeur ouvre aussi le **vrai PowerShell ou cmd de Windows** : tapez `powershell` ou `cmd`, puis `fadera run programme.fa` ; `fadera editer fichier.fa` ouvre un fichier dans l'éditeur ; `exit` revient au terminal bash. Les fichiers sont dans un vrai dossier, `Documents\Fadera`, partagé avec l'éditeur. Windows peut afficher « Windows a protégé votre ordinateur »
 (l'installateur n'est pas encore signé : voir [la signature du code](docs/SIGNATURE.md)) : *Informations complémentaires → Exécuter quand même*.
 Un antivirus (Avast, Defender…) peut aussi bloquer `fadera.exe`, tout nouveau programme non signé étant suspect : ajoutez le dossier d'installation
 (par défaut `%LocalAppData%\Programs\Fadera`) à ses exceptions, ou restaurez le fichier depuis la quarantaine.

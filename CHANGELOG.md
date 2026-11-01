@@ -5,10 +5,15 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et la nu
 
 ## [Non publié]
 
-## [0.8.2] — 2026-10-30
+## [0.8.3] — 2026-10-31
+
+### Ajouté
+- Terminal **PowerShell / cmd** intégré à l'éditeur installé (`fadera ide`, Fadéra IDE) : dans le terminal de l'éditeur, les commandes `powershell`, `pwsh` et `cmd` ouvrent le vrai terminal de Windows, dans le dossier de travail réel (`Documents\Fadera`, ou `--espace=DOSSIER`). `fadera run programme.fa` y fonctionne, et les fichiers créés réapparaissent dans l'éditeur (et inversement).
+- `fadera editer fichier.fa` : depuis ce terminal, ouvre le fichier dans l'éditeur déjà ouvert, sans nouvelle fenêtre.
+- Sécurité de ces accès : jeton secret tiré au hasard à chaque lancement et remis seulement à la page de l'éditeur, origine et hôte locaux obligatoires, noms de fichiers contrôlés (pas de `..`, de lecteur ni de dossier caché), extensions de texte seulement. Vérifié par 23 contrôles de plus dans `verifier_ide_serveur.js`. La version en ligne n'a jamais accès à l'ordinateur.
 
 ### Amélioré
-- Installateur Windows aux couleurs de Fadéra : fond bleu nuit, titres orange, images d'accueil et de fin avec le logo (une par niveau de zoom de l'écran), cases à cocher sur des lignes plus hautes pour qu'elles ne soient plus coupées.
+- Installateur Windows aux couleurs de Fadéra : fond bleu nuit, titres orange, images d'accueil et de fin avec le logo (une par niveau de zoom de l'écran), vraies cases à cocher Windows (elles ne sont plus coupées, quel que soit le zoom de l'écran), pages de licence et de préparation sur fond crème pour rester lisibles.
 - CI : chaque envoi construit un « installateur d'essai » téléchargeable (onglet Actes → la tâche → Artifacts), pour voir l'installateur sans publier de version.
 
 ## [0.8.1] — 2026-10-30
