@@ -5,7 +5,8 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et la nu
 
 ## [Non publié]
 
-## [0.8.4] — 2026-11-01
+### Amélioré
+- Guide : nouvelle section 27 « Fadéra IDE sur Windows » (installation, terminaux PowerShell et cmd, `fadera editer`, mises à jour, antivirus).
 
 ### Ajouté
 - Fadéra IDE installé : vérification de mise à jour au démarrage (une requête par jour vers l'API publique de GitHub, aucune donnée envoyée) ; un message dans le terminal indique la nouvelle version et le lien de téléchargement. Commande `maj` pour vérifier à la demande, `maj non` pour désactiver.

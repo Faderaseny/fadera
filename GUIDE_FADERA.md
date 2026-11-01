@@ -37,6 +37,7 @@ Deux façons d'exécuter du Fadéra :
 24. [Sauvegarde durable, export et import](#24-sauvegarde-durable-export-et-import)
 25. [Formateur de code : `fadera fmt`](#25-formateur-de-code--fadera-fmt)
 26. [Distribution et partage](#26-distribution-et-partage)
+27. [Fadéra IDE sur Windows : installation, terminaux, mises à jour](#27-fadéra-ide-sur-windows--installation-terminaux-mises-à-jour)
 
 ---
 
@@ -1333,3 +1334,36 @@ Codes de sortie de `fadera run` : 0 succès, 1 erreur du programme (message sur 
 **Playground en ligne.** `index.html` fonctionne tel quel sur n'importe quel hébergement statique ; le dépôt le publie sur GitHub Pages. Le bouton **🔗 Partager (lien)** crée une adresse `…#p=…` qui contient les onglets ouverts (compressés dans l'adresse elle-même : rien n'est envoyé à un serveur). Celui qui ouvre le lien voit la liste des fichiers et doit confirmer ; ils sont copiés dans le dossier `partage/` de son espace et **rien n'est exécuté automatiquement**.
 
 **Versions.** Numérotation `MAJEUR.MINEUR.CORRECTIF`, notes dans `CHANGELOG.md`. À chaque modification du dépôt, la CI relance `node verifier_tout.js` (tests Rust et JavaScript, parité JS/Rust, formateur, débogueur, spécification, IDE dans Chromium), puis compile et teste sous Windows et macOS.
+
+---
+
+## 27. Fadéra IDE sur Windows : installation, terminaux, mises à jour
+
+### Installer
+Téléchargez `Fadera-Installateur-<version>.exe` sur la page des [versions](https://github.com/Faderaseny/fadera/releases/latest) et double-cliquez. L'installateur propose le dossier, un raccourci sur le Bureau, l'ajout de Fadéra au `PATH` (pour taper `fadera` dans un terminal) et l'association des fichiers `.fa` (double-clic = ouverture dans l'éditeur, icône Fadéra). À la fin, Fadéra IDE s'ouvre. Aucun droit d'administrateur n'est nécessaire : l'installation va dans `%LocalAppData%\Programs\Fadera`.
+
+Sans installation : le [playground en ligne](https://faderaseny.github.io/fadera/), ou `index.html` ouvert dans un navigateur. Ces versions n'ont pas les terminaux Windows décrits plus bas.
+
+### Lancer l'éditeur
+- Raccourci **Fadéra IDE**, ou double-clic sur un fichier `.fa`.
+- Depuis un terminal : `fadera ide programme.fa`. Si l'éditeur est déjà ouvert, le fichier s'y ajoute sans nouvelle fenêtre.
+- `fadera editer fichier.fa` (depuis le terminal de l'éditeur) ouvre un fichier dans l'éditeur déjà ouvert.
+
+### Les terminaux Windows dans l'IDE
+Le terminal de l'IDE démarre en mode « bash » (simulé, voir la section 17). Dans l'IDE installé, trois commandes ouvrent les **vrais** terminaux de Windows :
+
+| Commande | Résultat |
+|---|---|
+| `powershell` (ou `pwsh`) | le vrai Windows PowerShell, invite `PS C:\…>` |
+| `cmd` | l'Invite de commandes de Windows, invite `C:\…>` |
+| `exit` | retour au terminal bash de l'IDE |
+
+Ces terminaux travaillent dans un vrai dossier, `Documents\Fadera` (autre dossier : `fadera ide --espace=DOSSIER`). Les fichiers de l'éditeur y sont recopiés, et ceux qui y sont créés réapparaissent dans l'éditeur. Dans les deux, `fadera run programme.fa` exécute un programme. Chaque commande est indépendante (pas de programme interactif) et s'arrête après 120 secondes.
+
+**Sécurité.** Un terminal ouvert donne accès à l'ordinateur. Il n'est donc accessible qu'à la page de l'éditeur servie par Fadéra IDE lui-même, grâce à un jeton secret tiré au hasard à chaque lancement ; une autre page web ne peut pas s'en servir. La version en ligne n'a jamais accès à l'ordinateur.
+
+### Mises à jour
+Quelques secondes après l'ouverture, l'IDE installé demande à GitHub s'il existe une version plus récente (une fois par jour au plus, aucune donnée personnelle envoyée) et l'indique dans le terminal. Commandes : `maj` (vérifier tout de suite), `maj non` (désactiver), `maj oui` (réactiver). Pour mettre à jour, installez la nouvelle version par-dessus : vos fichiers sont conservés.
+
+### Si Windows ou l'antivirus bloque
+Fadéra n'est pas encore signé numériquement : Windows peut afficher « Windows a protégé votre ordinateur » (*Informations complémentaires → Exécuter quand même*), et un antivirus peut retenir `fadera.exe`. Si l'éditeur annonce « Impossible de démarrer le moteur Fadéra » ou « fadera.exe est introuvable », restaurez le fichier depuis la quarantaine de l'antivirus et ajoutez `%LocalAppData%\Programs\Fadera` à ses exceptions. Le journal `%LocalAppData%\Fadera\ide.log` donne la raison exacte. Vérification : `fadera --version`.
