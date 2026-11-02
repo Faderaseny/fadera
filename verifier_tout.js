@@ -52,7 +52,12 @@ for (const [nom, cmd, args, cwd, extra, facultative] of etapes) {
   const fin = sortie.trim().split("\n").filter(Boolean).slice(-2).join(" | ");
   if (facultative && r.status === 3) console.log("IGNORÉ  (" + fin.slice(0, 120) + ")");
   else if (r.status === 0) console.log("OK" + (fin ? "  (" + fin.slice(0, 160) + ")" : ""));
-  else { ko++; console.log("ÉCHEC\n" + (r.error ? String(r.error) + "\n" : "") + sortie.split("\n").slice(-25).join("\n")); }
+  else {
+    ko++;
+    const lignes = sortie.split("\n");
+    const fautives = lignes.flatMap((l, i) => (/✗|✘|FAIL|not ok/.test(l) ? [l, ...lignes.slice(i + 1, i + 3).filter((x) => /^\s{2,}/.test(x))] : [])); // les vérifications ratées, même loin dans la sortie
+    console.log("ÉCHEC\n" + (r.error ? String(r.error) + "\n" : "") + (fautives.length ? "Vérifications en échec :\n" + fautives.slice(0, 40).join("\n") + "\n--- fin de la sortie ---\n" : "") + lignes.slice(-25).join("\n"));
+  }
 }
 console.log(ko ? `\n✗ ${ko} étape(s) en échec.` : "\n✓ Tout est vert.");
 process.exit(ko ? 1 : 0);
