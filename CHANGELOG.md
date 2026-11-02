@@ -5,6 +5,10 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et la nu
 
 ## [Non publié]
 
+### Ajouté
+- **Apprendre Fadéra** (`/apprendre/`) : 10 leçons pour débutants, exercices corrigés automatiquement dans le navigateur (moteur WebAssembly), progression gardée localement, sans compte. Vérifié par `site/apprendre/verifier_cours.js`.
+- Site officiel de Fadéra (`site/index.html`), publié à la racine de GitHub Pages : présentation, façons d'utiliser Fadéra, classe, documentation. L'IDE en ligne passe dans `/jouer/` (`https://faderaseny.github.io/fadera/jouer/`) ; les anciens liens de partage `#p=…` de la racine y sont redirigés.
+
 ### Amélioré
 - Guide : nouvelle section 27 « Fadéra IDE sur Windows » (installation, terminaux PowerShell et cmd, `fadera editer`, mises à jour, antivirus).
 

@@ -8,7 +8,7 @@ Fadéra est un langage de programmation **écrit en français** : on y lit `si �
 
 Vous avez deux façons d'exécuter du Fadéra, et les deux donnent **exactement les mêmes résultats**.
 
-1. **Dans le navigateur** : ouvrez le playground `https://faderaseny.github.io/fadera/`, tapez votre programme à gauche, cliquez sur ▶ Exécuter le script. Le bouton « 🔗 Partager (lien) » fabrique un lien que vous pouvez envoyer à quelqu'un : il ouvrira votre programme tel quel.
+1. **Dans le navigateur** : ouvrez le playground `https://faderaseny.github.io/fadera/jouer/`, tapez votre programme à gauche, cliquez sur ▶ Exécuter le script. Le bouton « 🔗 Partager (lien) » fabrique un lien que vous pouvez envoyer à quelqu'un : il ouvrira votre programme tel quel.
 2. **Sur votre ordinateur** : avec `fadera.exe` (Windows) ou `fadera` (Linux). Enregistrez votre programme dans un fichier qui se termine par `.fa`, par exemple `bonjour.fa`, puis tapez dans un terminal :
 
 ```text

@@ -1,0 +1,260 @@
+<title>Fadéra</title>
+<meta name="description" content="Fadéra est un langage de programmation en français, libre et gratuit : éditeur en ligne, installateur Windows, moteur Rust.">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Crect width='256' height='256' rx='56' fill='%230f1b33'/%3E%3Cpath d='M86 204V70a14 14 0 0 1 14-14h92M86 130h74' fill='none' stroke='%23f2a93b' stroke-width='26' stroke-linecap='round' stroke-linejoin='round'/%3E%3Crect x='176' y='164' width='40' height='40' rx='8' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&display=swap">
+<style>
+/* Concept : une page d'atelier, bleu nuit du logo, un seul accent orange. Le code est le personnage principal. */
+:root {
+  --bg: #f6f7fa;
+  --surface: #ffffff;
+  --fg: #0f1b33;
+  --muted: #55627c;
+  --line: #d9deea;
+  --accent: #b9650a;          /* orange foncé : texte lisible sur fond clair */
+  --accent-bg: #f2a93b;       /* orange du logo : fonds de boutons */
+  --accent-fg: #0f1b33;
+  --code-bg: #0f1b33;
+  --code-fg: #e8edf5;
+  --code-dim: #8d9bb8;
+  --code-kw: #f2a93b;
+  --code-str: #8fd6a8;
+  --code-num: #f2c27a;
+  --display: "Bricolage Grotesque", "IBM Plex Sans", system-ui, sans-serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0b1426; --surface: #121f3a; --fg: #e8edf5; --muted: #9fadc9; --line: #22335a;
+    --accent: #f2a93b; --code-bg: #08101f; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0b1426; --surface: #121f3a; --fg: #e8edf5; --muted: #9fadc9; --line: #22335a;
+  --accent: #f2a93b; --code-bg: #08101f; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font: 400 17px/1.6 var(--body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0;
+}
+a { color: inherit; }
+.wrap { max-width: 1080px; margin: 0 auto; }
+h1, h2, h3 { font-family: var(--display); line-height: 1.08; margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
+h2 { font-size: clamp(1.7rem, 3.4vw, 2.4rem); }
+h3 { font-size: 1.2rem; }
+p { margin: 0; }
+code, pre { font-family: var(--mono); }
+:focus-visible { outline: 3px solid var(--accent-bg); outline-offset: 3px; border-radius: 4px; }
+
+/* en-tête */
+header.top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 18px; flex-wrap: wrap; }
+.marque { display: flex; align-items: center; gap: 10px; font: 800 1.4rem var(--display); text-decoration: none; }
+.marque svg { width: 34px; height: 34px; display: block; }
+nav.liens { display: flex; gap: 22px; flex-wrap: wrap; font-size: .95rem; }
+nav.liens a { text-decoration: none; color: var(--muted); }
+nav.liens a:hover { color: var(--fg); }
+
+/* héros */
+.hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 48px; align-items: center; padding-block: 56px 72px; }
+.hero h1 { font-size: clamp(2.5rem, 6vw, 4.4rem); font-weight: 800; }
+.hero h1 em { font-style: normal; color: var(--accent); }
+.hero .lead { margin-top: 20px; font-size: 1.15rem; color: var(--muted); max-width: 34em; }
+.actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 22px; border-radius: 10px; font-weight: 600; text-decoration: none; border: 2px solid var(--fg); }
+.btn.plein { background: var(--accent-bg); border-color: var(--accent-bg); color: var(--accent-fg); }
+.btn.plein:hover { filter: brightness(1.06); }
+.btn.vide:hover { background: var(--fg); color: var(--bg); }
+.note { margin-top: 14px; font-size: .9rem; color: var(--muted); }
+
+/* fenêtre de code */
+.fenetre { background: var(--code-bg); color: var(--code-fg); border-radius: 12px; overflow: hidden; box-shadow: 0 18px 50px rgba(15, 27, 51, .25); min-width: 0; }
+.fenetre .barre { display: flex; align-items: center; gap: 8px; padding: 11px 14px; border-bottom: 1px solid rgba(255,255,255,.08); font: 500 .8rem var(--mono); color: var(--code-dim); }
+.fenetre .barre i { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,.18); display: block; }
+.fenetre pre { margin: 0; padding: 18px 20px; font-size: .92rem; line-height: 1.7; overflow-x: auto; }
+.fenetre .sortie { border-top: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.035); }
+.fenetre .sortie pre { color: var(--code-str); }
+.fenetre .etiquette { padding: 8px 20px 0; font: 500 .72rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--code-dim); }
+.k { color: var(--code-kw); font-weight: 500; }
+.s { color: var(--code-str); }
+.n { color: var(--code-num); }
+.c { color: var(--code-dim); font-style: italic; }
+.err { color: #ff9b8e; }
+
+/* sections */
+section { padding-block: 64px; border-top: 1px solid var(--line); }
+.intro { max-width: 40em; margin-top: 14px; color: var(--muted); }
+.trio { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 32px; margin-top: 40px; }
+.trio h3 { margin-bottom: 8px; }
+.trio p { color: var(--muted); font-size: .98rem; }
+.etiq { font: 500 .78rem var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; display: block; }
+
+.duo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; align-items: start; margin-top: 36px; }
+.liste-voies { margin-top: 36px; border-top: 1px solid var(--line); }
+.voie { display: grid; grid-template-columns: 220px minmax(0, 1fr) auto; gap: 24px; align-items: baseline; padding: 20px 0; border-bottom: 1px solid var(--line); }
+.voie strong { font: 700 1.1rem var(--display); }
+.voie span { color: var(--muted); }
+.voie a { font-weight: 600; color: var(--accent); white-space: nowrap; }
+
+.docs { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; margin-top: 36px; }
+.doc { display: block; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; text-decoration: none; }
+.doc:hover { border-color: var(--accent-bg); }
+.doc b { display: block; font: 700 1.05rem var(--display); margin-bottom: 4px; }
+.doc span { color: var(--muted); font-size: .93rem; }
+
+footer { border-top: 1px solid var(--line); padding-block: 36px 48px; color: var(--muted); font-size: .92rem; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+footer a { color: var(--fg); }
+
+@media (max-width: 860px) {
+  .hero, .duo { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .hero { padding-block: 32px 48px; }
+  .voie { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  section { padding-block: 48px; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <a class="marque" href="#haut" id="haut" aria-label="Fadéra, accueil">
+      <svg viewBox="0 0 256 256" aria-hidden="true"><rect width="256" height="256" rx="56" fill="#0f1b33"/><path d="M86 204V70a14 14 0 0 1 14-14h92M86 130h74" fill="none" stroke="#f2a93b" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/><rect x="176" y="164" width="40" height="40" rx="8" fill="#fff"/></svg>
+      Fadéra
+    </a>
+    <nav class="liens" aria-label="Navigation">
+      <a href="#pourquoi">Pourquoi</a>
+      <a href="#utiliser">Utiliser</a>
+      <a href="#classe">En classe</a>
+      <a href="#docs">Documentation</a>
+      <a href="https://github.com/Faderaseny/fadera">GitHub</a>
+    </nav>
+  </header>
+
+  <div class="hero">
+    <div>
+      <h1>Programmer <em>en français.</em></h1>
+      <p class="lead">Fadéra est un langage de programmation dont les mots-clés, les messages d'erreur et la documentation sont en français. Pour apprendre la logique sans passer par l'anglais. Libre et gratuit.</p>
+      <div class="actions">
+        <a class="btn plein" href="apprendre/">Apprendre en 10 leçons</a>
+        <a class="btn vide" href="jouer/">Essayer en ligne</a>
+        <a class="btn vide" href="https://github.com/Faderaseny/fadera/releases/latest">Télécharger pour Windows</a>
+      </div>
+      <p class="note">Rien à installer pour essayer : l'éditeur tourne dans le navigateur. <span id="version"></span></p>
+    </div>
+
+    <div class="fenetre" role="img" aria-label="Exemple de programme Fadéra et son résultat">
+      <div class="barre"><i></i><i></i><i></i><span style="margin-left:8px">exemple.fa</span></div>
+<pre><span class="k">soit</span> prenom = <span class="s">"Awa"</span>
+<span class="k">soit</span> note = <span class="n">15</span>
+
+<span class="k">si</span> note &gt;= <span class="n">10</span> <span class="k">alors</span>
+    <span class="k">afficher</span> prenom + <span class="s">" est admise !"</span>
+<span class="k">sinon</span>
+    <span class="k">afficher</span> prenom + <span class="s">" doit réviser."</span>
+<span class="k">fin</span>
+
+<span class="k">pour</span> i <span class="k">allantde</span> <span class="n">1</span> <span class="k">a</span> <span class="n">3</span> <span class="k">faire</span>
+    <span class="k">afficher</span> <span class="s">"Essai "</span> + i
+<span class="k">fin</span></pre>
+      <div class="sortie"><div class="etiquette">Résultat</div>
+<pre>Awa est admise !
+Essai 1
+Essai 2
+Essai 3</pre></div>
+    </div>
+  </div>
+
+  <section id="pourquoi">
+    <h2>Un langage qui parle la langue de la classe</h2>
+    <p class="intro">Les débutants butent autant sur l'anglais que sur la logique. Fadéra enlève la première difficulté.</p>
+    <div class="trio">
+      <div><span class="etiq">Mots-clés</span><h3>Du français partout</h3><p><code>soit</code>, <code>si … alors … sinon</code>, <code>pour … allantde … faire</code>, <code>tantque</code>, <code>fonction</code>, <code>renvoyer</code>. Ce qui s'écrit se lit comme une phrase.</p></div>
+      <div><span class="etiq">Erreurs</span><h3>Des messages qui expliquent</h3><p>Une variable mal écrite ? Fadéra le dit en français, donne la ligne et indique comment la déclarer.</p></div>
+      <div><span class="etiq">Fiabilité</span><h3>Deux moteurs, un même résultat</h3><p>Un moteur JavaScript dans le navigateur et un moteur Rust en ligne de commande. Des centaines de programmes de test vérifient qu'ils répondent à l'identique.</p></div>
+    </div>
+
+    <div class="duo">
+      <div class="fenetre" role="img" aria-label="Exemple d'erreur en français">
+        <div class="barre"><i></i><i></i><i></i><span style="margin-left:8px">erreur.fa</span></div>
+<pre><span class="k">soit</span> prenom = <span class="s">"Awa"</span>
+<span class="k">afficher</span> prenon</pre>
+        <div class="sortie"><div class="etiquette">Résultat</div>
+<pre class="err">Erreur : Ligne 2 : La variable "prenon" n'existe pas.
+Déclarez-la d'abord avec : soit prenon = ...</pre></div>
+      </div>
+      <div class="fenetre" role="img" aria-label="Exemple de fonction">
+        <div class="barre"><i></i><i></i><i></i><span style="margin-left:8px">fonction.fa</span></div>
+<pre><span class="k">fonction</span> carre(x)
+    <span class="k">renvoyer</span> x * x
+<span class="k">fin</span>
+
+<span class="k">afficher</span> <span class="s">"Le carré de 7 est "</span> + carre(<span class="n">7</span>)</pre>
+        <div class="sortie"><div class="etiquette">Résultat</div>
+<pre>Le carré de 7 est 49</pre></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="utiliser">
+    <h2>Quatre façons de l'utiliser</h2>
+    <p class="intro">Choisissez selon la salle : de zéro installation à l'environnement complet.</p>
+    <div class="liste-voies">
+      <div class="voie"><strong>En ligne</strong><span>L'éditeur, le terminal et le moteur dans le navigateur. Aucun compte, aucun téléchargement. Idéal pour une salle sans droits d'installation.</span><a href="jouer/">Ouvrir →</a></div>
+      <div class="voie"><strong>Fadéra IDE (Windows)</strong><span>L'installateur pose l'éditeur dans sa fenêtre, les raccourcis, l'ouverture des fichiers .fa par double-clic, et un vrai terminal PowerShell ou cmd intégré.</span><a href="https://github.com/Faderaseny/fadera/releases/latest">Télécharger →</a></div>
+      <div class="voie"><strong>Ligne de commande</strong><span>Le moteur <code>fadera</code> pour Windows, Linux et macOS : <code>fadera run programme.fa</code>, un testeur, un formateur, un débogueur et un gestionnaire de paquets.</span><a href="https://github.com/Faderaseny/fadera/releases/latest">Archives →</a></div>
+      <div class="voie"><strong>Hors ligne</strong><span>Le playground se télécharge en un seul dossier : ouvrez <code>index.html</code> dans un navigateur, sans internet.</span><a href="https://github.com/Faderaseny/fadera/releases/latest">Playground →</a></div>
+    </div>
+    <p class="note" style="margin-top:20px">Windows ou un antivirus peut afficher un avertissement : le programme est jeune et pas encore signé numériquement. La marche à suivre est dans le <a href="https://github.com/Faderaseny/fadera/blob/main/GUIDE_FADERA.md">guide</a> (section 27).</p>
+  </section>
+
+  <section id="classe">
+    <h2>Pensé pour la classe</h2>
+    <p class="intro">Fadéra est né dans une salle de cours. Le dépôt contient de quoi démarrer sans préparer soi-même.</p>
+    <div class="trio">
+      <div><span class="etiq">Exercices</span><h3>94 exercices corrigés</h3><p>Du premier <code>afficher</code> aux algorithmes, chacun avec son énoncé, son corrigé exécutable et sa sortie attendue.</p></div>
+      <div><span class="etiq">Séance</span><h3>Une heure pour débuter</h3><p>Variables, conditions, boucles, une fonction : dix exercices à enchaîner, avec indices, corrigés et erreurs fréquentes.</p></div>
+      <div><span class="etiq">Tutoriel</span><h3>Tous les exemples sont testés</h3><p>Chaque exemple du tutoriel et de la référence est exécuté à chaque modification du projet. Aucun ne ment.</p></div>
+    </div>
+  </section>
+
+  <section id="docs">
+    <h2>Documentation</h2>
+    <div class="docs">
+      <a class="doc" href="https://github.com/Faderaseny/fadera/blob/main/docs/TUTORIEL.md"><b>Tutoriel</b><span>Pas à pas, pour commencer.</span></a>
+      <a class="doc" href="https://github.com/Faderaseny/fadera/blob/main/GUIDE_FADERA.md"><b>Guide du langage</b><span>Tout le langage, et l'IDE sur Windows.</span></a>
+      <a class="doc" href="https://github.com/Faderaseny/fadera/blob/main/docs/EXERCICES.md"><b>Exercices</b><span>94 énoncés avec corrigés.</span></a>
+      <a class="doc" href="https://github.com/Faderaseny/fadera/blob/main/docs/REFERENCE.md"><b>Référence</b><span>Chaque fonction, un exemple.</span></a>
+      <a class="doc" href="https://github.com/Faderaseny/fadera/blob/main/SPEC_FADERA.md"><b>Spécification</b><span>Grammaire et règles précises.</span></a>
+      <a class="doc" href="https://github.com/Faderaseny/fadera/blob/main/CHANGELOG.md"><b>Journal des versions</b><span>Ce qui change, version par version.</span></a>
+    </div>
+  </section>
+
+  <footer>
+    <span>Fadéra · licence MIT · fait pour enseigner la programmation en français.</span>
+    <span><a href="https://github.com/Faderaseny/fadera">Code source</a> · <a href="https://github.com/Faderaseny/fadera/issues">Signaler un problème</a></span>
+  </footer>
+</div>
+
+<script>
+// Redirige les anciens liens de partage du playground (…/fadera/#p=…) vers le playground déplacé dans /jouer/.
+(function () {
+  try {
+    if (/^#p=/.test(location.hash) && !/claude\.ai/.test(location.hostname)) location.replace("jouer/" + location.hash);
+  } catch (e) {}
+})();
+// Affiche la dernière version publiée (sans elle, la page reste complète).
+(function () {
+  var el = document.getElementById("version");
+  if (!el || !window.fetch) return;
+  fetch("https://api.github.com/repos/Faderaseny/fadera/releases/latest", { headers: { Accept: "application/vnd.github+json" } })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (j) { if (j && /^v\d+\.\d+\.\d+/.test(j.tag_name || "")) el.textContent = "Dernière version : " + j.tag_name.replace(/^v/, "") + "."; })
+    .catch(function () {});
+})();
+</script>

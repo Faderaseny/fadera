@@ -18,7 +18,7 @@
 fadera run docs/exemples/01_bonjour.fa
 ```
 
-ou copiez son contenu dans le [playground](https://faderaseny.github.io/fadera/).
+ou copiez son contenu dans le [playground](https://faderaseny.github.io/fadera/jouer/).
 
 ## Les 40 exemples
 

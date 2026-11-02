@@ -23,7 +23,8 @@ afficher "Bonjour Fadéra, n = " + c.n
 
 | Je veux… | Je fais… |
 |---|---|
-| **Essayer tout de suite** | ouvrir le [playground en ligne](https://faderaseny.github.io/fadera/) : rien à installer |
+| **Site officiel** | https://faderaseny.github.io/fadera/ : présentation, téléchargements, documentation |
+| **Essayer tout de suite** | ouvrir le [playground en ligne](https://faderaseny.github.io/fadera/jouer/) : rien à installer |
 | **Un vrai logiciel sous Windows** | télécharger `Fadera-Installateur-<version>.exe` dans les [versions](../../releases/latest), le double-cliquer, choisir le dossier et les raccourcis : Fadéra IDE s'ouvre à la fin |
 | **La ligne de commande** | télécharger l'archive de votre système (`windows`, `linux`, `macos`) dans les [versions](../../releases/latest) |
 | **Travailler sans internet** | ouvrir `index.html` dans un navigateur (ou `python serveur.py` pour le moteur complet) |
