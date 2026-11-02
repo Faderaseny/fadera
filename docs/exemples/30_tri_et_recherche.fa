@@ -9,8 +9,8 @@ afficher "Décroissant : " + trier_decroissant(notes)
 afficher "Est trié ? " + est_trie(notes) + " / " + est_trie(tri_fusion(notes, (a, b) => a - b))
 
 soit eleves = [
-  { nom: "Awa", classe: "B", note: 15 },
-  { nom: "Moussa", classe: "A", note: 12 },
+  { nom: "Fatima", classe: "B", note: 15 },
+  { nom: "Ansou", classe: "A", note: 12 },
   { nom: "Fatou", classe: "A", note: 18 },
   { nom: "Ibrahima", classe: "B", note: 15 },
   { nom: "Mariama", classe: "A", note: 12 }

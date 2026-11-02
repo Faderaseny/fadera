@@ -5,7 +5,7 @@
 # la mention (≥ 14 « Bien », ≥ 10 « Passable », sinon « Ajourné »), classez les élèves par moyenne décroissante
 # et affichez un tableau aligné (texte_remplir_droite) avec la moyenne de la classe en bas.
 # Corrigé :
-soit brut = "nom;maths;francais;anglais\nAwa;15;12;16\nMoussa;9;14;10\nFatou;18;16;17\nIbrahima;7;9;8"
+soit brut = "nom;maths;francais;anglais\nFatima;15;12;16\nAnsou;9;14;10\nFatou;18;16;17\nIbrahima;7;9;8"
 soit lignes = tranche(csv_lire(brut, ";"), 1, 5)
 
 fonction mention(m)

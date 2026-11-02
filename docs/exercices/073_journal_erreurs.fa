@@ -17,6 +17,6 @@ fonction journaliser(message)
 fin
 
 journaliser("démarrage")
-journaliser("connexion de Awa")
+journaliser("connexion de Fatima")
 journaliser("arrêt")
 afficher lireFichier("journal.log")

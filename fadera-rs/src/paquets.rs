@@ -310,8 +310,8 @@ fn creer(args: &[String]) -> R<()> {
     let ecrire = |f: &str, c: &str| std::fs::write(d.join(f), c).map_err(|e| format!("écriture de {} : {}", f, e));
     ecrire(MANIFESTE, &(json_texte(&man, "  ").map_err(|_| "JSON".to_string())? + "\n"))?;
     ecrire("principal.fa", "# Paquet « NOM » : les fonctions publiques sont celles que ce fichier déclare.\n\nfonction saluer(prenom)\n  renvoyer \"Bonjour \" + prenom + \" !\"\nfin\n".replace("NOM", nom).as_str())?;
-    ecrire("tests.fa", "importer \"principal\" comme p\n\ntester \"saluer\"\n  verifier_egal(p.saluer(\"Awa\"), \"Bonjour Awa !\")\nfin\n")?;
-    ecrire("LISEZMOI.md", &format!("# {}\n\nDécrivez ici ce que fait votre paquet.\n\n## Installation\n\n```\nfadera paquet installer votre-nom/{}\n```\n\n## Utilisation\n\n```\nimporter \"paquets/{}/principal\" comme p\nafficher p.saluer(\"Awa\")\n```\n", nom, nom, nom))?;
+    ecrire("tests.fa", "importer \"principal\" comme p\n\ntester \"saluer\"\n  verifier_egal(p.saluer(\"Fatima\"), \"Bonjour Fatima !\")\nfin\n")?;
+    ecrire("LISEZMOI.md", &format!("# {}\n\nDécrivez ici ce que fait votre paquet.\n\n## Installation\n\n```\nfadera paquet installer votre-nom/{}\n```\n\n## Utilisation\n\n```\nimporter \"paquets/{}/principal\" comme p\nafficher p.saluer(\"Fatima\")\n```\n", nom, nom, nom))?;
     println!("✓ Paquet créé dans {}/ : modifiez principal.fa, testez avec « fadera tester {}/tests.fa »,", nom, nom);
     println!("  puis publiez le dossier sur GitHub : vos utilisateurs feront « fadera paquet installer votre-nom/{} ».", nom);
     Ok(())

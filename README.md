@@ -2,7 +2,7 @@
 
 # Fadéra
 
-Un langage de programmation **en français**, avec un IDE dans le navigateur et un moteur en ligne de commande.
+Un langage de programmation **en français**, avec un IDE dans le navigateur et un moteur en ligne de commande. Il sert à **apprendre** la programmation comme à **travailler** : traitement de données, automatisation, outils métier (industrie, finance, santé, télécoms), avec tests intégrés, paquets et chiffrement.
 
 ```
 classe Compteur

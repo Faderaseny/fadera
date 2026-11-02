@@ -5,8 +5,8 @@
 # (utilisez plafond). Calculez la facture de trois clients et repérez celui qui paie le plus de dépassement.
 # Corrigé :
 soit clients = [
-  { nom: "Awa", minutes: 90, donnees: 4.2 },
-  { nom: "Moussa", minutes: 180, donnees: 5.5 },
+  { nom: "Fatima", minutes: 90, donnees: 4.2 },
+  { nom: "Ansou", minutes: 180, donnees: 5.5 },
   { nom: "Fatou", minutes: 130, donnees: 8.1 }
 ]
 soit pire = ""

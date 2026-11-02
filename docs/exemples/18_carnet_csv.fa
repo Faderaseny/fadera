@@ -2,8 +2,8 @@
 # Notions : csv_lire, csv_texte, listes de structures, filtrer, trier_par, recherche
 
 soit donnees = "nom;ville;age
-Awa;Dakar;34
-Moussa;Thiès;27
+Fatima;Dakar;34
+Ansou;Thiès;27
 Fatou;Dakar;41
 Ibrahima;Saint-Louis;19
 Mariama;Thiès;52"

@@ -1,5 +1,5 @@
 <title>Fadéra</title>
-<meta name="description" content="Fadéra est un langage de programmation en français, libre et gratuit : éditeur en ligne, installateur Windows, moteur Rust.">
+<meta name="description" content="Fadéra est un langage de programmation en français, libre et gratuit, pour apprendre comme pour travailler : traitement de données, automatisation, outils métier. Éditeur en ligne, installateur Windows, moteur Rust.">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Crect width='256' height='256' rx='56' fill='%230f1b33'/%3E%3Cpath d='M86 204V70a14 14 0 0 1 14-14h92M86 130h74' fill='none' stroke='%23f2a93b' stroke-width='26' stroke-linecap='round' stroke-linejoin='round'/%3E%3Crect x='176' y='164' width='40' height='40' rx='8' fill='%23fff'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -129,6 +129,7 @@ footer a { color: var(--fg); }
     </a>
     <nav class="liens" aria-label="Navigation">
       <a href="#pourquoi">Pourquoi</a>
+      <a href="#metier">Au travail</a>
       <a href="#utiliser">Utiliser</a>
       <a href="#classe">En classe</a>
       <a href="#docs">Documentation</a>
@@ -139,7 +140,7 @@ footer a { color: var(--fg); }
   <div class="hero">
     <div>
       <h1>Programmer <em>en français.</em></h1>
-      <p class="lead">Fadéra est un langage de programmation dont les mots-clés, les messages d'erreur et la documentation sont en français. Pour apprendre la logique sans passer par l'anglais. Libre et gratuit.</p>
+      <p class="lead">Fadéra est un langage de programmation dont les mots-clés, les messages d'erreur et la documentation sont en français. Pour apprendre la logique sans passer par l'anglais, et pour écrire de vrais outils : traitement de données, automatisation, contrôle qualité. Libre et gratuit.</p>
       <div class="actions">
         <a class="btn plein" href="apprendre/">Apprendre en 10 leçons</a>
         <a class="btn vide" href="jouer/">Essayer en ligne</a>
@@ -150,7 +151,7 @@ footer a { color: var(--fg); }
 
     <div class="fenetre" role="img" aria-label="Exemple de programme Fadéra et son résultat">
       <div class="barre"><i></i><i></i><i></i><span style="margin-left:8px">exemple.fa</span></div>
-<pre><span class="k">soit</span> prenom = <span class="s">"Awa"</span>
+<pre><span class="k">soit</span> prenom = <span class="s">"Fatima"</span>
 <span class="k">soit</span> note = <span class="n">15</span>
 
 <span class="k">si</span> note &gt;= <span class="n">10</span> <span class="k">alors</span>
@@ -163,7 +164,7 @@ footer a { color: var(--fg); }
     <span class="k">afficher</span> <span class="s">"Essai "</span> + i
 <span class="k">fin</span></pre>
       <div class="sortie"><div class="etiquette">Résultat</div>
-<pre>Awa est admise !
+<pre>Fatima est admise !
 Essai 1
 Essai 2
 Essai 3</pre></div>
@@ -182,7 +183,7 @@ Essai 3</pre></div>
     <div class="duo">
       <div class="fenetre" role="img" aria-label="Exemple d'erreur en français">
         <div class="barre"><i></i><i></i><i></i><span style="margin-left:8px">erreur.fa</span></div>
-<pre><span class="k">soit</span> prenom = <span class="s">"Awa"</span>
+<pre><span class="k">soit</span> prenom = <span class="s">"Fatima"</span>
 <span class="k">afficher</span> prenon</pre>
         <div class="sortie"><div class="etiquette">Résultat</div>
 <pre class="err">Erreur : Ligne 2 : La variable "prenon" n'existe pas.
@@ -198,6 +199,17 @@ Déclarez-la d'abord avec : soit prenon = ...</pre></div>
         <div class="sortie"><div class="etiquette">Résultat</div>
 <pre>Le carré de 7 est 49</pre></div>
       </div>
+    </div>
+  </section>
+
+  <section id="metier">
+    <h2>Pas seulement pour enseigner</h2>
+    <p class="intro">Fadéra est né dans les classes, mais il sert aussi à travailler : le même langage, du premier <code>afficher</code> jusqu'aux outils d'atelier et de bureau.</p>
+    <div class="trio">
+      <div><span class="etiq">Données</span><h3>CSV, JSON, fichiers, journaux</h3><p>Lire, nettoyer et résumer des données, statistiques comprises, puis écrire un rapport ou un fichier de résultats.</p></div>
+      <div><span class="etiq">Automatisation</span><h3>Des scripts en ligne de commande</h3><p>Le moteur Rust lance un programme <code>.fa</code> comme n'importe quel outil, sous Windows, avec ses terminaux PowerShell et cmd intégrés.</p></div>
+      <div><span class="etiq">Métiers</span><h3>Industrie, finance, santé, télécoms</h3><p>Contrôle qualité, surveillance d'une machine, facturation, indicateurs de santé : des exercices corrigés montrent ces usages.</p></div>
+      <div><span class="etiq">Qualité</span><h3>Des programmes qu'on peut tester</h3><p>Tests intégrés au langage, formateur de code, paquets partageables, chiffrement et signature HMAC pour protéger ses échanges.</p></div>
     </div>
   </section>
 

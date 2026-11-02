@@ -287,7 +287,7 @@ fn copie_profonde() {
 
 #[test]
 fn texte_a_trous() {
-    assert_eq!(run("afficher texte_format(\"{} a {} ans\", [\"Awa\", 30])"), "Awa a 30 ans");
+    assert_eq!(run("afficher texte_format(\"{} a {} ans\", [\"Fatima\", 30])"), "Fatima a 30 ans");
     assert_eq!(run("afficher texte_format(\"{nom}/{{x}}\", {nom: \"é\"})"), "é/{x}");
     assert!(run("afficher texte_format(\"{} {}\", [1])").contains("aucune valeur pour {1} (1 valeur(s) fournie(s))."));
     assert!(run("afficher texte_format(\"a } b\", [])").contains("accolade « } » isolée"));

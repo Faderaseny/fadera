@@ -86,8 +86,8 @@ tester "std/tas : file de priorité"
   verifier_egal(sortie, [1, 2, 3, 5, 7, 8, 9])
   verifier_egal(tas_max().pousser("m").pousser("z").extraire(), "z")
   soit par_age = Tas((a, b) => a.age - b.age)
-  par_age.pousser({ nom: "Awa", age: 30 }).pousser({ nom: "Moussa", age: 20 })
-  verifier_egal(par_age.extraire().nom, "Moussa")
+  par_age.pousser({ nom: "Fatima", age: 30 }).pousser({ nom: "Ansou", age: 20 })
+  verifier_egal(par_age.extraire().nom, "Ansou")
   verifier_erreur(() => Tas(ordre_naturel).extraire(), "Tas vide")
 fin
 

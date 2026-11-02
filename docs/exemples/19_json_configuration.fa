@@ -1,7 +1,7 @@
 # Exemple 19 — Lire, modifier et écrire du JSON
 # Notions : json_lire, json_texte, json_valide, json_chemin, essayer / attraper
 
-soit brut = "{\"nom\": \"Boutique Awa\", \"ouvert\": true, \"horaires\": {\"semaine\": \"8h-18h\", \"dimanche\": null}, \"produits\": [{\"nom\": \"thé\", \"prix\": 1500}, {\"nom\": \"café\", \"prix\": 2200}]}"
+soit brut = "{\"nom\": \"Boutique Fatima\", \"ouvert\": true, \"horaires\": {\"semaine\": \"8h-18h\", \"dimanche\": null}, \"produits\": [{\"nom\": \"thé\", \"prix\": 1500}, {\"nom\": \"café\", \"prix\": 2200}]}"
 
 afficher "JSON valide ? " + json_valide(brut)
 afficher "JSON valide ? " + json_valide("{ceci n'est pas du json")

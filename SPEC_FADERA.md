@@ -92,7 +92,7 @@ ERR:Ligne 4 : "taille" est un mot réservé du langage : choisissez un autre nom
 | texte | `"salut"` | `texte` |
 | booléen | `vrai`, `faux` | `booléen` |
 | liste | `[1, "a", [2]]` | `liste` |
-| structure | `{ nom: "Awa", age: 20 }` | `structure` |
+| structure | `{ nom: "Fatima", age: 20 }` | `structure` |
 | fonction | `x => x * 2` | `fonction` |
 | rien | résultat d'une fonction qui ne renvoie rien | `rien` |
 

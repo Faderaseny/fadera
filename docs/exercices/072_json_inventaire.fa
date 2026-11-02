@@ -4,7 +4,7 @@
 # À partir du JSON ci-dessous : affichez le prix du deuxième produit avec json_chemin, augmentez tous les prix de 10 %
 # puis réécrivez le JSON en version compacte (json_texte).
 # Corrigé :
-soit brut = "{\"boutique\": \"Awa\", \"produits\": [{\"nom\": \"thé\", \"prix\": 1000}, {\"nom\": \"café\", \"prix\": 2000}]}"
+soit brut = "{\"boutique\": \"Fatima\", \"produits\": [{\"nom\": \"thé\", \"prix\": 1000}, {\"nom\": \"café\", \"prix\": 2000}]}"
 soit data = json_lire(brut)
 afficher "Prix du 2e produit : " + json_chemin(data, "produits.1.prix", 0)
 pour chaque p dans lireCle(data, "produits") faire

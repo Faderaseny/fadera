@@ -61,7 +61,7 @@ pour chaque c dans clients faire
 fin
 
 # ajouter un client
-http_envoyer(base + "/clients", { nom: "Awa", ville: "Dakar" }, cles)
+http_envoyer(base + "/clients", { nom: "Fatima", ville: "Dakar" }, cles)
 ```
 
 ## Ce que Fadéra ne fait pas (encore)

@@ -20,7 +20,7 @@ fonction categorie(v)
   renvoyer "obésité"
 fin
 
-pour chaque p dans [["Awa", 58, 1.65], ["Moussa", 92, 1.75], ["Fatou", 47, 1.70]] faire
+pour chaque p dans [["Fatima", 58, 1.65], ["Ansou", 92, 1.75], ["Fatou", 47, 1.70]] faire
   soit v = imc(lireElement(p, 1), lireElement(p, 2))
   afficher lireElement(p, 0) + " : IMC " + arrondir(v, 1) + " (" + categorie(v) + ")"
 fin

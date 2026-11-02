@@ -18,12 +18,12 @@
       id: "variables", chapitre: "1. Premiers pas", titre: "Les variables",
       lecon: `<p>Une <strong>variable</strong> est une boîte qui porte un nom et contient une valeur. On la crée avec <code>soit</code>.</p>
 <p>Pour mettre plusieurs choses dans un même <code>afficher</code>, on les <strong>assemble avec <code>+</code></strong>. Pour <em>demander</em> quelque chose à la personne, on utilise <code>saisir("question")</code>.</p>`,
-      exemple: `soit prenom = "Awa"\nsoit age = 14\nafficher "Je m'appelle " + prenom + " et j'ai " + age + " ans."`,
-      consigne: `Demande le prénom avec <code>saisir</code>, puis affiche <code>Bonjour, </code> suivi du prénom et d'un point d'exclamation. Pour « Awa » : <code>Bonjour, Awa !</code>`,
+      exemple: `soit prenom = "Fatima"\nsoit age = 14\nafficher "Je m'appelle " + prenom + " et j'ai " + age + " ans."`,
+      consigne: `Demande le prénom avec <code>saisir</code>, puis affiche <code>Bonjour, </code> suivi du prénom et d'un point d'exclamation. Pour « Fatima » : <code>Bonjour, Fatima !</code>`,
       depart: `soit prenom = saisir("Ton prénom ? ")\n# affiche maintenant le message\n`,
       indice: `Assemble les morceaux : <code>"Bonjour, " + prenom + " !"</code>`,
       solution: `soit prenom = saisir("Ton prénom ? ")\nafficher "Bonjour, " + prenom + " !"`,
-      tests: [{ saisies: ["Awa"], sortie: ["Bonjour, Awa !"] }, { saisies: ["Moussa"], sortie: ["Bonjour, Moussa !"] }],
+      tests: [{ saisies: ["Fatima"], sortie: ["Bonjour, Fatima !"] }, { saisies: ["Ansou"], sortie: ["Bonjour, Ansou !"] }],
     },
     {
       id: "calculs", chapitre: "1. Premiers pas", titre: "Faire des calculs",

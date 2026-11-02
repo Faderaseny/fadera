@@ -1,7 +1,7 @@
 # Exemple 1 — Bonjour, Fadéra !
 # Notions : afficher, variables (soit), texte, nombres, concaténation avec +
 
-soit prenom = "Awa"
+soit prenom = "Fatima"
 soit age = 17
 
 afficher "Bonjour, " + prenom + " !"

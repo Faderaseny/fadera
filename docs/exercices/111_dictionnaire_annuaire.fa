@@ -7,14 +7,14 @@
 importer "std/dictionnaire"
 
 soit annuaire = Dictionnaire()
-annuaire.definir("Awa", "77 111 11 11")
-annuaire.definir("Moussa", "78 222 22 22")
+annuaire.definir("Fatima", "77 111 11 11")
+annuaire.definir("Ansou", "78 222 22 22")
 annuaire.definir("Fatou", "70 333 33 33")
-annuaire.definir("Awa", "77 999 99 99")
-annuaire.supprimer("Moussa")
+annuaire.definir("Fatima", "77 999 99 99")
+annuaire.supprimer("Ansou")
 afficher "Contacts : " + annuaire.longueur()
-afficher "Moussa existe ? " + annuaire.possede("Moussa")
-afficher "Numéro de Moussa : " + annuaire.obtenir_ou("Moussa", "inconnu")
+afficher "Ansou existe ? " + annuaire.possede("Ansou")
+afficher "Numéro de Ansou : " + annuaire.obtenir_ou("Ansou", "inconnu")
 pour chaque paire dans annuaire.liste_paires() faire
   afficher lireElement(paire, 0) + " → " + lireElement(paire, 1)
 fin

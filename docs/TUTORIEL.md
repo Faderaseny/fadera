@@ -67,7 +67,7 @@ Résultat :
 Une **variable** est une boîte qui porte un nom. On la crée avec `soit`.
 
 ```fadera
-soit prenom = "Awa"
+soit prenom = "Fatima"
 soit age = 20
 afficher prenom
 afficher age
@@ -76,7 +76,7 @@ afficher age
 Résultat :
 
 ```
-Awa
+Fatima
 20
 ```
 
@@ -98,7 +98,7 @@ Résultat :
 Avec `+`, un texte et un nombre se collent ensemble :
 
 ```fadera
-soit nom = "Moussa"
+soit nom = "Ansou"
 soit annees = 17
 afficher nom + " a " + annees + " ans."
 ```
@@ -106,10 +106,10 @@ afficher nom + " a " + annees + " ans."
 Résultat :
 
 ```
-Moussa a 17 ans.
+Ansou a 17 ans.
 ```
 
-Il existe cinq sortes de valeurs, qu'on découvrira au fil des chapitres : les **nombres** (`42`, `3.14`), les **textes** (`"bonjour"`), les **booléens** (`vrai`, `faux`), les **listes** (`[1, 2, 3]`) et les **structures** (`{ nom: "Awa" }`). La fonction `type_de` donne le type d'une valeur :
+Il existe cinq sortes de valeurs, qu'on découvrira au fil des chapitres : les **nombres** (`42`, `3.14`), les **textes** (`"bonjour"`), les **booléens** (`vrai`, `faux`), les **listes** (`[1, 2, 3]`) et les **structures** (`{ nom: "Fatima" }`). La fonction `type_de` donne le type d'une valeur :
 
 ```fadera
 afficher type_de(42)
@@ -455,8 +455,8 @@ On les combine avec les listes pour fabriquer une petite base de données :
 
 ```fadera
 soit eleves = [
-  { nom: "Awa", note: 15 },
-  { nom: "Moussa", note: 9 },
+  { nom: "Fatima", note: 15 },
+  { nom: "Ansou", note: 9 },
   { nom: "Fatou", note: 18 }
 ]
 pour chaque e dans eleves faire
@@ -467,8 +467,8 @@ fin
 Résultat :
 
 ```
-Awa : 15
-Moussa : 9
+Fatima : 15
+Ansou : 9
 Fatou : 18
 ```
 
@@ -503,14 +503,14 @@ fonction bonjour()
   afficher "Bonjour à tous"
 fin
 
-afficher saluer("Awa", "Bonsoir")
+afficher saluer("Fatima", "Bonsoir")
 bonjour()
 ```
 
 Résultat :
 
 ```
-Bonsoir Awa !
+Bonsoir Fatima !
 Bonjour à tous
 ```
 
@@ -575,7 +575,7 @@ Résultat :
 `filtrer` garde les éléments qui passent un test, `transformer` change chaque élément, `reduire` les résume en une seule valeur. Pour trier des structures, `trier_par` prend une fonction qui donne **la clé de tri** :
 
 ```fadera
-soit gens = [{ nom: "Awa", age: 34 }, { nom: "Ibra", age: 19 }, { nom: "Fatou", age: 41 }]
+soit gens = [{ nom: "Fatima", age: 34 }, { nom: "Ibra", age: 19 }, { nom: "Fatou", age: 41 }]
 pour chaque g dans trier_par(gens, p => lireCle(p, "age")) faire
   afficher lireCle(g, "nom") + " (" + lireCle(g, "age") + ")"
 fin
@@ -585,7 +585,7 @@ Résultat :
 
 ```
 Ibra (19)
-Awa (34)
+Fatima (34)
 Fatou (41)
 ```
 
@@ -634,15 +634,15 @@ Sel.....   150 F
 Et `texte_format` remplit un modèle :
 
 ```fadera
-afficher texte_format("{} a {} ans et habite à {}", ["Awa", 20, "Dakar"])
-afficher texte_format("{nom} : {note}/20", { nom: "Moussa", note: 14 })
+afficher texte_format("{} a {} ans et habite à {}", ["Fatima", 20, "Dakar"])
+afficher texte_format("{nom} : {note}/20", { nom: "Ansou", note: 14 })
 ```
 
 Résultat :
 
 ```
-Awa a 20 ans et habite à Dakar
-Moussa : 14/20
+Fatima a 20 ans et habite à Dakar
+Ansou : 14/20
 ```
 
 ## Chapitre 10 — Quand ça se passe mal : les erreurs
@@ -709,7 +709,7 @@ Erreur : Pas de racine réelle pour un nombre négatif.
 `ecrireFichier` et `lireFichier` lisent et écrivent du texte. Avec la commande `fadera`, le fichier est créé dans le dossier courant ; dans le playground, il vit dans un espace de fichiers propre à la page.
 
 ```fadera
-ecrireFichier("notes.txt", "Awa;15\nMoussa;9\nFatou;18")
+ecrireFichier("notes.txt", "Fatima;15\nAnsou;9\nFatou;18")
 soit contenu = lireFichier("notes.txt")
 afficher contenu
 ```
@@ -717,15 +717,15 @@ afficher contenu
 Résultat :
 
 ```
-Awa;15
-Moussa;9
+Fatima;15
+Ansou;9
 Fatou;18
 ```
 
 Les tableurs échangent des fichiers **CSV** : `csv_lire` les transforme en listes, `csv_texte` fait l'inverse.
 
 ```fadera
-ecrireFichier("notes.txt", "Awa;15\nMoussa;9\nFatou;18")
+ecrireFichier("notes.txt", "Fatima;15\nAnsou;9\nFatou;18")
 soit lignes = csv_lire(lireFichier("notes.txt"), ";")
 soit total = 0
 pour chaque l dans lignes faire

@@ -6,6 +6,8 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et la nu
 ## [Non publié]
 
 ### Ajouté
+- Présentation : Fadéra est précisé comme langage d'usage professionnel autant que pédagogique (site, README, guide) ; nouvelle section « Pas seulement pour enseigner » sur le site.
+- Exemples : les prénoms des exemples sont Ansou et Fatima.
 - **Apprendre Fadéra** (`/apprendre/`) : 10 leçons pour débutants, exercices corrigés automatiquement dans le navigateur (moteur WebAssembly), progression gardée localement, sans compte. Vérifié par `site/apprendre/verifier_cours.js`.
 - Site officiel de Fadéra (`site/index.html`), publié à la racine de GitHub Pages : présentation, façons d'utiliser Fadéra, classe, documentation. L'IDE en ligne passe dans `/jouer/` (`https://faderaseny.github.io/fadera/jouer/`) ; les anciens liens de partage `#p=…` de la racine y sont redirigés.
 

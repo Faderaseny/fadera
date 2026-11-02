@@ -4,7 +4,7 @@
 # Le texte CSV ci-dessous contient des élèves et leurs notes (séparateur « ; »). Avec csv_lire,
 # calculez la moyenne de chaque matière et affichez l'élève qui a la meilleure moyenne générale.
 # Corrigé :
-soit brut = "nom;maths;francais\nAwa;15;12\nMoussa;9;14\nFatou;18;16"
+soit brut = "nom;maths;francais\nFatima;15;12\nAnsou;9;14\nFatou;18;16"
 soit lignes = csv_lire(brut, ";")
 soit entete = lireElement(lignes, 0)
 soit donnees = tranche(lignes, 1, taille(lignes))

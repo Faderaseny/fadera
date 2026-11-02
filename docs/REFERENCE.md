@@ -96,8 +96,8 @@ afficher modifierElement([1, 2, 3], 0, 9)
 **`lireCle(structure, cle)`** — Valeur associée à la clé d'une structure.
 
 ```fadera
-afficher lireCle({ nom: "Awa" }, "nom")
-# → Awa
+afficher lireCle({ nom: "Fatima" }, "nom")
+# → Fatima
 ```
 
 **`modifierCle(structure, cle, valeur)`** — Crée ou remplace une clé d'une structure (modifie la structure).
@@ -909,8 +909,8 @@ afficher texte_distance("chat", "chien")
 **`texte_format(modele, valeurs)`** — Remplit {} (dans l'ordre), {0} (par position) ou {nom} (liste ou structure).
 
 ```fadera
-afficher texte_format("{} a {} ans", ["Awa", 20])
-# → Awa a 20 ans
+afficher texte_format("{} a {} ans", ["Fatima", 20])
+# → Fatima a 20 ans
 ```
 
 **`url_encoder(t)`** — Encode un texte pour une adresse web.
@@ -1527,7 +1527,7 @@ Exemple :
 ```fadera
 importer "std/json"
 
-soit v = { nom: "Awa", adresse: { ville: "Dakar", rue: ["Plateau", 12] } }
+soit v = { nom: "Fatima", adresse: { ville: "Dakar", rue: ["Plateau", 12] } }
 afficher json_compact(v)
 afficher json_aplatir(v)
 afficher json_profondeur(v)
@@ -1538,10 +1538,10 @@ afficher json_lire_ou("pas du json", "repli")
 Résultat :
 
 ```
-{"nom":"Awa","adresse":{"ville":"Dakar","rue":["Plateau",12]}}
-{ nom: "Awa", adresse.ville: "Dakar", adresse.rue[0]: "Plateau", adresse.rue[1]: 12 }
+{"nom":"Fatima","adresse":{"ville":"Dakar","rue":["Plateau",12]}}
+{ nom: "Fatima", adresse.ville: "Dakar", adresse.rue[0]: "Plateau", adresse.rue[1]: 12 }
 3
-{ nom: "Awa" }
+{ nom: "Fatima" }
 repli
 ```
 
@@ -1740,7 +1740,7 @@ afficher ordre
 
 # Une file de priorité avec sa propre règle : les plus âgés d'abord
 soit urgences = Tas((a, b) => lireCle(b, "age") - lireCle(a, "age"))
-urgences.pousser({ nom: "Awa", age: 30 }).pousser({ nom: "Ali", age: 71 }).pousser({ nom: "Bineta", age: 55 })
+urgences.pousser({ nom: "Fatima", age: 30 }).pousser({ nom: "Ali", age: 71 }).pousser({ nom: "Bineta", age: 55 })
 afficher lireCle(urgences.extraire(), "nom")
 ```
 

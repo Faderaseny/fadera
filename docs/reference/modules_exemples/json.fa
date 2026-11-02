@@ -1,6 +1,6 @@
 importer "std/json"
 
-soit v = { nom: "Awa", adresse: { ville: "Dakar", rue: ["Plateau", 12] } }
+soit v = { nom: "Fatima", adresse: { ville: "Dakar", rue: ["Plateau", 12] } }
 afficher json_compact(v)
 afficher json_aplatir(v)
 afficher json_profondeur(v)

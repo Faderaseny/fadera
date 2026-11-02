@@ -339,16 +339,16 @@ await t("modulo par zéro",'afficher modulo(5, 0)',/modulo : division par zéro/
 await t("sinus texte",'afficher sinus("a")',/sinus : l'argument 1 doit être un nombre \(reçu : texte\)/);
 await t("logarithme base texte",'afficher logarithme(8, "a")',/logarithme : l'argument 2 doit être un nombre/);
 await t("copier liste imbriquée",'soit a = [1, [2, 3]]\nsoit b = copier(a)\najouter(lireElement(b, 1), 99)\nafficher a\nafficher b',"[1, [2, 3]]\n[1, [2, 3, 99]]");
-await t("copier structure",'structure s = {nom: "Awa", notes: [1, 2]}\nsoit c = copier(s)\najouter(lireCle(c, "notes"), 3)\nmodifierCle(c, "nom", "Bob")\nafficher s\nafficher c',/^\{ nom: "Awa", notes: \[1, 2\] \}\n\{ nom: "Bob", notes: \[1, 2, 3\] \}$/);
+await t("copier structure",'structure s = {nom: "Fatima", notes: [1, 2]}\nsoit c = copier(s)\najouter(lireCle(c, "notes"), 3)\nmodifierCle(c, "nom", "Bob")\nafficher s\nafficher c',/^\{ nom: "Fatima", notes: \[1, 2\] \}\n\{ nom: "Bob", notes: \[1, 2, 3\] \}$/);
 await t("sans copier : partagé",'soit a = [1]\nsoit b = a\najouter(b, 2)\nafficher a',"[1, 2]");
 await t("copier valeurs simples",'afficher copier(5) + " " + copier("x") + " " + copier(vrai)',"5 x vrai");
 await t("copier liste vide",'afficher copier([])',"[]");
 await t("copier structure cyclique",'structure s = {a: 1}\nmodifierCle(s, "moi", s)\nsoit c = copier(s)\nmodifierCle(c, "a", 2)\nafficher lireCle(s, "a") + " " + lireCle(c, "a")',"1 2");
 await t("copier liste cyclique",'soit l = [1]\najouter(l, l)\nsoit c = copier(l)\najouter(c, 5)\nafficher taille(l) + " " + taille(c)',"2 3");
 await t("copier fonction",'soit f = x => x + 1\nsoit g = copier(f)\nafficher g(1)',"2");
-await t("texte_format séquentiel",'afficher texte_format("{} a {} ans", ["Awa", 30])',"Awa a 30 ans");
+await t("texte_format séquentiel",'afficher texte_format("{} a {} ans", ["Fatima", 30])',"Fatima a 30 ans");
 await t("texte_format indices",'afficher texte_format("{1}-{0}-{1}", ["a", "b"])',"b-a-b");
-await t("texte_format structure",'afficher texte_format("{nom} ({age})", {nom: "Awa", age: 30})',"Awa (30)");
+await t("texte_format structure",'afficher texte_format("{nom} ({age})", {nom: "Fatima", age: 30})',"Fatima (30)");
 await t("texte_format valeur seule",'afficher texte_format("x={}", 5)',"x=5");
 await t("texte_format sans valeurs",'afficher texte_format("sans trou")',"sans trou");
 await t("texte_format accolades",'afficher texte_format("{{}} et {{{}}}", [7])',"{} et {7}");
@@ -756,7 +756,7 @@ async function editeur() {
     const bon = att instanceof RegExp ? att.test(String(obtenu)) : JSON.stringify(obtenu) === JSON.stringify(att);
     if (bon) ok++; else { ko++; console.log("✗ [éditeur] " + nom + "\n    obtenu : " + JSON.stringify(obtenu) + "\n    attendu: " + String(att instanceof RegExp ? att : JSON.stringify(att))); }
   };
-  const SRC = '# démo\nimporter "std/pile" comme p\nclasse Compte herite Base\n    fonction creer(titulaire, solde)\n        soi.titulaire = titulaire\n        soi.solde = solde\n    fin\n    fonction deposer(montant)\n        soi.solde = soi.solde + montant\n        renvoyer soi\n    fin\nfin\nsoit c = Compte("Awa", 100)\nsoit pile = p.Pile()\npour i allantde 1 a 3 pas 1 faire\n    afficher c.deposer(i).solde\nfin\nsoit f = x => x * 2\nstructure cfg = { nom: "x", port: 80 }\n';
+  const SRC = '# démo\nimporter "std/pile" comme p\nclasse Compte herite Base\n    fonction creer(titulaire, solde)\n        soi.titulaire = titulaire\n        soi.solde = solde\n    fin\n    fonction deposer(montant)\n        soi.solde = soi.solde + montant\n        renvoyer soi\n    fin\nfin\nsoit c = Compte("Fatima", 100)\nsoit pile = p.Pile()\npour i allantde 1 a 3 pas 1 faire\n    afficher c.deposer(i).solde\nfin\nsoit f = x => x * 2\nstructure cfg = { nom: "x", port: 80 }\n';
   const depuisHtml = (h) => h.replace(/<[^>]+>/g, "").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
   // --- analyse par le vrai analyseur
   const a = O.analyser(SRC);

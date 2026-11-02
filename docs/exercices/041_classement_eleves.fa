@@ -2,11 +2,11 @@
 # Domaine : Structures · Niveau : ★★
 # Énoncé :
 # Voici des élèves { nom, note }. Triez-les du meilleur au moins bon (trier_par) et affichez
-# « 1. Fatou — 18 », « 2. Awa — 15 »… Indice : une clé négative inverse l'ordre.
+# « 1. Fatou — 18 », « 2. Fatima — 15 »… Indice : une clé négative inverse l'ordre.
 # Corrigé :
 soit eleves = [
-  { nom: "Awa", note: 15 },
-  { nom: "Moussa", note: 12 },
+  { nom: "Fatima", note: 15 },
+  { nom: "Ansou", note: 12 },
   { nom: "Fatou", note: 18 },
   { nom: "Ibrahima", note: 9 }
 ]

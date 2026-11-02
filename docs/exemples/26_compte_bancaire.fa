@@ -45,7 +45,7 @@ classe CompteEpargne herite Compte
   fin
 fin
 
-soit awa = Compte("Awa", 50000)
+soit awa = Compte("Fatima", 50000)
 awa.deposer(25000)
 awa.retirer_argent(10000)
 afficher awa.resume()
@@ -58,7 +58,7 @@ attraper erreur
 fin
 
 afficher ""
-soit livret = CompteEpargne("Moussa", 200000, 3)
+soit livret = CompteEpargne("Ansou", 200000, 3)
 afficher "Intérêts versés : " + livret.ajouter_interets()
 afficher livret.resume()
 afficher "Livret est un Compte ? " + est_instance(livret, "Compte")

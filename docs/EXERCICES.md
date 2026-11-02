@@ -44,13 +44,13 @@ Les corrigés sont **exécutés automatiquement sur les deux moteurs** de Fadér
 *Niveau : ★*
 
 > Stockez votre prénom et votre âge dans deux variables, puis affichez la phrase :
-> « Bonjour, je m'appelle Awa et j'ai 17 ans. » (avec vos valeurs).
+> « Bonjour, je m'appelle Fatima et j'ai 17 ans. » (avec vos valeurs).
 
 <details>
 <summary>Corrigé</summary>
 
 ```fadera
-soit prenom = "Awa"
+soit prenom = "Fatima"
 soit age = 17
 afficher "Bonjour, je m'appelle " + prenom + " et j'ai " + age + " ans."
 ```
@@ -58,7 +58,7 @@ afficher "Bonjour, je m'appelle " + prenom + " et j'ai " + age + " ans."
 Résultat :
 
 ```
-Bonjour, je m'appelle Awa et j'ai 17 ans.
+Bonjour, je m'appelle Fatima et j'ai 17 ans.
 ```
 
 </details>
@@ -778,13 +778,13 @@ Résultat :
 *Niveau : ★*
 
 > Créez une structure { nom, classe, notes } pour un élève, ajoutez la note 15 à ses notes,
-> puis affichez « Awa (3e A) : moyenne 13 » avec la moyenne calculée.
+> puis affichez « Fatima (3e A) : moyenne 13 » avec la moyenne calculée.
 
 <details>
 <summary>Corrigé</summary>
 
 ```fadera
-soit eleve = { nom: "Awa", classe: "3e A", notes: [12, 14, 13] }
+soit eleve = { nom: "Fatima", classe: "3e A", notes: [12, 14, 13] }
 ajouter(lireCle(eleve, "notes"), 13)
 afficher lireCle(eleve, "nom") + " (" + lireCle(eleve, "classe") + ") : moyenne " + stats_moyenne(lireCle(eleve, "notes"))
 ```
@@ -792,7 +792,7 @@ afficher lireCle(eleve, "nom") + " (" + lireCle(eleve, "classe") + ") : moyenne 
 Résultat :
 
 ```
-Awa (3e A) : moyenne 13
+Fatima (3e A) : moyenne 13
 ```
 
 </details>
@@ -802,15 +802,15 @@ Awa (3e A) : moyenne 13
 *Niveau : ★★*
 
 > Voici des élèves { nom, note }. Triez-les du meilleur au moins bon (trier_par) et affichez
-> « 1. Fatou — 18 », « 2. Awa — 15 »… Indice : une clé négative inverse l'ordre.
+> « 1. Fatou — 18 », « 2. Fatima — 15 »… Indice : une clé négative inverse l'ordre.
 
 <details>
 <summary>Corrigé</summary>
 
 ```fadera
 soit eleves = [
-  { nom: "Awa", note: 15 },
-  { nom: "Moussa", note: 12 },
+  { nom: "Fatima", note: 15 },
+  { nom: "Ansou", note: 12 },
   { nom: "Fatou", note: 18 },
   { nom: "Ibrahima", note: 9 }
 ]
@@ -825,8 +825,8 @@ Résultat :
 
 ```
 1. Fatou — 18
-2. Awa — 15
-3. Moussa — 12
+2. Fatima — 15
+3. Ansou — 12
 4. Ibrahima — 9
 ```
 
@@ -918,8 +918,8 @@ chien : 1
 importer "std/tri"
 
 soit eleves = [
-  { nom: "Awa", classe: "B", note: 15 },
-  { nom: "Moussa", classe: "A", note: 12 },
+  { nom: "Fatima", classe: "B", note: 15 },
+  { nom: "Ansou", classe: "A", note: 12 },
   { nom: "Fatou", classe: "A", note: 18 },
   { nom: "Ibrahima", classe: "B", note: 15 },
   { nom: "Mariama", classe: "A", note: 12 }
@@ -941,9 +941,9 @@ Résultat :
 
 ```
 A  Fatou    18
+A  Ansou    12
 A  Mariama  12
-A  Moussa   12
-B  Awa      15
+B  Fatima   15
 B  Ibrahima 15
 Mêmes résultats ? vrai
 ```
@@ -1295,7 +1295,7 @@ Résultat :
 <summary>Corrigé</summary>
 
 ```fadera
-soit brut = "nom;maths;francais\nAwa;15;12\nMoussa;9;14\nFatou;18;16"
+soit brut = "nom;maths;francais\nFatima;15;12\nAnsou;9;14\nFatou;18;16"
 soit lignes = csv_lire(brut, ";")
 soit entete = lireElement(lignes, 0)
 soit donnees = tranche(lignes, 1, taille(lignes))
@@ -1328,7 +1328,7 @@ Meilleure moyenne : Fatou
 <summary>Corrigé</summary>
 
 ```fadera
-soit brut = "{\"boutique\": \"Awa\", \"produits\": [{\"nom\": \"thé\", \"prix\": 1000}, {\"nom\": \"café\", \"prix\": 2000}]}"
+soit brut = "{\"boutique\": \"Fatima\", \"produits\": [{\"nom\": \"thé\", \"prix\": 1000}, {\"nom\": \"café\", \"prix\": 2000}]}"
 soit data = json_lire(brut)
 afficher "Prix du 2e produit : " + json_chemin(data, "produits.1.prix", 0)
 pour chaque p dans lireCle(data, "produits") faire
@@ -1341,7 +1341,7 @@ Résultat :
 
 ```
 Prix du 2e produit : 2000
-{"boutique":"Awa","produits":[{"nom":"thé","prix":1100},{"nom":"café","prix":2200}]}
+{"boutique":"Fatima","produits":[{"nom":"thé","prix":1100},{"nom":"café","prix":2200}]}
 ```
 
 </details>
@@ -1370,7 +1370,7 @@ fonction journaliser(message)
 fin
 
 journaliser("démarrage")
-journaliser("connexion de Awa")
+journaliser("connexion de Fatima")
 journaliser("arrêt")
 afficher lireFichier("journal.log")
 ```
@@ -1379,7 +1379,7 @@ Résultat :
 
 ```
 [1] démarrage
-[2] connexion de Awa
+[2] connexion de Fatima
 [3] arrêt
 ```
 
@@ -1871,8 +1871,8 @@ TOTAL : 3100 FCFA
 
 *Niveau : ★★*
 
-> Avec le module std/ensemble : les élèves inscrits au club de maths sont Awa, Moussa, Fatou ; au club d'informatique
-> Fatou, Ibrahima, Awa. Affichez ceux qui sont dans les deux clubs, dans au moins un, et seulement en maths.
+> Avec le module std/ensemble : les élèves inscrits au club de maths sont Fatima, Ansou, Fatou ; au club d'informatique
+> Fatou, Ibrahima, Fatima. Affichez ceux qui sont dans les deux clubs, dans au moins un, et seulement en maths.
 
 <details>
 <summary>Corrigé</summary>
@@ -1880,8 +1880,8 @@ TOTAL : 3100 FCFA
 ```fadera
 importer "std/ensemble"
 
-soit maths = ensemble_depuis(["Awa", "Moussa", "Fatou"])
-soit info = ensemble_depuis(["Fatou", "Ibrahima", "Awa"])
+soit maths = ensemble_depuis(["Fatima", "Ansou", "Fatou"])
+soit info = ensemble_depuis(["Fatou", "Ibrahima", "Fatima"])
 afficher "Les deux : " + trier_par(maths.intersection(info).en_liste(), x => x)
 afficher "Au moins un : " + taille(maths.union(info).en_liste())
 afficher "Seulement maths : " + maths.difference(info).en_liste()
@@ -1890,9 +1890,9 @@ afficher "Seulement maths : " + maths.difference(info).en_liste()
 Résultat :
 
 ```
-Les deux : ["Awa", "Fatou"]
+Les deux : ["Fatima", "Fatou"]
 Au moins un : 4
-Seulement maths : ["Moussa"]
+Seulement maths : ["Ansou"]
 ```
 
 </details>
@@ -1911,14 +1911,14 @@ Seulement maths : ["Moussa"]
 importer "std/dictionnaire"
 
 soit annuaire = Dictionnaire()
-annuaire.definir("Awa", "77 111 11 11")
-annuaire.definir("Moussa", "78 222 22 22")
+annuaire.definir("Fatima", "77 111 11 11")
+annuaire.definir("Ansou", "78 222 22 22")
 annuaire.definir("Fatou", "70 333 33 33")
-annuaire.definir("Awa", "77 999 99 99")
-annuaire.supprimer("Moussa")
+annuaire.definir("Fatima", "77 999 99 99")
+annuaire.supprimer("Ansou")
 afficher "Contacts : " + annuaire.longueur()
-afficher "Moussa existe ? " + annuaire.possede("Moussa")
-afficher "Numéro de Moussa : " + annuaire.obtenir_ou("Moussa", "inconnu")
+afficher "Ansou existe ? " + annuaire.possede("Ansou")
+afficher "Numéro de Ansou : " + annuaire.obtenir_ou("Ansou", "inconnu")
 pour chaque paire dans annuaire.liste_paires() faire
   afficher lireElement(paire, 0) + " → " + lireElement(paire, 1)
 fin
@@ -1928,9 +1928,9 @@ Résultat :
 
 ```
 Contacts : 2
-Moussa existe ? faux
-Numéro de Moussa : inconnu
-Awa → 77 999 99 99
+Ansou existe ? faux
+Numéro de Ansou : inconnu
+Fatima → 77 999 99 99
 Fatou → 70 333 33 33
 ```
 
@@ -2295,13 +2295,13 @@ Déchiffrement refusé avec un mauvais mot de passe.
 
 ```fadera
 soit cle = "cle-partagee"
-soit message = "virement:5000:vers:Awa"
+soit message = "virement:5000:vers:Fatima"
 soit signature = crypto_hmac_sha256(message, cle)
 fonction authentique(recu, signature_recue)
   renvoyer crypto_hmac_sha256(recu, cle) == signature_recue
 fin
 afficher "Message intact : " + authentique(message, signature)
-afficher "Message modifié : " + authentique("virement:50000:vers:Awa", signature)
+afficher "Message modifié : " + authentique("virement:50000:vers:Fatima", signature)
 ```
 
 Résultat :
@@ -2828,7 +2828,7 @@ Résultat :
 <summary>Corrigé</summary>
 
 ```fadera
-soit brut = "nom;maths;francais;anglais\nAwa;15;12;16\nMoussa;9;14;10\nFatou;18;16;17\nIbrahima;7;9;8"
+soit brut = "nom;maths;francais;anglais\nFatima;15;12;16\nAnsou;9;14;10\nFatou;18;16;17\nIbrahima;7;9;8"
 soit lignes = tranche(csv_lire(brut, ";"), 1, 5)
 
 fonction mention(m)
@@ -2857,8 +2857,8 @@ Résultat :
 
 ```
 1. Fatou         17  Bien
-2. Awa        14.33  Bien
-3. Moussa        11  Passable
+2. Fatima     14.33  Bien
+3. Ansou         11  Passable
 4. Ibrahima       8  Ajourné
 Moyenne de la classe : 12.58
 ```
@@ -3371,8 +3371,8 @@ Mois 6 : intérêts 2050, capital 205008, reste 0
 
 ```fadera
 soit clients = [
-  { nom: "Awa", minutes: 90, donnees: 4.2 },
-  { nom: "Moussa", minutes: 180, donnees: 5.5 },
+  { nom: "Fatima", minutes: 90, donnees: 4.2 },
+  { nom: "Ansou", minutes: 180, donnees: 5.5 },
   { nom: "Fatou", minutes: 130, donnees: 8.1 }
 ]
 soit pire = ""
@@ -3391,8 +3391,8 @@ afficher "Plus gros dépassement : " + pire
 Résultat :
 
 ```
-Awa : 10000 FCFA (dépassement 0)
-Moussa : 15000 FCFA (dépassement 5000)
+Fatima : 10000 FCFA (dépassement 0)
+Ansou : 15000 FCFA (dépassement 5000)
 Fatou : 18500 FCFA (dépassement 8500)
 Plus gros dépassement : Fatou
 ```
@@ -3493,7 +3493,7 @@ fonction categorie(v)
   renvoyer "obésité"
 fin
 
-pour chaque p dans [["Awa", 58, 1.65], ["Moussa", 92, 1.75], ["Fatou", 47, 1.70]] faire
+pour chaque p dans [["Fatima", 58, 1.65], ["Ansou", 92, 1.75], ["Fatou", 47, 1.70]] faire
   soit v = imc(lireElement(p, 1), lireElement(p, 2))
   afficher lireElement(p, 0) + " : IMC " + arrondir(v, 1) + " (" + categorie(v) + ")"
 fin
@@ -3502,8 +3502,8 @@ fin
 Résultat :
 
 ```
-Awa : IMC 21.3 (normal)
-Moussa : IMC 30 (obésité)
+Fatima : IMC 21.3 (normal)
+Ansou : IMC 30 (obésité)
 Fatou : IMC 16.3 (maigreur)
 ```
 

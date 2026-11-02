@@ -1,12 +1,12 @@
 JSON valide ? vrai
 JSON valide ? faux
-Boutique : Boutique Awa
+Boutique : Boutique Fatima
 Horaires de semaine : 8h-18h
 Prix du 2e produit : 2200
 Horaires du samedi : non renseigné
 
 {
-  "nom": "Boutique Awa",
+  "nom": "Boutique Fatima",
   "ouvert": false,
   "horaires": {
     "semaine": "8h-18h",

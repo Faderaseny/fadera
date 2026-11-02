@@ -46,7 +46,7 @@ afficher 10 / 4
 Une **variable** est une boîte qui porte un nom. On la crée avec `soit`.
 
 ```fadera
-soit prenom = "Awa"
+soit prenom = "Fatima"
 soit age = 20
 afficher prenom
 afficher age
@@ -64,12 +64,12 @@ afficher score
 Avec `+`, un texte et un nombre se collent ensemble :
 
 ```fadera
-soit nom = "Moussa"
+soit nom = "Ansou"
 soit annees = 17
 afficher nom + " a " + annees + " ans."
 ```
 
-Il existe cinq sortes de valeurs, qu'on découvrira au fil des chapitres : les **nombres** (`42`, `3.14`), les **textes** (`"bonjour"`), les **booléens** (`vrai`, `faux`), les **listes** (`[1, 2, 3]`) et les **structures** (`{ nom: "Awa" }`). La fonction `type_de` donne le type d'une valeur :
+Il existe cinq sortes de valeurs, qu'on découvrira au fil des chapitres : les **nombres** (`42`, `3.14`), les **textes** (`"bonjour"`), les **booléens** (`vrai`, `faux`), les **listes** (`[1, 2, 3]`) et les **structures** (`{ nom: "Fatima" }`). La fonction `type_de` donne le type d'une valeur :
 
 ```fadera
 afficher type_de(42)
@@ -272,8 +272,8 @@ On les combine avec les listes pour fabriquer une petite base de données :
 
 ```fadera
 soit eleves = [
-  { nom: "Awa", note: 15 },
-  { nom: "Moussa", note: 9 },
+  { nom: "Fatima", note: 15 },
+  { nom: "Ansou", note: 9 },
   { nom: "Fatou", note: 18 }
 ]
 pour chaque e dans eleves faire
@@ -305,7 +305,7 @@ fonction bonjour()
   afficher "Bonjour à tous"
 fin
 
-afficher saluer("Awa", "Bonsoir")
+afficher saluer("Fatima", "Bonsoir")
 bonjour()
 ```
 
@@ -348,7 +348,7 @@ afficher trouver(nombres, n => n > 3)
 `filtrer` garde les éléments qui passent un test, `transformer` change chaque élément, `reduire` les résume en une seule valeur. Pour trier des structures, `trier_par` prend une fonction qui donne **la clé de tri** :
 
 ```fadera
-soit gens = [{ nom: "Awa", age: 34 }, { nom: "Ibra", age: 19 }, { nom: "Fatou", age: 41 }]
+soit gens = [{ nom: "Fatima", age: 34 }, { nom: "Ibra", age: 19 }, { nom: "Fatou", age: 41 }]
 pour chaque g dans trier_par(gens, p => lireCle(p, "age")) faire
   afficher lireCle(g, "nom") + " (" + lireCle(g, "age") + ")"
 fin
@@ -379,8 +379,8 @@ fin
 Et `texte_format` remplit un modèle :
 
 ```fadera
-afficher texte_format("{} a {} ans et habite à {}", ["Awa", 20, "Dakar"])
-afficher texte_format("{nom} : {note}/20", { nom: "Moussa", note: 14 })
+afficher texte_format("{} a {} ans et habite à {}", ["Fatima", 20, "Dakar"])
+afficher texte_format("{nom} : {note}/20", { nom: "Ansou", note: 14 })
 ```
 
 ## Chapitre 10 — Quand ça se passe mal : les erreurs
@@ -427,7 +427,7 @@ fin
 `ecrireFichier` et `lireFichier` lisent et écrivent du texte. Avec la commande `fadera`, le fichier est créé dans le dossier courant ; dans le playground, il vit dans un espace de fichiers propre à la page.
 
 ```fadera
-ecrireFichier("notes.txt", "Awa;15\nMoussa;9\nFatou;18")
+ecrireFichier("notes.txt", "Fatima;15\nAnsou;9\nFatou;18")
 soit contenu = lireFichier("notes.txt")
 afficher contenu
 ```
@@ -435,7 +435,7 @@ afficher contenu
 Les tableurs échangent des fichiers **CSV** : `csv_lire` les transforme en listes, `csv_texte` fait l'inverse.
 
 ```fadera
-ecrireFichier("notes.txt", "Awa;15\nMoussa;9\nFatou;18")
+ecrireFichier("notes.txt", "Fatima;15\nAnsou;9\nFatou;18")
 soit lignes = csv_lire(lireFichier("notes.txt"), ";")
 soit total = 0
 pour chaque l dans lignes faire

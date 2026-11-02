@@ -2,6 +2,8 @@
 
 Fadéra est un langage de programmation en français : mots-clés, messages d'erreur et logique s'écrivent et se lisent en français. Ce guide couvre tout ce qu'il faut savoir pour écrire, comprendre et déboguer un programme Fadéra, du plus simple `afficher "bonjour"` jusqu'aux fonctions natives avancées (statistiques, mathématiques, réseau, intelligence artificielle, chiffrement).
 
+Fadéra n'est pas réservé à l'enseignement : le même langage sert à écrire des outils professionnels (traitement de fichiers CSV et JSON, journaux, automatisation en ligne de commande, contrôle qualité, indicateurs métier), avec des tests intégrés (section 18), un formateur de code (section 25), des paquets partageables (section 19) et un moteur Rust rapide.
+
 Deux façons d'exécuter du Fadéra :
 - **Référence précise** : `SPEC_FADERA.md` définit la grammaire, les priorités, l'égalité, la copie/référence, la portée et les erreurs. Ses exemples sont vérifiés automatiquement sur les deux moteurs (`node verifier_spec.js`).
 - **En ligne de commande** : `node fadera.js monscript.fa` (ou l'exécutable packagé). Seule cette version donne accès à `lireFichier`/`ecrireFichier`.
@@ -127,7 +129,7 @@ Le point-virgule `;` est toléré en fin d'instruction mais totalement facultati
 | **texte** | `"bonjour"` | oui (nombre de caractères) |
 | **booléen** | `vrai`, `faux` | non |
 | **liste** | `[1, 2, 3]` | oui (nombre d'éléments) |
-| **structure** | `{ nom: "Awa", age: 20 }` | oui (nombre de champs) |
+| **structure** | `{ nom: "Fatima", age: 20 }` | oui (nombre de champs) |
 | **rien** | valeur d'une fonction qui ne `renvoyer` rien | — |
 
 Fadéra convertit automatiquement en texte quand on utilise `+` avec au moins un texte :
@@ -143,7 +145,7 @@ afficher "J'ai " + age + " ans"   # "J'ai 20 ans"
 ### Déclaration : `soit`
 ```
 soit age = 20
-soit nom = "Awa"
+soit nom = "Fatima"
 soit actif = vrai
 ```
 Une variable doit être déclarée avec `soit` **avant** d'être utilisée.
@@ -215,7 +217,7 @@ afficher 1 + 1
 Les nombres, listes et structures sont automatiquement mis en forme lisible :
 ```
 afficher [1, 2, 3]              # [1, 2, 3]
-afficher { nom: "Awa", age: 20 } # { nom: "Awa", age: 20 }
+afficher { nom: "Fatima", age: 20 } # { nom: "Fatima", age: 20 }
 afficher vrai                    # vrai
 ```
 
@@ -367,8 +369,8 @@ Un index invalide (négatif, non entier, ou trop grand) donne une erreur précis
 Une structure regroupe des champs nommés — l'équivalent d'un objet ou d'un dictionnaire.
 
 ```
-structure personne = { nom: "Awa", age: 20, ville: "Dakar" }
-afficher personne                    # { nom: "Awa", age: 20, ville: "Dakar" }
+structure personne = { nom: "Fatima", age: 20, ville: "Dakar" }
+afficher personne                    # { nom: "Fatima", age: 20, ville: "Dakar" }
 ```
 
 `{ ... }` fonctionne aussi comme une **expression**, utilisable directement en argument d'une fonction, sans passer par `structure` :
@@ -520,7 +522,7 @@ afficher stats_analyse_distribution(notes)
 Exemple de `stats_query_engine` (filtrer/trier une "base de données" faite de structures) :
 ```
 soit eleves = [
-    { nom: "Awa", note: 15 },
+    { nom: "Fatima", note: 15 },
     { nom: "Ali", note: 9 },
     { nom: "Fatou", note: 18 }
 ]
@@ -644,8 +646,8 @@ afficher crypto_dechiffrer_asymetrique(chiffre, lireCle(cles, "cle_privee"))
 
 # Une structure par élève, regroupées dans une liste
 soit eleves = [
-    { nom: "Awa", notes: [15, 12, 18] },
-    { nom: "Moussa", notes: [8, 9, 11] },
+    { nom: "Fatima", notes: [15, 12, 18] },
+    { nom: "Ansou", notes: [8, 9, 11] },
     { nom: "Fatou", notes: [20, 19, 17] }
 ]
 
@@ -708,7 +710,7 @@ fin
 ### 16.2 `pour chaque`
 Parcourt une liste, un texte (caractère par caractère) ou une structure (les clés).
 ```
-pour chaque nom dans ["Awa", "Moussa"] faire
+pour chaque nom dans ["Fatima", "Ansou"] faire
     afficher "Bonjour " + nom
 fin
 ```
@@ -1027,9 +1029,9 @@ Les fonctions et les valeurs simples (nombres, textes) ne sont pas dupliquées, 
 **Texte à trous : `texte_format`**
 
 ```
-afficher texte_format("{} a {} ans", ["Awa", 30])                  # Awa a 30 ans
+afficher texte_format("{} a {} ans", ["Fatima", 30])                  # Fatima a 30 ans
 afficher texte_format("{1}-{0}-{1}", ["a", "b"])                   # b-a-b
-afficher texte_format("{nom} ({age})", {nom: "Awa", age: 30})      # Awa (30)
+afficher texte_format("{nom} ({age})", {nom: "Fatima", age: 30})      # Fatima (30)
 afficher texte_format("{{ok}} {}", [7])                            # {ok} 7
 ```
 
@@ -1259,19 +1261,19 @@ classe Compte
     fin
 fin
 
-soit c = Compte("Awa", 100)
+soit c = Compte("Fatima", 100)
 c.deposer(50)
-afficher c.resume()     # Awa : 150
-afficher c              # Compte { titulaire: "Awa", solde: 150 }
+afficher c.resume()     # Fatima : 150
+afficher c              # Compte { titulaire: "Fatima", solde: 150 }
 ```
 
 - **`soi`** désigne l'objet courant dans chaque méthode ; il est ajouté tout seul aux paramètres (ne l'écrivez pas).
-- **`creer`** est le constructeur, facultatif. `Compte("Awa", 100)` crée l'objet, appelle `creer`, et renvoie l'objet.
+- **`creer`** est le constructeur, facultatif. `Compte("Fatima", 100)` crée l'objet, appelle `creer`, et renvoie l'objet.
 - Un objet est une **structure** : `c.solde` se lit et s'écrit comme n'importe quel champ, `taille(c)` compte ses champs, `copier(c)` le duplique en gardant sa classe.
 - **Héritage** : `classe Epargne herite Compte` reprend les méthodes de `Compte`. Le constructeur n'est pas hérité : écrivez `creer` et appelez celui du parent avec `Compte.creer(soi, titulaire, solde)`.
 - `classe_de(c)` donne le nom de la classe (ou `rien`), `est_instance(c, "Compte")` dit si `c` est un `Compte` ou en hérite.
 - Les méthodes s'appellent aussi sur une **structure ordinaire** si elle contient une fonction dans un champ : `{f: x => x * 2}.f(3)` s'écrit `s.f(3)`.
-- **Enchaînement** : `Compte("Awa", 1).deposer(5).resume()` est accepté ; chaque point lit un champ ou appelle une méthode sur le résultat précédent. Le point doit suivre immédiatement la `)` ou le `]`.
+- **Enchaînement** : `Compte("Fatima", 1).deposer(5).resume()` est accepté ; chaque point lit un champ ou appelle une méthode sur le résultat précédent. Le point doit suivre immédiatement la `)` ou le `]`.
 - Les messages d'erreur sont explicites : `La méthode "nope" n'existe pas dans la classe "Compte".`, `Le champ "z" n'existe pas dans "c" (champs disponibles : titulaire, solde).`
 
 Le débogueur et les tests marchent avec les classes : une pause s'arrête dans le corps des méthodes (la pile montre `Compte.deposer`), et `tester` vérifie vos classes comme le reste.
@@ -1342,7 +1344,7 @@ Codes de sortie de `fadera run` : 0 succès, 1 erreur du programme (message sur 
 ### Installer
 Téléchargez `Fadera-Installateur-<version>.exe` sur la page des [versions](https://github.com/Faderaseny/fadera/releases/latest) et double-cliquez. L'installateur propose le dossier, un raccourci sur le Bureau, l'ajout de Fadéra au `PATH` (pour taper `fadera` dans un terminal) et l'association des fichiers `.fa` (double-clic = ouverture dans l'éditeur, icône Fadéra). À la fin, Fadéra IDE s'ouvre. Aucun droit d'administrateur n'est nécessaire : l'installation va dans `%LocalAppData%\Programs\Fadera`.
 
-Sans installation : le [playground en ligne](https://faderaseny.github.io/fadera/), ou `index.html` ouvert dans un navigateur. Ces versions n'ont pas les terminaux Windows décrits plus bas.
+Sans installation : le [playground en ligne](https://faderaseny.github.io/fadera/jouer/), ou `index.html` ouvert dans un navigateur. Ces versions n'ont pas les terminaux Windows décrits plus bas.
 
 ### Lancer l'éditeur
 - Raccourci **Fadéra IDE**, ou double-clic sur un fichier `.fa`.
