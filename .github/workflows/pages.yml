@@ -44,7 +44,7 @@ jobs:
         run: |
           # racine : le site officiel (site/index.html) ; l'IDE en ligne est dans /jouer/
           mkdir -p _site/jouer
-          cp site/index.html _site/
+          cp site/index.html site/fadera-partage.png _site/
           cp index.html _site/jouer/
           mkdir -p _site/apprendre
           cp site/apprendre/index.html site/apprendre/cours.js site/apprendre/correcteur.js _site/apprendre/
