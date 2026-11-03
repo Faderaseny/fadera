@@ -91,7 +91,95 @@
       tests: [{ saisies: ["3"], sortie: ["3", "2", "1", "Décollage !"] }, { saisies: ["1"], sortie: ["1", "Décollage !"] }, { saisies: ["0"], sortie: ["Décollage !"] }],
     },
     {
-      id: "fonctions", chapitre: "4. Organiser", titre: "Les fonctions",
+      id: "listes", chapitre: "4. Les listes", titre: "Créer une liste",
+      lecon: `<p>Une <strong>liste</strong> range plusieurs valeurs dans une seule variable : <code>[12, 15, 8]</code>. Chaque valeur a une place numérotée, <strong>à partir de 0</strong>.</p>
+<p>On connaît sa taille avec <code>taille(liste)</code>, on lit une valeur avec <code>lireElement(liste, place)</code>, et on en ajoute une à la fin avec <code>ajouter(liste, valeur)</code>.</p>`,
+      exemple: `soit notes = [12, 15, 8]\najouter(notes, 18)\nafficher notes\nafficher taille(notes)\nafficher lireElement(notes, 1)   # la 2e valeur : 15`,
+      consigne: `Crée une liste vide <code>[]</code>, demande trois nombres avec <code>saisir</code> et ajoute-les dans l'ordre, puis affiche la liste. Avec 4, 8 et 15 : <code>[4, 8, 15]</code>.`,
+      depart: `soit nombres = []\n`,
+      indice: `<code>ajouter(nombres, saisir("Un nombre ? "))</code>, trois fois, puis <code>afficher nombres</code>.`,
+      solution: `soit nombres = []\najouter(nombres, saisir("Un nombre ? "))\najouter(nombres, saisir("Un nombre ? "))\najouter(nombres, saisir("Un nombre ? "))\nafficher nombres`,
+      tests: [{ saisies: ["4", "8", "15"], sortie: ["[4, 8, 15]"] }, { saisies: ["1", "1", "1"], sortie: ["[1, 1, 1]"] }, { saisies: ["30", "20", "10"], sortie: ["[30, 20, 10]"] }],
+    },
+    {
+      id: "parcourir", chapitre: "4. Les listes", titre: "Parcourir une liste",
+      lecon: `<p>Pour traiter chaque valeur d'une liste, on combine une boucle <code>pour</code> et les places de la liste : elles vont de <code>0</code> à <code>taille(liste) - 1</code>.</p>
+<p>À chaque tour, <code>i</code> est la place, et <code>lireElement(liste, i)</code> donne la valeur.</p>`,
+      exemple: `soit prix = [5, 12, 3]\nsoit total = 0\npour i allantde 0 a taille(prix) - 1 faire\n    total = total + lireElement(prix, i)\nfin\nafficher "Total : " + total`,
+      consigne: `Demande d'abord combien de notes il y a (<code>n</code>), puis lis les <code>n</code> notes. Affiche la moyenne sous la forme <code>Moyenne : 12</code> (pour 10, 14 et 12).`,
+      depart: `soit n = saisir("Combien de notes ? ")\nsoit notes = []\n`,
+      indice: `Une première boucle <code>pour i allantde 1 a n</code> ajoute chaque note. Une seconde boucle (ou la même) fait la somme, puis divise par <code>n</code>.`,
+      solution: `soit n = saisir("Combien de notes ? ")\nsoit notes = []\npour i allantde 1 a n faire\n    ajouter(notes, saisir("Note ? "))\nfin\nsoit total = 0\npour i allantde 0 a taille(notes) - 1 faire\n    total = total + lireElement(notes, i)\nfin\nafficher "Moyenne : " + total / n`,
+      tests: [{ saisies: ["3", "10", "14", "12"], sortie: ["Moyenne : 12"] }, { saisies: ["2", "10", "15"], sortie: ["Moyenne : 12.5"] }, { saisies: ["1", "17"], sortie: ["Moyenne : 17"] }, { saisies: ["4", "8", "8", "8", "8"], sortie: ["Moyenne : 8"] }],
+    },
+    {
+      id: "trier", chapitre: "4. Les listes", titre: "Trier et chercher",
+      lecon: `<p>Fadéra sait déjà trier : <code>trier(liste)</code> range du plus petit au plus grand, <code>inverser(liste)</code> renverse l'ordre, et <code>contient(liste, valeur)</code> répond <code>vrai</code> ou <code>faux</code>.</p>
+<p>Ces fonctions <strong>renvoient une nouvelle liste</strong> : la liste d'origine ne change pas. On peut les emboîter : <code>inverser(trier(l))</code>.</p>`,
+      exemple: `soit l = [15, 8, 18, 12]\nafficher trier(l)\nafficher inverser(trier(l))\nafficher contient(l, 18)\nafficher contient(l, 5)`,
+      consigne: `Demande trois notes, puis affiche-les du <strong>plus grand au plus petit</strong>. Avec 12, 18 et 15 : <code>[18, 15, 12]</code>.`,
+      depart: `soit notes = []\najouter(notes, saisir("Note 1 ? "))\najouter(notes, saisir("Note 2 ? "))\najouter(notes, saisir("Note 3 ? "))\n`,
+      indice: `Trie d'abord, puis inverse : <code>afficher inverser(trier(notes))</code>.`,
+      solution: `soit notes = []\najouter(notes, saisir("Note 1 ? "))\najouter(notes, saisir("Note 2 ? "))\najouter(notes, saisir("Note 3 ? "))\nafficher inverser(trier(notes))`,
+      tests: [{ saisies: ["12", "18", "15"], sortie: ["[18, 15, 12]"] }, { saisies: ["1", "2", "3"], sortie: ["[3, 2, 1]"] }, { saisies: ["9", "9", "4"], sortie: ["[9, 9, 4]"] }],
+    },
+    {
+      id: "textes", chapitre: "5. Les textes", titre: "Travailler avec du texte",
+      lecon: `<p>Un texte a des outils bien à lui : <code>taille(texte)</code> compte les caractères, <code>majuscule(texte)</code> et <code>minuscule(texte)</code> changent la casse, <code>nettoyer(texte)</code> retire les espaces autour.</p>
+<p>Comme pour les listes, ces fonctions <strong>renvoient un nouveau texte</strong>.</p>`,
+      exemple: `soit t = "  Bonjour Fadéra  "\nafficher nettoyer(t)\nafficher majuscule(nettoyer(t))\nafficher taille(nettoyer(t))`,
+      consigne: `Demande un nom. Affiche-le <strong>nettoyé</strong> et en majuscules, puis, sur la ligne suivante, <code>Taille : </code> et le nombre de caractères. Pour « Ansou » : <code>ANSOU</code> puis <code>Taille : 5</code>.`,
+      depart: `soit nom = saisir("Ton nom ? ")\n`,
+      indice: `<code>soit propre = nettoyer(nom)</code>, puis <code>afficher majuscule(propre)</code> et <code>afficher "Taille : " + taille(propre)</code>.`,
+      solution: `soit nom = saisir("Ton nom ? ")\nsoit propre = nettoyer(nom)\nafficher majuscule(propre)\nafficher "Taille : " + taille(propre)`,
+      tests: [{ saisies: ["Ansou"], sortie: ["ANSOU", "Taille : 5"] }, { saisies: ["  fatima "], sortie: ["FATIMA", "Taille : 6"] }, { saisies: ["Li"], sortie: ["LI", "Taille : 2"] }],
+    },
+    {
+      id: "decouper", chapitre: "5. Les textes", titre: "Découper et assembler",
+      lecon: `<p><code>decouper(texte, séparateur)</code> casse un texte en <strong>liste</strong> de morceaux ; <code>joindre(liste, séparateur)</code> fait l'inverse. <code>remplacer(texte, ancien, nouveau)</code> change un morceau de texte.</p>
+<p>Découper une phrase sur les espaces donne la liste de ses mots : on peut les compter avec <code>taille</code>.</p>`,
+      exemple: `soit phrase = "le chat dort"\nsoit mots = decouper(phrase, " ")\nafficher mots\nafficher taille(mots)\nafficher joindre(mots, "-")`,
+      consigne: `Demande une phrase. Affiche d'abord le <strong>nombre de mots</strong>, puis la phrase avec des tirets <code>-</code> à la place des espaces. Pour « le chat dort » : <code>3</code> puis <code>le-chat-dort</code>.`,
+      depart: `soit phrase = saisir("Une phrase ? ")\n`,
+      indice: `<code>soit mots = decouper(phrase, " ")</code>, puis <code>afficher taille(mots)</code> et <code>afficher joindre(mots, "-")</code>.`,
+      solution: `soit phrase = saisir("Une phrase ? ")\nsoit mots = decouper(phrase, " ")\nafficher taille(mots)\nafficher joindre(mots, "-")`,
+      tests: [{ saisies: ["le chat dort"], sortie: ["3", "le-chat-dort"] }, { saisies: ["bonjour"], sortie: ["1", "bonjour"] }, { saisies: ["Fadéra parle français aux élèves"], sortie: ["5", "Fadéra-parle-français-aux-élèves"] }],
+    },
+    {
+      id: "voyelles", chapitre: "5. Les textes", titre: "Lire un texte lettre par lettre",
+      lecon: `<p><code>caractere(texte, place)</code> donne la lettre à une place donnée (la première est la place <code>0</code>), exactement comme pour les listes. On peut donc <strong>parcourir un texte</strong> avec une boucle.</p>
+<p><code>contient("aeiou", lettre)</code> répond <code>vrai</code> si la lettre fait partie de ces voyelles.</p>`,
+      exemple: `soit mot = "bonjour"\npour i allantde 0 a taille(mot) - 1 faire\n    afficher caractere(mot, i)\nfin`,
+      consigne: `Demande un mot (en minuscules, sans accent) et affiche <code>Voyelles : </code> suivi de leur nombre. Pour « bonjour » : <code>Voyelles : 3</code>.`,
+      depart: `soit mot = saisir("Un mot ? ")\nsoit compte = 0\n`,
+      indice: `Dans la boucle, <code>si contient("aeiou", caractere(mot, i)) alors</code> ajoute 1 à <code>compte</code>.`,
+      solution: `soit mot = saisir("Un mot ? ")\nsoit compte = 0\npour i allantde 0 a taille(mot) - 1 faire\n    si contient("aeiou", caractere(mot, i)) alors\n        compte = compte + 1\n    fin\nfin\nafficher "Voyelles : " + compte`,
+      tests: [{ saisies: ["bonjour"], sortie: ["Voyelles : 3"] }, { saisies: ["fadera"], sortie: ["Voyelles : 3"] }, { saisies: ["rythme"], sortie: ["Voyelles : 1"] }, { saisies: ["strt"], sortie: ["Voyelles : 0"] }, { saisies: ["aeiou"], sortie: ["Voyelles : 5"] }],
+    },
+    {
+      id: "structures", chapitre: "6. Les structures", titre: "Regrouper avec une structure",
+      lecon: `<p>Une <strong>structure</strong> regroupe des informations <em>nommées</em> sur une même chose, par exemple un élève : <code>{ nom: "Fatima", note: 16 }</code>.</p>
+<p>On crée avec <code>structure nom = { champ: valeur, … }</code>, on lit avec <code>lireCle(structure, "champ")</code> et on change avec <code>modifierCle(structure, "champ", valeur)</code>.</p>`,
+      exemple: `structure eleve = { nom: "Fatima", note: 16 }\nafficher lireCle(eleve, "nom")\nmodifierCle(eleve, "note", 17)\nafficher eleve`,
+      consigne: `Demande un nom puis une note. Crée une structure <code>eleve</code> avec ces deux champs, ajoute <strong>1 point bonus</strong> à la note, puis affiche la structure. Pour « Ansou » et 14 : <code>{ nom: "Ansou", note: 15 }</code>.`,
+      depart: `soit nom = saisir("Nom ? ")\nsoit note = saisir("Note ? ")\n`,
+      indice: `<code>structure eleve = { nom: nom, note: note }</code>, puis <code>modifierCle(eleve, "note", lireCle(eleve, "note") + 1)</code>, puis <code>afficher eleve</code>.`,
+      solution: `soit nom = saisir("Nom ? ")\nsoit note = saisir("Note ? ")\nstructure eleve = { nom: nom, note: note }\nmodifierCle(eleve, "note", lireCle(eleve, "note") + 1)\nafficher eleve`,
+      tests: [{ saisies: ["Ansou", "14"], sortie: ['{ nom: "Ansou", note: 15 }'] }, { saisies: ["Fatima", "19"], sortie: ['{ nom: "Fatima", note: 20 }'] }, { saisies: ["Li", "0"], sortie: ['{ nom: "Li", note: 1 }'] }],
+    },
+    {
+      id: "classe", chapitre: "6. Les structures", titre: "Une liste de structures",
+      lecon: `<p>On peut mettre des structures <strong>dans une liste</strong> : c'est ainsi qu'on représente un tableau de données (une classe d'élèves, un stock, des factures…).</p>
+<p>Pour lire un champ du 3<sup>e</sup> élément : <code>lireCle(lireElement(eleves, 2), "nom")</code>.</p>`,
+      exemple: `soit eleves = [{ nom: "Ansou", note: 14 }, { nom: "Fatima", note: 17 }]\npour i allantde 0 a taille(eleves) - 1 faire\n    soit e = lireElement(eleves, i)\n    afficher lireCle(e, "nom") + " : " + lireCle(e, "note")\nfin`,
+      consigne: `Demande combien d'élèves, puis, pour chacun, son nom et sa note. Affiche à la fin <code>Major : </code> suivi du nom de l'élève qui a la <strong>meilleure note</strong>. (Les notes seront toutes différentes.)`,
+      depart: `soit n = saisir("Combien d'élèves ? ")\nsoit eleves = []\n`,
+      indice: `Une boucle <code>pour i allantde 1 a n</code> ajoute <code>{ nom: …, note: … }</code> à la liste. Une seconde boucle garde le nom et la note du meilleur vus jusque-là.`,
+      solution: `soit n = saisir("Combien d'élèves ? ")\nsoit eleves = []\npour i allantde 1 a n faire\n    soit nom = saisir("Nom ? ")\n    soit note = saisir("Note ? ")\n    ajouter(eleves, { nom: nom, note: note })\nfin\nsoit major = lireElement(eleves, 0)\npour i allantde 1 a taille(eleves) - 1 faire\n    soit e = lireElement(eleves, i)\n    si lireCle(e, "note") > lireCle(major, "note") alors\n        major = e\n    fin\nfin\nafficher "Major : " + lireCle(major, "nom")`,
+      tests: [{ saisies: ["2", "Ansou", "14", "Fatima", "17"], sortie: ["Major : Fatima"] }, { saisies: ["3", "Li", "9", "Fatima", "18", "Kofi", "12"], sortie: ["Major : Fatima"] }, { saisies: ["1", "Solo", "10"], sortie: ["Major : Solo"] }, { saisies: ["3", "A", "20", "B", "5", "C", "7"], sortie: ["Major : A"] }],
+    },
+    {
+      id: "fonctions", chapitre: "7. Organiser", titre: "Les fonctions",
       lecon: `<p>Une <strong>fonction</strong> est un petit programme qu'on nomme pour le réutiliser. On la définit avec <code>fonction nom(paramètres) … fin</code> et elle <strong>rend</strong> un résultat avec <code>renvoyer</code>.</p>
 <p>On l'appelle ensuite par son nom, autant de fois qu'on veut.</p>`,
       exemple: `fonction carre(x)\n    renvoyer x * x\nfin\n\nafficher carre(4)\nafficher carre(10)`,
@@ -102,7 +190,7 @@
       tests: [{ saisies: ["4"], sortie: ["8"] }, { saisies: ["0"], sortie: ["0"] }, { saisies: ["-3"], sortie: ["-6"] }, { saisies: ["2.5"], sortie: ["5"] }],
     },
     {
-      id: "projet", chapitre: "4. Organiser", titre: "Mini-projet : nombres pairs",
+      id: "projet", chapitre: "7. Organiser", titre: "Mini-projet : nombres pairs",
       lecon: `<p>Tu connais maintenant l'essentiel : <strong>afficher, variables, conditions, boucles, fonctions</strong>. Mettons-les ensemble.</p>
 <p>Astuce : le reste d'une division s'obtient avec <code>%</code>. <code>n % 2 == 0</code> est vrai quand <code>n</code> est pair.</p>`,
       exemple: `fonction estPair(n)\n    renvoyer n % 2 == 0\nfin\n\nafficher estPair(8)\nafficher estPair(7)`,

@@ -5,6 +5,9 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et la nu
 
 ## [Non publié]
 
+### Ajouté
+- Apprendre Fadéra : leçons sur les listes, les textes et les structures (17 leçons au total).
+
 ## [0.8.5] — 2026-11-02
 
 ### Ajouté
