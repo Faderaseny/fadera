@@ -5,6 +5,9 @@ edition = "2021"
 description = "Fadéra — langage de programmation en français (moteur Rust)"
 license = "MIT"
 
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = false
+
 [lib]
 name = "fadera"
 path = "src/lib.rs"
