@@ -2,13 +2,14 @@
 
 | Document | Pour qui ? |
 |---|---|
-| [**TUTORIEL.md**](TUTORIEL.md) | Vous découvrez la programmation ou Fadéra : 17 chapitres pas à pas, avec le vrai résultat de chaque exemple. |
+| [**TUTORIEL.md**](TUTORIEL.md) | Vous découvrez la programmation ou Fadéra : 18 chapitres pas à pas, avec le vrai résultat de chaque exemple. |
 | [**exemples/**](exemples/) | Vous voulez des programmes complets à lire, lancer et modifier : 40 exemples (calculs, jeux, textes, fichiers, réseau, objets, robotique). |
 | [**EXERCICES.md**](EXERCICES.md) | Vous voulez vous entraîner : 94 exercices corrigés dans 20 domaines (du calcul aux robots, au chiffrement, à l'IA et aux métiers de l'industrie), avec le vrai résultat de chaque corrigé. |
 | [**REFERENCE.md**](REFERENCE.md) | Vous cherchez une fonction précise : les 196 fonctions natives, les 12 du langage et les 12 modules standard, avec un exemple vérifié pour chacune. |
 | [**PAQUETS.md**](PAQUETS.md) | Vous voulez installer du code écrit par d'autres, ou partager le vôtre : `fadera paquet …`. |
 | [**PAQUETS_CONNUS.md**](PAQUETS_CONNUS.md) | La liste des paquets déjà publiés (géométrie, notes…) et comment ajouter le vôtre. |
 | [**SERVICES.md**](SERVICES.md) | Vous voulez interroger une API, une base de données hébergée ou un service en ligne. |
+| [**SERVEUR.md**](SERVEUR.md) | Vous voulez écrire un serveur web, manipuler des dossiers ou stocker des mots de passe (ligne de commande). |
 | [Guide du langage](../GUIDE_FADERA.md) | Vous voulez la grammaire complète, l'IDE, la distribution. |
 | [Spécification](../SPEC_FADERA.md) | Vous voulez le comportement exact du langage (elle est exécutable et testée). |
 

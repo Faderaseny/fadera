@@ -1,0 +1,66 @@
+# Un petit site web complet en Fadéra : une liste de tâches qui survit au redémarrage.
+# Lancer :  fadera site.fa      puis ouvrir http://localhost:3000
+# (variable PORT pour changer de port, DONNEES_TACHES pour changer le fichier de sauvegarde)
+
+soit PORT = nombre(environnement("PORT", "3000"))
+soit DOSSIER = dossier_programme()
+soit FICHIER = environnement("DONNEES_TACHES", DOSSIER + "/taches.json")
+
+# --- les données : une liste de { id, texte, fait }, relue au démarrage ---
+soit taches = []
+si fichier_existe(FICHIER) alors
+  taches = json_lire(lireFichier(FICHIER))
+fin
+
+fonction sauver()
+  fichier_ecrire_sur(FICHIER, json_texte(taches))
+fin
+
+fonction prochain_id()
+  soit plus_grand = 0
+  pour chaque t dans taches faire
+    si t.id > plus_grand alors
+      plus_grand = t.id
+    fin
+  fin
+  renvoyer plus_grand + 1
+fin
+
+# --- les réponses ---
+fonction json_reponse(statut, donnees)
+  renvoyer { statut: statut, entetes: { "Content-Type": "application/json; charset=utf-8" }, corps: json_texte(donnees) }
+fin
+
+fonction gestionnaire(req)
+  si req.methode == "GET" et req.chemin == "/" alors
+    renvoyer { statut: 200, entetes: { "Content-Type": "text/html; charset=utf-8" }, fichier: DOSSIER + "/index.html" }
+  fin
+  si req.methode == "GET" et req.chemin == "/api/taches" alors
+    renvoyer json_reponse(200, { taches: taches })
+  fin
+  si req.methode == "POST" et req.chemin == "/api/taches" alors
+    soit donnees = json_lire(req.corps)
+    soit texte = nettoyer(texte(donnees.texte))
+    si taille(texte) == 0 ou taille(texte) > 200 alors
+      renvoyer json_reponse(400, { erreur: "Le texte doit faire entre 1 et 200 caractères." })
+    fin
+    ajouter(taches, { id: prochain_id(), texte: texte, fait: faux })
+    sauver()
+    renvoyer json_reponse(200, { ok: vrai })
+  fin
+  si req.methode == "POST" et req.chemin == "/api/taches/basculer" alors
+    soit donnees = json_lire(req.corps)
+    pour chaque t dans taches faire
+      si t.id == donnees.id alors
+        t.fait = non t.fait
+        sauver()
+        renvoyer json_reponse(200, { ok: vrai })
+      fin
+    fin
+    renvoyer json_reponse(404, { erreur: "Tâche introuvable." })
+  fin
+  renvoyer json_reponse(404, { erreur: "Page introuvable." })
+fin
+
+afficher "Site des tâches : http://localhost:" + PORT
+serveur_http(PORT, gestionnaire)

@@ -14,7 +14,9 @@ pub mod modules_std;
 pub mod vm;
 pub mod natives;
 pub mod parser;
+pub mod serveur;
 pub mod stdlib;
+pub mod suggestion;
 pub mod util;
 pub mod valeur;
 #[cfg(feature = "wasm")]

@@ -70,6 +70,8 @@ pub struct Interp {
     pub hote: Box<dyn Hote>,
     pub fonctions: Vec<Option<Rc<FnDef>>>,
     pub(crate) portees_libres: Vec<Scope>,
+    /// identifiants des variables créées dans un bloc déjà terminé (pour le message d'aide « déclarez-la avant le bloc »)
+    pub(crate) disparus: Vec<bool>,
     pub globale: Scope,
     pub pile: Vec<Scope>,
     pub etapes: u64,
@@ -88,6 +90,14 @@ pub struct Interp {
     /// Dossier du module en cours d'import (pour que `importer "autre"` le cherche d'abord à côté de lui).
     dossiers_modules: Vec<String>,
     rng: u64,
+}
+
+/// Message « variable introuvable » ; pour un nom pointé (`zz.foo`), pas de conseil `soit zz.foo` (qui créerait une variable fantôme).
+fn msg_variable_absente(nom: &str) -> String {
+    match nom.split_once('.') {
+        Some((base, _)) => format!("La variable \"{}\" n'existe pas (vérifiez l'orthographe de \"{}\" et du champ).", nom, base),
+        None => format!("La variable \"{}\" n'existe pas. Déclarez-la d'abord avec : soit {} = ...", nom, nom),
+    }
 }
 
 pub fn analyser_code(code: &str) -> Result<Vec<Stmt>, ErreurFadera> {
@@ -117,6 +127,7 @@ impl Interp {
             hote,
             fonctions: Vec::new(),
             portees_libres: Vec::new(),
+            disparus: Vec::new(),
             globale: g.clone(),
             pile: vec![g],
             etapes: 0,
@@ -271,7 +282,7 @@ impl Interp {
                     }
                 }
                 Err(fad_l(
-                    format!("La variable \"{}\" n'existe pas. Déclarez-la d'abord avec : soit {} = ...", nom, nom),
+                    format!("{}{}", msg_variable_absente(nom), self.aide_bloc(nom)),
                     ligne,
                 ))
             }
@@ -377,7 +388,7 @@ impl Interp {
             }
         }
         Err(fad_l(
-            format!("La variable \"{}\" n'existe pas. Déclarez-la d'abord avec : soit {} = ...", nom, nom),
+            format!("{}{}", msg_variable_absente(nom), self.aide_bloc(nom)),
             ligne,
         ))
     }
@@ -492,8 +503,119 @@ impl Interp {
 
     // ------------------------------------------------------------------ exécution
     pub(crate) fn bloc(&mut self, instrs: &[Stmt]) -> R<()> {
+        // portée de bloc : créée seulement si le bloc déclare lui-même une variable (soit)
+        if !instrs.iter().any(|i| matches!(i.k, StmtK::DeclVar(..))) {
+            for i in instrs {
+                self.executer(i)?;
+            }
+            return Ok(());
+        }
+        self.bloc_portee(instrs, None)
+    }
+
+    /// Corps de fonction : les paramètres ont déjà leur portée.
+    pub(crate) fn bloc_sans_portee(&mut self, instrs: &[Stmt]) -> R<()> {
         for i in instrs {
             self.executer(i)?;
+        }
+        Ok(())
+    }
+
+    /// Exécute un bloc dans une portée propre ; `var` = variable définie d'office dans cette portée (nom d'erreur de `attraper`).
+    pub(crate) fn bloc_portee(&mut self, instrs: &[Stmt], var: Option<(&Nom, Valeur)>) -> R<()> {
+        let taille = self.pile.len();
+        self.ouvrir_portee();
+        if let Some((n, v)) = var {
+            self.definir(n, v);
+        }
+        let mut r = Ok(());
+        for i in instrs {
+            if let Err(e) = self.executer(i) {
+                r = Err(e);
+                break;
+            }
+        }
+        self.fermer_jusqua(taille);
+        r
+    }
+
+    /// Ouvre une portée de bloc (enfant de la portée courante), recyclée si possible.
+    #[inline]
+    pub(crate) fn ouvrir_portee(&mut self) {
+        let parent = self.pile.last().cloned();
+        let p = self.nouvelle_portee(parent, 2);
+        self.pile.push(p);
+    }
+
+    /// Ferme la portée de bloc courante : retient les noms qu'elle contenait (message d'aide) puis la recycle.
+    #[inline]
+    pub(crate) fn fermer_portee(&mut self) {
+        if let Some(p) = self.pile.pop() {
+            if let Vars::Petit(v) = &*p.vars.borrow() {
+                for (id, _) in v.iter() {
+                    let i = *id as usize;
+                    if i >= self.disparus.len() {
+                        self.disparus.resize(i + 1, false);
+                    }
+                    self.disparus[i] = true;
+                }
+            }
+            self.rendre_portee(p);
+        }
+    }
+
+    pub(crate) fn fermer_jusqua(&mut self, taille: usize) {
+        while self.pile.len() > taille {
+            self.fermer_portee();
+        }
+    }
+
+    /// Dans une boucle : si une fermeture a capturé la portée de la variable de boucle, le tour suivant en reçoit une neuve.
+    #[inline]
+    pub(crate) fn renouveler_portee_boucle(&mut self) {
+        let top = self.pile.last().unwrap();
+        if Rc::strong_count(top) > 1 {
+            let parent = top.parent.clone();
+            let p = ScopeData::avec_capacite(parent, 2);
+            *self.pile.last_mut().unwrap() = p;
+        }
+    }
+
+    pub(crate) fn aide_bloc(&self, nom: &str) -> String {
+        if nom.contains('.') || self.disparus.is_empty() {
+            return String::new();
+        }
+        let id = Nom::nouveau(nom).id as usize;
+        if self.disparus.get(id).copied().unwrap_or(false) {
+            format!("\nCette variable a été créée dans un bloc (si, boucle, selon, essayer) qui est terminé : elle n'existe plus après lui. Déclarez-la avant le bloc, par exemple : soit {} = ...", nom)
+        } else {
+            String::new()
+        }
+    }
+
+    /// Tours d'une boucle « pour » (la portée de la variable de boucle est déjà ouverte).
+    fn pour_tours(&mut self, nom: &Nom, debut: f64, fin: f64, pas: f64, corps: &[Stmt]) -> R<()> {
+        let mut i = debut;
+        while if pas > 0.0 { i <= fin } else { i >= fin } {
+            self.renouveler_portee_boucle();
+            self.definir(nom, Valeur::Nombre(i));
+            if let Sortie::Rompre = self.corps_boucle(corps)? {
+                break;
+            }
+            self.tic()?;
+            i += pas;
+        }
+        Ok(())
+    }
+
+    fn chaque_tours(&mut self, nom: &Nom, elems: Vec<Valeur>, corps: &[Stmt]) -> R<()> {
+        for x in elems {
+            self.renouveler_portee_boucle();
+            self.definir(nom, x);
+            if let Sortie::Rompre = self.corps_boucle(corps)? {
+                break;
+            }
+            self.tic()?;
         }
         Ok(())
     }
@@ -626,15 +748,11 @@ impl Interp {
                 if pas == 0.0 {
                     return Err(fad("Le pas de la boucle \"pour\" ne peut pas être 0."));
                 }
-                let mut i = debut;
-                while if pas > 0.0 { i <= fin } else { i >= fin } {
-                    self.definir(nom, Valeur::Nombre(i));
-                    if let Sortie::Rompre = self.corps_boucle(corps)? {
-                        break;
-                    }
-                    self.tic()?;
-                    i += pas;
-                }
+                let taille = self.pile.len();
+                self.ouvrir_portee();
+                let r = self.pour_tours(nom, debut, fin, pas, corps);
+                self.fermer_jusqua(taille);
+                r?;
             }
             StmtK::Rompre => return Err(Flow::Rompre),
             StmtK::Continuer => return Err(Flow::Continuer),
@@ -654,13 +772,11 @@ impl Interp {
                         )))
                     }
                 };
-                for x in elems {
-                    self.definir(nom, x);
-                    if let Sortie::Rompre = self.corps_boucle(corps)? {
-                        break;
-                    }
-                    self.tic()?;
-                }
+                let taille = self.pile.len();
+                self.ouvrir_portee();
+                let r = self.chaque_tours(nom, elems, corps);
+                self.fermer_jusqua(taille);
+                r?;
             }
             StmtK::Selon { expr, cas, defaut } => {
                 let v = self.evaluer(expr)?;
@@ -691,14 +807,12 @@ impl Interp {
                         }
                         self.profondeur = prof;
                         self.pile.truncate(taille);
-                        self.definir(nom, Valeur::texte(&e.message));
-                        self.bloc(gestion)?;
+                        self.bloc_portee(gestion, Some((nom, Valeur::texte(&e.message))))?;
                     }
                     Err(Flow::Nat(m)) => {
                         self.profondeur = prof;
                         self.pile.truncate(taille);
-                        self.definir(nom, Valeur::texte(&m));
-                        self.bloc(gestion)?;
+                        self.bloc_portee(gestion, Some((nom, Valeur::texte(&m))))?;
                     }
                     Err(e) => return Err(e),
                 }
@@ -962,7 +1076,7 @@ impl Interp {
                     Ok(None) => Ok(Valeur::texte("")),
                     Ok(Some(r)) => {
                         if est_nombre_saisi(&r) {
-                            Ok(Valeur::Nombre(js_trim(&r).parse().unwrap_or(f64::NAN)))
+                            Ok(Valeur::Nombre(js_trim(&r).replacen(',', ".", 1).parse().unwrap_or(f64::NAN)))
                         } else {
                             Ok(Valeur::texte(r))
                         }
@@ -1240,10 +1354,10 @@ impl Interp {
 }
 
 fn est_nombre_saisi(r: &str) -> bool {
-    // /^\s*-?\d+(\.\d+)?\s*$/
+    // /^\s*-?\d+([.,]\d+)?\s*$/
     let t = js_trim(r);
     let t = t.strip_prefix('-').unwrap_or(t);
-    let mut parts = t.splitn(2, '.');
+    let mut parts = t.splitn(2, |c| c == '.' || c == ',');
     let a = parts.next().unwrap_or("");
     if a.is_empty() || !a.bytes().all(|b| b.is_ascii_digit()) {
         return false;

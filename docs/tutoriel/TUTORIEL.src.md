@@ -79,7 +79,7 @@ afficher type_de([1, 2])
 afficher type_de({ a: 1 })
 ```
 
-> **Attention aux noms réservés.** Certains mots appartiennent au langage (`soit`, `si`, `fin`, `liste`, `taille`, `pour`, `vrai`…) : on ne peut pas s'en servir comme noms de variables. Écrire `soit liste = 3` provoque une erreur. Choisissez `ma_liste`, `notes`, etc. La liste complète est dans le [guide](../GUIDE_FADERA.md).
+> **Attention aux noms réservés.** Certains mots appartiennent au langage (`soit`, `si`, `fin`, `pour`, `faire`, `vrai`, `afficher`…) : on ne peut pas s'en servir comme noms de variables. Écrire `soit fin = 3` provoque une erreur. En revanche `liste`, `taille` ou `hasard` sont libres (`soit taille = 1.75` fonctionne) : ils ne désignent la fonction que suivis d'une parenthèse, comme `taille(notes)`. La liste complète est dans le [guide](../GUIDE_FADERA.md).
 
 ## Chapitre 3 — Calculer
 
@@ -160,30 +160,47 @@ selon jour faire
     afficher "Semaine"
   cas 6, 7 alors
     afficher "Week-end"
-  defaut
+  défaut
     afficher "Jour inconnu"
 fin
 ```
 
 ## Chapitre 5 — Répéter des actions
 
-**`pour … allantde … a …`** compte d'un nombre à un autre (bornes incluses). `pas` change l'incrément.
+**`pour … allant de … à …`** compte d'un nombre à un autre (bornes incluses). `pas` change l'incrément.
 
 ```fadera
-pour i allantde 1 a 5 faire
+pour i allant de 1 à 5 faire
   afficher "Tour numéro " + i
 fin
 
-pour i allantde 10 a 0 pas -5 faire
+pour i allant de 10 à 0 pas -5 faire
   afficher i
 fin
 ```
 
-**`tantque`** répète tant qu'une condition est vraie. À vous de faire changer la condition, sinon la boucle ne s'arrête jamais !
+**`répéter n fois`** fait la même chose un nombre de fois connu, sans compteur : c'est le plus simple quand on n'a pas besoin de savoir à quel tour on est. Le `faire` est facultatif, et on peut imbriquer plusieurs `répéter`.
+
+```fadera
+répéter 3 fois
+  afficher "Bonjour !"
+fin
+
+soit lignes = 2
+répéter lignes fois
+  répéter 4 fois
+    afficher "*"
+  fin
+fin
+```
+
+**Pour parcourir une liste**, `pour x dans liste faire … fin` donne directement chaque élément (voir le chapitre 6).
+
+**`tant que`** répète tant qu'une condition est vraie. À vous de faire changer la condition, sinon la boucle ne s'arrête jamais !
 
 ```fadera
 soit n = 1
-tantque n < 100 faire
+tant que n < 100 faire
   n = n * 2
 fin
 afficher n
@@ -192,7 +209,7 @@ afficher n
 `rompre` sort de la boucle immédiatement ; `continuer` saute au tour suivant.
 
 ```fadera
-pour i allantde 1 a 10 faire
+pour i allant de 1 à 10 faire
   si i % 2 == 0 alors
     continuer
   fin
@@ -206,7 +223,7 @@ fin
 Une table de multiplication :
 
 ```fadera
-pour i allantde 1 a 10 faire
+pour i allant de 1 à 10 faire
   afficher "7 x " + i + " = " + (7 * i)
 fin
 ```
@@ -232,12 +249,22 @@ afficher courses
 afficher taille(courses)
 ```
 
-Pour parcourir une liste, on utilise `pour chaque` (et **non** `pour x dans`) :
+Plus court : les **crochets**. `courses[0]` lit un élément, `courses[0] = "riz"` le remplace. C'est la même chose que `lireElement` et `modifierElement`, en plus lisible, surtout avec des listes de listes (une grille, un tableau) :
+
+```fadera
+soit grille = [[0, 0, 0], [0, 0, 0]]
+grille[1][2] = 5
+grille[0][0] = grille[1][2] + 1
+afficher grille
+afficher grille[1][2]
+```
+
+Pour parcourir une liste, on écrit `pour x dans liste faire` (ou, de façon équivalente, `pour chaque x dans liste faire`) :
 
 ```fadera
 soit notes = [12, 15, 9, 18]
 soit total = 0
-pour chaque n dans notes faire
+pour n dans notes faire
   total = total + n
 fin
 afficher "Moyenne : " + total / taille(notes)
@@ -488,7 +515,7 @@ Une **classe** décrit un modèle d'objet : ses données et ses actions. `creer`
 
 ```fadera
 classe Compteur
-  fonction creer(depart)
+  fonction créer(depart)
     soi.valeur = depart
   fin
   fonction incrementer()
@@ -507,7 +534,7 @@ Une classe peut **hériter** d'une autre : elle reprend ses actions et en ajoute
 
 ```fadera
 classe Animal
-  fonction creer(nom)
+  fonction créer(nom)
     soi.nom = nom
   fin
   fonction presentation()
@@ -515,8 +542,8 @@ classe Animal
   fin
 fin
 
-classe Chien herite Animal
-  fonction creer(nom)
+classe Chien hérite Animal
+  fonction créer(nom)
     Animal.creer(soi, nom)
   fin
   fonction aboyer()
@@ -611,19 +638,85 @@ afficher "Enchanté, " + prenom + " !"
 
 Voici les erreurs que tout le monde fait au début, et comment les reconnaître.
 
-**1. Utiliser un mot réservé comme nom.** `soit liste = [1, 2]` ou `soit fin = 3` échouent : ces mots appartiennent au langage. Écrivez `ma_liste`, `dernier`…
+**1. Utiliser un mot réservé comme nom.** `soit fin = 3` ou `soit si = 1` échouent : ces mots appartiennent au langage. Écrivez `dernier`, `reste`… (en revanche `liste`, `taille`, `hasard` sont libres : `soit taille = 1.75` fonctionne ; ils ne désignent la fonction que suivis d'une parenthèse, `taille(x)`).
 
-**2. Oublier `fin`.** Chaque `si`, `tantque`, `pour`, `fonction`, `classe`, `essayer`, `selon`, `tester` se ferme par un `fin`. Si le message parle de « fin du fichier », il manque un `fin` quelque part.
+**2. Oublier `fin`.** Chaque `si`, `tant que`, `pour`, `fonction`, `classe`, `essayer`, `selon`, `tester` se ferme par un `fin`. Si le message parle de « fin du fichier », il manque un `fin` quelque part.
 
-**3. Écrire `pour x dans liste`.** Le bon mot est `pour chaque x dans liste faire`.
+**3. Oublier `faire` ou `fin` dans une boucle.** `pour x dans liste faire … fin` (ou `pour chaque x dans liste faire … fin`) : sans `faire` après la liste, ou sans `fin` à la fin, le programme s'arrête avec une erreur.
 
-**4. Se tromper de nombre d'arguments.** Une fonction à deux paramètres s'appelle avec exactement deux arguments.
+**4. Modifier le champ d'un objet avec `soit`.** Pour changer le champ `x` d'un objet `p`, on écrit `p.x = 5`, **sans** `soit` (et dans une classe : `soi.x = x`). `soit p.x = 5` est refusé avec un message clair, car il ne toucherait pas l'objet.
 
-**5. Compter à partir de 1.** Le premier élément d'une liste est à la position **0**, le dernier à la position `taille(liste) - 1`.
+**5. Se tromper de nombre d'arguments.** Une fonction à deux paramètres s'appelle avec exactement deux arguments.
 
-**6. Utiliser `=` pour comparer.** `=` range une valeur (`x = 5`), `==` compare (`si x == 5 alors`).
+**6. Compter à partir de 1.** Le premier élément d'une liste est à la position **0**, le dernier à la position `taille(liste) - 1`.
 
-**7. Boucle infinie.** Une boucle `tantque` dont la condition ne change jamais ne s'arrête pas : dans le navigateur, le bouton « Arrêter » (ou Maj+F5) l'interrompt ; dans un terminal, `Ctrl + C`.
+**7. Utiliser `=` pour comparer.** `=` range une valeur (`x = 5`), `==` compare (`si x == 5 alors`).
+
+**8. Boucle infinie.** Une boucle `tant que` dont la condition ne change jamais ne s'arrête pas : dans le navigateur, le bouton « Arrêter » (ou Maj+F5) l'interrompt ; dans un terminal, `Ctrl + C`.
+
+**9. Utiliser après un bloc une variable créée dans le bloc.** Une variable créée par `soit` dans un `si`, une boucle ou un `essayer` n'existe plus après lui ; la variable d'une boucle `pour` non plus. Si vous voulez le résultat après le bloc, déclarez la variable **avant** (`soit signe = ""`) puis modifiez-la dans le bloc avec `signe = …` (sans `soit`). Le message d'erreur le rappelle : « Cette variable a été créée dans un bloc … Déclarez-la avant le bloc ».
+
+## Chapitre 18 — Écrire un petit site web (pour aller plus loin)
+
+Jusqu'ici, vos programmes ont **demandé** des choses au réseau. Avec la commande `fadera`, un programme peut aussi **répondre** : devenir un site web ou une API que d'autres personnes ouvrent dans leur navigateur. Ces fonctions n'existent que dans la ligne de commande (le navigateur ne peut pas ouvrir de port) ; elles sont décrites dans [`SERVEUR.md`](SERVEUR.md).
+
+Le plus petit serveur possible :
+
+```libre
+fonction gestionnaire(requete)
+  si requete.chemin == "/" alors
+    renvoyer { statut: 200, entetes: { "Content-Type": "text/html; charset=utf-8" }, corps: "<h1>Bonjour !</h1>" }
+  fin
+  renvoyer { statut: 404, corps: "Introuvable" }
+fin
+
+afficher "Ouvrez http://localhost:3000"
+serveur_http(3000, gestionnaire)
+```
+
+Enregistrez-le dans `site.fa`, lancez `fadera site.fa`, puis ouvrez <http://localhost:3000>. La dernière ligne ne se termine jamais : le programme attend les visiteurs. `Ctrl + C` l'arrête.
+
+**Comment ça marche.** `serveur_http(port, gestionnaire)` appelle votre fonction pour chaque visite, l'une après l'autre. Elle reçoit une structure `{ methode, chemin, requete, entetes, corps, ip }` : la méthode (`"GET"` pour lire une page, `"POST"` pour envoyer des données), l'adresse demandée, les paramètres de l'adresse, les en-têtes, le contenu envoyé et l'adresse du visiteur. Elle renvoie `{ statut, entetes, corps }` : le code de réponse (200 = bien, 404 = introuvable, 400 = demande incorrecte), les en-têtes et le contenu. Pour envoyer un fichier tel quel (une page HTML, une image), on renvoie `fichier: "chemin"` à la place de `corps`.
+
+**Une API qui retient des choses.** Un site utile garde des données. Le mini-site des tâches ([`applications/mini-site`](../applications/mini-site/)) les range dans un fichier JSON : on les relit au démarrage, et on les réécrit à chaque changement avec `fichier_ecrire_sur`, qui n'abîme jamais le fichier même si le courant se coupe au mauvais moment.
+
+```libre
+soit FICHIER = environnement("DONNEES_TACHES", dossier_programme() + "/taches.json")
+soit taches = []
+si fichier_existe(FICHIER) alors
+  taches = json_lire(lireFichier(FICHIER))
+fin
+
+fonction sauver()
+  fichier_ecrire_sur(FICHIER, json_texte(taches))
+fin
+
+fonction json_reponse(statut, donnees)
+  renvoyer { statut: statut, entetes: { "Content-Type": "application/json; charset=utf-8" }, corps: json_texte(donnees) }
+fin
+
+fonction gestionnaire(req)
+  si req.methode == "GET" et req.chemin == "/api/taches" alors
+    renvoyer json_reponse(200, { taches: taches })
+  fin
+  si req.methode == "POST" et req.chemin == "/api/taches" alors
+    soit donnees = json_lire(req.corps)
+    ajouter(taches, { id: taille(taches) + 1, texte: nettoyer(texte(donnees.texte)), fait: faux })
+    sauver()
+    renvoyer json_reponse(200, { ok: vrai })
+  fin
+  renvoyer json_reponse(404, { erreur: "Page introuvable." })
+fin
+```
+
+Quelques réflexes à avoir dès qu'un programme parle à des inconnus :
+
+- **Ne faites jamais confiance à ce qui arrive.** Vérifiez la taille et le contenu avant de ranger quoi que ce soit (le mini-site refuse un texte vide ou de plus de 200 caractères).
+- **Une erreur n'arrête pas le serveur.** Si votre gestionnaire plante, le visiteur reçoit une erreur 400 avec le message, l'erreur s'affiche dans votre terminal, et le serveur continue.
+- **Jamais de mot de passe en clair.** `crypto_scrypt(mot_de_passe, sel)` calcule une empreinte à ranger à la place, et `crypto_egal_constant(a, b)` compare deux empreintes sans rien révéler.
+- **Pour internet, mettez un HTTPS devant.** `serveur_http` parle en HTTP simple : un programme comme Caddy se place devant et gère le HTTPS.
+
+Pour aller plus loin, le module serveur sait aussi hacher des mots de passe (`crypto_scrypt`) et signer des jetons (`crypto_hmac_base64url`) : voir [docs/SERVEUR.md](SERVEUR.md).
 
 ## Pour aller plus loin
 

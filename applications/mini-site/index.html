@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mes tâches — site écrit en Fadéra</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 34rem; margin: 2rem auto; padding: 0 1rem; color: #1b2230; }
+  h1 { font-size: 1.4rem; }
+  form { display: flex; gap: .5rem; margin-bottom: 1rem; }
+  input { flex: 1; padding: .5rem; font-size: 1rem; }
+  button { padding: .5rem .9rem; font-size: 1rem; cursor: pointer; }
+  li { display: flex; justify-content: space-between; align-items: center; padding: .4rem 0; border-bottom: 1px solid #e3e7ee; }
+  li.fait span { text-decoration: line-through; color: #8a93a5; }
+  small { color: #8a93a5; }
+</style>
+</head>
+<body>
+<h1>Mes tâches</h1>
+<form id="f"><input id="t" placeholder="Une nouvelle tâche…" autocomplete="off" required><button>Ajouter</button></form>
+<ul id="liste"></ul>
+<p><small>Ce site est servi par un programme Fadéra (<code>site.fa</code>).</small></p>
+<script>
+async function charger() {
+  const r = await (await fetch("/api/taches")).json();
+  const ul = document.getElementById("liste");
+  ul.innerHTML = "";
+  for (const t of r.taches) {
+    const li = document.createElement("li");
+    if (t.fait) li.className = "fait";
+    const s = document.createElement("span"); s.textContent = t.texte;
+    const b = document.createElement("button"); b.textContent = t.fait ? "Rouvrir" : "Terminée";
+    b.onclick = async () => { await fetch("/api/taches/basculer", { method: "POST", body: JSON.stringify({ id: t.id }) }); charger(); };
+    li.append(s, b); ul.append(li);
+  }
+}
+document.getElementById("f").onsubmit = async (e) => {
+  e.preventDefault();
+  const i = document.getElementById("t");
+  await fetch("/api/taches", { method: "POST", body: JSON.stringify({ texte: i.value }) });
+  i.value = ""; charger();
+};
+charger();
+</script>
+</body>
+</html>

@@ -41,25 +41,34 @@ const attendre = (ms) => new Promise((r) => setTimeout(r, ms));
     const accueil = await requete("GET", "/");
     verifier("GET / renvoie l'éditeur", accueil.code === 200 && accueil.texte.includes("Fadéra"), accueil.code);
 
-    const ouvert = await requete("GET", "/__ouvrir");
+    const jetonM = /name="fadera-jeton" content="([0-9a-f]{64})"/.exec(accueil.texte);
+    verifier("la page d'éditeur reçoit un jeton de 64 caractères", !!jetonM, accueil.texte.slice(-200));
+    const J = { "X-Fadera-Jeton": jetonM ? jetonM[1] : "" };
+    const hote = "127.0.0.1:" + PORT;
+    const ouvrir = (methode = "GET", corps = null) => requete(methode, "/__ouvrir", corps, hote, J);
+    // /__ouvrir est réservé à l'éditeur (jeton) et au lancement « fadera fichier » (jeton lu dans le dossier personnel)
+    verifier("lire /__ouvrir sans jeton refusé", (await requete("GET", "/__ouvrir")).code === 403);
+    verifier("déposer un fichier sans jeton refusé", (await requete("POST", "/__ouvrir", '{"nom":"x.fa","texte":"x"}')).code === 403);
+    verifier("déposer un fichier avec une origine étrangère refusé", (await requete("POST", "/__ouvrir", '{"nom":"x.fa","texte":"x"}', hote, { ...J, Origin: "http://evil.example" })).code === 403);
+    for (const h of ["localhost.evil.com:" + PORT, "127.0.0.1.evil.com:" + PORT, "evil.com/127.0.0.1", "127.0.0.1", "localhost:9999"])
+      verifier("hôte « " + h + " » refusé (comparaison exacte)", (await requete("GET", "/", null, h)).code === 403);
+    verifier("hôte localhost:" + PORT + " accepté", (await requete("GET", "/__fadera", null, "localhost:" + PORT)).code === 200);
+
+    const ouvert = await ouvrir();
     let j = null; try { j = JSON.parse(ouvert.texte); } catch (e) {}
     verifier("le fichier double-cliqué est transmis (accents compris)", ouvert.code === 200 && j && j.nom === "x.fa" && j.texte === 'afficher "élève — « salut »"\n', ouvert.texte);
-    verifier("il n'est transmis qu'une fois", (await requete("GET", "/__ouvrir")).code === 204);
+    verifier("il n'est transmis qu'une fois", (await ouvrir()).code === 204);
 
     // un second « fadera ide fichier » réutilise le serveur déjà lancé
     const second = cp.spawnSync(binaire, ["ide", "--sans-navigateur", "y.fa"], { cwd: dossier, encoding: "utf8", timeout: 15000 });
     verifier("la seconde commande se termine sans erreur", second.status === 0, second.status);
-    const recu = await requete("GET", "/__ouvrir");
+    const recu = await ouvrir();
     let r2 = null; try { r2 = JSON.parse(recu.texte); } catch (e) {}
     verifier("… et lui transmet son fichier", recu.code === 200 && r2 && r2.nom === "y.fa" && r2.texte.includes("deuxième"), recu.texte);
 
     // terminal PowerShell / cmd et dossier réel : réservés à la page d'éditeur (jeton secret)
     verifier("terminal sans jeton refusé", (await requete("POST", "/__terminal", '{"commande":"echo non","shell":"powershell"}')).code === 403);
     verifier("dossier réel sans jeton refusé", (await requete("GET", "/__espace")).code === 403);
-    const jetonM = /name="fadera-jeton" content="([0-9a-f]{64})"/.exec(accueil.texte);
-    verifier("la page d'éditeur reçoit un jeton de 64 caractères", !!jetonM, accueil.texte.slice(-200));
-    const J = { "X-Fadera-Jeton": jetonM ? jetonM[1] : "" };
-    const hote = "127.0.0.1:" + PORT;
     verifier("mauvais jeton refusé", (await requete("GET", "/__espace", null, hote, { "X-Fadera-Jeton": "0".repeat(64) })).code === 403);
     verifier("origine étrangère refusée même avec le bon jeton", (await requete("GET", "/__espace", null, hote, { ...J, Origin: "http://evil.example" })).code === 403);
     verifier("hôte étranger refusé même avec le bon jeton", (await requete("GET", "/__espace", null, "evil.example.com", J)).code === 403);
@@ -83,7 +92,7 @@ const attendre = (ms) => new Promise((r) => setTimeout(r, ms));
 
     const ed = await requete("POST", "/__terminal", JSON.stringify({ commande: "fadera editer essai.fa", shell: "cmd" }), hote, J);
     verifier("« fadera editer » s'exécute dans le terminal", ed.code === 200 && JSON.parse(ed.texte).code === 0, ed.texte);
-    const ouv = await requete("GET", "/__ouvrir");
+    const ouv = await ouvrir();
     let oj = null; try { oj = JSON.parse(ouv.texte); } catch (e) {}
     verifier("… et ouvre le fichier dans l'éditeur déjà ouvert", ouv.code === 200 && oj && oj.nom === "essai.fa" && oj.texte.includes("salut"), ouv.texte);
 
@@ -92,7 +101,7 @@ const attendre = (ms) => new Promise((r) => setTimeout(r, ms));
     verifier("chemin Windows refusé", (await requete("GET", "/..\\x.fa")).code === 404);
     verifier("lecteur refusé (C:)", (await requete("GET", "/C:/Windows/win.ini")).code === 404);
     verifier("hôte étranger refusé (DNS rebinding)", (await requete("GET", "/", null, "evil.example.com")).code === 403);
-    verifier("JSON invalide refusé", (await requete("POST", "/__ouvrir", "pas du json")).code === 400);
+    verifier("JSON invalide refusé", (await ouvrir("POST", "pas du json")).code === 400);
     verifier("méthode inconnue refusée", (await requete("DELETE", "/")).code === 405);
     verifier("fichier absent → 404", (await requete("GET", "/nexiste-pas.js")).code === 404);
     verifier("signal de vie accepté", (await requete("GET", "/__vivant")).code === 200);

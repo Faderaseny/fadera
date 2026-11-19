@@ -38,6 +38,88 @@ pub const MOTS_CLES: &[&str] = &[
     "essayer", "attraper", "selon", "cas", "defaut", "rompre", "continuer", "importer",
 ];
 
+/// Mots qui désignent une fonction du langage seulement quand une parenthèse ouvrante suit : ailleurs, ce sont des noms libres.
+const MOTS_APPEL: &[&str] = &[
+    "liste", "taille", "lireElement", "modifierElement", "modifierCle", "hasard", "lireCle", "lireFichier", "ecrireFichier", "ajouter", "saisir",
+];
+
+/// Écritures françaises (accents, snake_case) des fonctions du langage, ramenées à leur forme interne ; seulement dans un appel `nom(…)`.
+const ALIAS_APPEL: &[(&str, &str)] = &[
+    ("écrire_fichier", "ecrireFichier"),
+    ("ecrire_fichier", "ecrireFichier"),
+    ("lire_fichier", "lireFichier"),
+    ("lire_élément", "lireElement"),
+    ("lire_element", "lireElement"),
+    ("modifier_élément", "modifierElement"),
+    ("modifier_element", "modifierElement"),
+    ("modifier_clé", "modifierCle"),
+    ("modifier_cle", "modifierCle"),
+    ("lire_clé", "lireCle"),
+    ("lire_cle", "lireCle"),
+    ("masque_réseau", "masque_reseau"),
+    ("plage_réseau", "plage_reseau"),
+    ("créer_réseau", "creer_reseau"),
+    ("ia_entraîner", "ia_entrainer"),
+    ("ia_prédire", "ia_predire"),
+];
+
+/// Vrai si le programme déclare lui-même une fonction `longueur` : le synonyme `longueur(x)` = `taille(x)` est alors désactivé.
+fn definit_longueur(s: &[char]) -> bool {
+    let mot: Vec<char> = "longueur".chars().collect();
+    let est_car = |c: char| c.is_alphanumeric() || c == '_';
+    let mut i = 0;
+    while i + mot.len() <= s.len() {
+        if s[i..i + mot.len()] == mot[..] && (i == 0 || !(est_car(s[i - 1]) || s[i - 1] == '.')) && !s.get(i + mot.len()).map_or(false, |c| est_car(*c) || *c == '.') {
+            let mut k = i;
+            while k > 0 && (s[k - 1] == ' ' || s[k - 1] == '\t') {
+                k -= 1;
+            }
+            let f: Vec<char> = "fonction".chars().collect();
+            if k > i.saturating_sub(64) && k >= f.len() && k < i && s[k - f.len()..k] == f[..] && (k == f.len() || !est_car(s[k - f.len() - 1])) {
+                return true;
+            }
+        }
+        i += 1;
+    }
+    false
+}
+
+/// Premier caractère non blanc (retours à la ligne compris) à partir de `i`.
+fn prochain_non_blanc(s: &[char], mut i: usize) -> Option<char> {
+    while i < s.len() && (s[i].is_whitespace() || s[i] == '\u{feff}') {
+        i += 1;
+    }
+    s.get(i).copied()
+}
+
+/// Premier caractère qui n'est ni une espace ni une tabulation, sur la même ligne.
+fn prochain_sur_la_ligne(s: &[char], mut i: usize) -> Option<char> {
+    while i < s.len() && (s[i] == ' ' || s[i] == '\t') {
+        i += 1;
+    }
+    s.get(i).copied().filter(|c| *c != '\n' && *c != '\r')
+}
+
+/// Si le mot `mot` suit, après au moins une espace sur la même ligne, renvoie la position qui suit ce mot.
+fn suit_mot(s: &[char], i: usize, mot: &str) -> Option<usize> {
+    let mut k = i;
+    while k < s.len() && (s[k] == ' ' || s[k] == '\t') {
+        k += 1;
+    }
+    if k == i {
+        return None;
+    }
+    let m: Vec<char> = mot.chars().collect();
+    if k + m.len() > s.len() || s[k..k + m.len()] != m[..] {
+        return None;
+    }
+    let f = k + m.len();
+    match s.get(f) {
+        Some(c) if c.is_alphanumeric() || *c == '_' || *c == '.' => None,
+        _ => Some(f),
+    }
+}
+
 pub fn decrire(j: Option<&Jeton>) -> String {
     match j {
         None => "la fin du code".into(),
@@ -62,6 +144,7 @@ pub fn lexer_comm(src: &str, mut comm: Option<&mut Vec<Commentaire>>) -> Result<
     let mut ligne = 1usize;
     let est_debut = |c: char| c.is_alphabetic() || c == '_';
     let est_car = |c: char| c.is_alphanumeric() || c == '_';
+    let sans_longueur = definit_longueur(&s);
     let mut deb_tour = 0usize;
     let mut nb_avant = 0usize;
     while i < n {
@@ -158,9 +241,37 @@ pub fn lexer_comm(src: &str, mut comm: Option<&mut Vec<Commentaire>>) -> Result<
             while j < n && (est_car(s[j]) || (s[j] == '.' && j + 1 < n && est_debut(s[j + 1]))) {
                 j += 1;
             }
-            let v: String = s[i..j].iter().collect();
+            let mut v: String = s[i..j].iter().collect();
+            // Formes françaises correctes, ramenées à la forme interne : « défaut », « tant que », « allant de ».
+            if v == "défaut" {
+                v = "defaut".into();
+            } else if v == "tant" {
+                if let Some(f) = suit_mot(&s, j, "que") {
+                    v = "tantque".into();
+                    j = f;
+                }
+            } else if v == "allant" {
+                if let Some(f) = suit_mot(&s, j, "de") {
+                    v = "allantde".into();
+                    j = f;
+                }
+            }
+            if let Some((_, canon)) = ALIAS_APPEL.iter().find(|(a, _)| *a == v) {
+                if prochain_non_blanc(&s, j) == Some('(') {
+                    v = (*canon).to_string();
+                }
+            }
+            if v == "longueur" && !sans_longueur && prochain_non_blanc(&s, j) == Some('(') && !matches!(toks.last(), Some(Jeton { t: Type::Symbole, valeur, .. }) if valeur == ".") {
+                v = "taille".into(); // synonyme français : longueur(x) = taille(x)
+            }
             let t = if v == "et" || v == "ou" {
                 Type::Logique
+            } else if MOTS_APPEL.contains(&v.as_str()) {
+                // « liste », « taille », « hasard »… ne sont des mots du langage que dans un appel `taille(x)` : ailleurs ce sont des noms ordinaires.
+                if prochain_non_blanc(&s, j) == Some('(') { Type::MotCle } else { Type::Identifiant }
+            } else if v == "structure" {
+                // `structure nom = …` déclare ; un `structure` seul est un nom ordinaire.
+                if prochain_sur_la_ligne(&s, j).map_or(false, est_debut) { Type::MotCle } else { Type::Identifiant }
             } else if MOTS_CLES.contains(&v.as_str()) {
                 Type::MotCle
             } else {

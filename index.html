@@ -1284,7 +1284,7 @@
     <div id="boot">
       <div class="logo-boot"><img class="logo-img" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 256 256%22%3E%3Crect width=%22256%22 height=%22256%22 rx=%2256%22 fill=%22%230f1b33%22/%3E%3Cpath d=%22M86 204V70a14 14 0 0 1 14-14h92M86 130h74%22 fill=%22none%22 stroke=%22%23f2a93b%22 stroke-width=%2226%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3Crect x=%22176%22 y=%22164%22 width=%2240%22 height=%2240%22 rx=%228%22 fill=%22%23fff%22/%3E%3C/svg%3E" alt="Fadéra" width="96" height="96" /></div>
       <div class="barre-charge"></div>
-      <div class="texte-boot" id="texteBoot">Démarrage de Fadéra v0.8.5…</div>
+      <div class="texte-boot" id="texteBoot">Démarrage de Fadéra v0.9.0…</div>
     </div>
 
     <div class="topbar">
@@ -3318,6 +3318,49 @@ fin</textarea
 
       // ---------- Lexer ----------
       // `comm` (facultatif) reçoit les commentaires { ligne, deb, fin } ; chaque jeton porte aussi deb/fin (positions dans src)
+      // Mots qui désignent une fonction du langage seulement quand une parenthèse ouvrante suit : ailleurs, ce sont des noms libres.
+      const MOTS_APPEL = ["liste", "taille", "lireElement", "modifierElement", "modifierCle", "hasard", "lireCle", "lireFichier", "ecrireFichier", "ajouter", "saisir"];
+      // Écritures françaises (accents, snake_case) des fonctions du langage, ramenées à leur forme interne ; seulement dans un appel nom(…).
+      const ALIAS_APPEL = {
+        "écrire_fichier": "ecrireFichier",
+        "ecrire_fichier": "ecrireFichier",
+        "lire_fichier": "lireFichier",
+        "lire_élément": "lireElement",
+        "lire_element": "lireElement",
+        "modifier_élément": "modifierElement",
+        "modifier_element": "modifierElement",
+        "modifier_clé": "modifierCle",
+        "modifier_cle": "modifierCle",
+        "lire_clé": "lireCle",
+        "lire_cle": "lireCle",
+        "masque_réseau": "masque_reseau",
+        "plage_réseau": "plage_reseau",
+        "créer_réseau": "creer_reseau",
+        "ia_entraîner": "ia_entrainer",
+        "ia_prédire": "ia_predire",
+      };
+      // vrai si le programme déclare lui-même une fonction « longueur » : le synonyme longueur(x) = taille(x) est alors désactivé
+      function definitLongueur(src) {
+        return /(^|[^\p{L}\p{N}_.])fonction[ \t]+longueur(?![\p{L}\p{N}_.])/u.test(src);
+      }
+      // premier caractère non blanc (retours à la ligne compris) à partir de i
+      function prochainNonBlanc(s, i) {
+        while (i < s.length && (/\s/.test(s[i]) || s[i] === "\ufeff")) i++;
+        return i < s.length ? s[i] : "";
+      }
+      // premier caractère qui n'est ni une espace ni une tabulation, sur la même ligne ("" sinon)
+      function prochainSurLaLigne(s, i) {
+        while (i < s.length && (s[i] === " " || s[i] === "\t")) i++;
+        return i < s.length && s[i] !== "\n" && s[i] !== "\r" ? s[i] : "";
+      }
+      // si le mot est ensuite sur la même ligne (après au moins une espace), renvoie la position qui le suit ; sinon -1
+      function suitMot(s, i, mot) {
+        let k = i;
+        while (k < s.length && (s[k] === " " || s[k] === "\t")) k++;
+        if (k === i || s.substr(k, mot.length) !== mot) return -1;
+        const f = k + mot.length;
+        return f < s.length && /[\p{L}\p{N}_.]/u.test(s[f]) ? -1 : f;
+      }
       function lexer(src, comm) {
         const tokens = [],
           n = src.length;
@@ -3325,6 +3368,7 @@ fin</textarea
           ligne = 1,
           debTour = 0,
           nbAvant = 0;
+        const sansLongueur = definitLongueur(src);
         const estDebutId = (c) => /[\p{L}_]/u.test(c);
         const estIdCar = (c) => /[\p{L}\p{N}_]/u.test(c);
         const echap = { n: "\n", t: "\t", '"': '"', "'": "'", "\\": "\\" };
@@ -3406,13 +3450,27 @@ fin</textarea
             let j = i + 1;
             // « o.double » : un identifiant peut contenir des points (espace de nom d'un module, champ d'une structure)
             while (j < n && (estIdCar(src[j]) || (src[j] === "." && j + 1 < n && estDebutId(src[j + 1])))) j++;
-            const v = src.slice(i, j);
-            const type =
-              v === "et" || v === "ou"
-                ? TYPE.LOGIQUE
-                : MOTS_CLES.includes(v)
-                  ? TYPE.MOT_CLE
-                  : TYPE.IDENTIFIANT;
+            let v = src.slice(i, j);
+            // Formes françaises correctes, ramenées à la forme interne : « défaut », « tant que », « allant de ».
+            if (v === "défaut") v = "defaut";
+            else if (v === "tant" || v === "allant") {
+              const suite = suitMot(src, j, v === "tant" ? "que" : "de");
+              if (suite >= 0) {
+                v = v === "tant" ? "tantque" : "allantde";
+                j = suite;
+              }
+            }
+            if (Object.prototype.hasOwnProperty.call(ALIAS_APPEL, v) && prochainNonBlanc(src, j) === "(") v = ALIAS_APPEL[v];
+            if (v === "longueur" && !sansLongueur && prochainNonBlanc(src, j) === "(" && !(tokens.length && tokens[tokens.length - 1].valeur === "." && tokens[tokens.length - 1].type === TYPE.SYMBOLE)) v = "taille"; // synonyme français : longueur(x) = taille(x)
+            let type;
+            if (v === "et" || v === "ou") type = TYPE.LOGIQUE;
+            else if (MOTS_APPEL.includes(v))
+              // « liste », « taille », « hasard »… ne sont des mots du langage que dans un appel `taille(x)` : ailleurs ce sont des noms ordinaires.
+              type = prochainNonBlanc(src, j) === "(" ? TYPE.MOT_CLE : TYPE.IDENTIFIANT;
+            else if (v === "structure")
+              // `structure nom = …` déclare ; un `structure` seul est un nom ordinaire.
+              type = estDebutId(prochainSurLaLigne(src, j)) ? TYPE.MOT_CLE : TYPE.IDENTIFIANT;
+            else type = MOTS_CLES.includes(v) ? TYPE.MOT_CLE : TYPE.IDENTIFIANT;
             tokens.push({ type, valeur: v, ligne });
             i = j;
             continue;
@@ -3504,6 +3562,7 @@ fin</textarea
           // `rec` (facultatif) : l'éditeur y fait noter les déclarations (fonctions, classes, variables, imports…) avec leurs lignes
           this.rec = null;
           this.classeRec = null;
+          this.estModule = false;
         }
         get actuel() {
           return this.tokens[this.position];
@@ -3687,7 +3746,7 @@ fin</textarea
                   throw new ErreurFadera(
                     '"' +
                       j.valeur +
-                      "\" ne peut être utilisé qu'à l'intérieur d'une boucle (pour, tantque).",
+                      "\" ne peut être utilisé qu'à l'intérieur d'une boucle (pour, tant que).",
                     j.ligne,
                   );
                 this.avancer();
@@ -3750,7 +3809,7 @@ fin</textarea
                 throw new ErreurFadera(
                   '"' +
                     j.valeur +
-                    "\" inattendu : aucun bloc (si, pour, tantque, fonction) n'est ouvert à cet endroit.",
+                    "\" inattendu : aucun bloc (si, pour, tant que, fonction) n'est ouvert à cet endroit.",
                   j.ligne,
                 );
             }
@@ -3760,11 +3819,33 @@ fin</textarea
             // « classe » et « tester » sont contextuels (pas des mots réservés) : un identifiant suivi d'un nom / d'un texte
             if (j.valeur === "classe" && s && s.type === TYPE.IDENTIFIANT) return this.analyserClasse();
             if (j.valeur === "tester" && s && s.type === TYPE.CHAINE) return this.analyserTest();
+            // « répéter n fois … fin » : n répétitions (équivaut à pour i allant de 1 à n)
+            if ((j.valeur === "répéter" || j.valeur === "repeter") && s && (s.type === TYPE.NUMERO || s.type === TYPE.IDENTIFIANT)) {
+              const l = this.consommer(TYPE.IDENTIFIANT).ligne;
+              const finExpr = this.analyserExpression();
+              if (!this.actuel || this.actuel.type !== TYPE.IDENTIFIANT || this.actuel.valeur !== "fois")
+                throw new ErreurFadera('"fois" attendu après le nombre de répétitions (exemple : répéter 3 fois), mais ' + decrire(this.actuel) + " trouvé.", this.actuel ? this.actuel.ligne : l);
+              this.avancer();
+              if (this.actuel && this.actuel.type === TYPE.MOT_CLE && this.actuel.valeur === "faire") this.avancer();
+              this.profBoucle++;
+              const corps = this.analyserBloc(["fin"], "répéter", l);
+              this.profBoucle--;
+              this.consommer(TYPE.MOT_CLE, "fin");
+              return { type: "InstructionPour", compteurNom: "__rep" + l, debutExpr: { type: "Litteral", valeur: 1 }, finExpr, pasExpr: null, corps };
+            }
             if (s && s.type === TYPE.SYMBOLE && s.valeur === "(")
               return {
                 type: "InstructionExpression",
                 expression: this.analyserExpression(),
               };
+            // « l[i] = valeur » : modifie un élément (équivaut à modifierElement(l, i, valeur))
+            if (s && s.type === TYPE.SYMBOLE && s.valeur === "[" && s.ligne === j.ligne) {
+              const cible = this.analyserPrimaire();
+              if (cible.type !== "ExpressionLireElement" || !this.actuel || this.actuel.type !== TYPE.OPERATEUR || this.actuel.valeur !== "=")
+                throw new ErreurFadera('"=" attendu après ' + j.valeur + "[…] pour modifier un élément (exemple : " + j.valeur + "[0] = 5), mais " + decrire(this.actuel) + " trouvé.", j.ligne);
+              this.avancer();
+              return { type: "InstructionModifierElement", liste: cible.liste, indexExpr: cible.indexExpr, valeurExpr: this.analyserExpression(), ligne: j.ligne };
+            }
             if (s && s.type === TYPE.OPERATEUR && s.valeur === "=") {
               if (this.rec && this.classeRec && j.valeur.startsWith("soi.")) this.rec.push({ g: "champ", classe: this.classeRec.nom, nom: j.valeur.split(".")[1], ligne: j.ligne });
               this.avancer();
@@ -3787,12 +3868,22 @@ fin</textarea
           );
         }
 
+        // « soit p.x = 5 » créerait une variable nommée « p.x » sans toucher à l'objet p : piège de débutant, refusé dans le code de l'utilisateur
+        // (les modules importés, eux, reçoivent des noms pointés par le mécanisme des espaces de noms).
+        verifierNomSansPoint(nom, ligne) {
+          if (this.estModule || !nom.includes(".")) return;
+          throw new ErreurFadera(
+            '"soit ' + nom + ' = …" ne crée pas de champ : pour modifier le champ "' + nom.split(".").slice(1).join(".") + '" de "' + nom.split(".")[0] + '", écrivez ' + nom + ' = … (sans "soit"). Pour une variable ordinaire, choisissez un nom sans point.',
+            ligne,
+          );
+        }
         analyserVariable() {
           this.consommer(TYPE.MOT_CLE, "soit");
           const tNom = this.consommer(TYPE.IDENTIFIANT);
           const nom = tNom.valeur;
           const recV = this.rec ? { g: "var", nom, ligne: tNom.ligne, genre: "variable", init: null } : null;
           if (recV) this.rec.push(recV);
+          this.verifierNomSansPoint(nom, tNom.ligne);
           this.consommer(TYPE.OPERATEUR, "=");
           const valeurV = this.analyserExpression();
           if (recV) recV.init = resumerInit(valeurV);
@@ -3806,6 +3897,7 @@ fin</textarea
           this.consommer(TYPE.MOT_CLE, "structure");
           const tNomS = this.consommer(TYPE.IDENTIFIANT);
           const nom = tNomS.valeur;
+          this.verifierNomSansPoint(nom, tNomS.ligne);
           const recS = this.rec ? { g: "var", nom, ligne: tNomS.ligne, genre: "structure", init: null } : null;
           if (recS) this.rec.push(recS);
           this.consommer(TYPE.OPERATEUR, "=");
@@ -4049,6 +4141,23 @@ fin</textarea
               };
             }
           }
+          {
+            // forme française naturelle : « pour x dans liste faire » (comme « pour chaque x dans liste faire »)
+            const u1 = this.tokens[this.position],
+              u2 = this.tokens[this.position + 1];
+            if (u1 && u1.type === TYPE.IDENTIFIANT && u2 && u2.type === TYPE.IDENTIFIANT && u2.valeur === "dans") {
+              const nom = this.consommer(TYPE.IDENTIFIANT).valeur;
+              if (this.rec) this.rec.push({ g: "var", nom, ligne: l, genre: "boucle" });
+              this.avancer();
+              const iterable = this.analyserExpression();
+              this.consommer(TYPE.MOT_CLE, "faire");
+              this.profBoucle++;
+              const corps = this.analyserBloc(["fin"], "pour", l);
+              this.profBoucle--;
+              this.consommer(TYPE.MOT_CLE, "fin");
+              return { type: "InstructionPourChaque", compteurNom: nom, iterable, corps };
+            }
+          }
           const compteurNom = this.consommer(TYPE.IDENTIFIANT).valeur;
           if (this.rec) this.rec.push({ g: "var", nom: compteurNom, ligne: l, genre: "boucle" });
           this.consommer(TYPE.MOT_CLE, "allantde");
@@ -4060,7 +4169,7 @@ fin</textarea
             (sep.valeur !== "a" && sep.valeur !== "à")
           )
             throw new ErreurFadera(
-              '"a" attendu entre les deux bornes (exemple : pour i allantde 1 a 10 faire), mais ' +
+              '"a" attendu entre les deux bornes (exemple : pour i allant de 1 à 10 faire), mais ' +
                 decrire(sep) +
                 " trouvé.",
               sep ? sep.ligne : l,
@@ -4119,7 +4228,7 @@ fin</textarea
           this.avancer(); // "classe"
           const nom = this.consommer(TYPE.IDENTIFIANT).valeur;
           let parent = null;
-          if (this.actuel && this.actuel.type === TYPE.IDENTIFIANT && this.actuel.valeur === "herite" && this.actuel.ligne === l) {
+          if (this.actuel && this.actuel.type === TYPE.IDENTIFIANT && (this.actuel.valeur === "herite" || this.actuel.valeur === "hérite") && this.actuel.ligne === l) {
             this.avancer();
             if (!this.actuel || this.actuel.type !== TYPE.IDENTIFIANT)
               throw new ErreurFadera('classe ... herite : un nom de classe est attendu après "herite", mais ' + decrire(this.actuel) + " trouvé.", l);
@@ -4145,12 +4254,13 @@ fin</textarea
               throw new ErreurFadera("Dans une classe, seules les méthodes (fonction ... fin) sont permises (reçu : " + decrire(j) + ").", j.ligne);
             const lm = j.ligne;
             const f = this.analyserFonction();
-            if (vues.has(f.nom)) throw new ErreurFadera('La méthode "' + f.nom + '" est déjà définie dans la classe "' + nom + '".', lm);
-            vues.add(f.nom);
+            const mnom = f.nom === "créer" ? "creer" : f.nom; // « créer » (avec accent) est le constructeur, comme « creer »
+            if (vues.has(mnom)) throw new ErreurFadera('La méthode "' + f.nom + '" est déjà définie dans la classe "' + nom + '".', lm);
+            vues.add(mnom);
             if (f.parametres.includes("soi"))
               throw new ErreurFadera('"soi" est réservé dans une méthode : il désigne déjà l\'objet courant.', lm);
-            if (f.nom === "creer") creer = f.parametres.slice();
-            noeuds.push({ type: "DeclarationFonction", nom: nom + "." + f.nom, parametres: ["soi", ...f.parametres], corps: f.corps, ligne: lm });
+            if (mnom === "creer") creer = f.parametres.slice();
+            noeuds.push({ type: "DeclarationFonction", nom: nom + "." + mnom, parametres: ["soi", ...f.parametres], corps: f.corps, ligne: lm });
           }
           this.classeRec = null;
           this.consommer(TYPE.MOT_CLE, "fin");
@@ -4340,9 +4450,23 @@ fin</textarea
           return base;
         }
         // valeur primaire suivie d'éventuels enchaînements : Compte(1).deposer(2).solde
+        // « [ » collé à la suite d'une valeur, sur la même ligne : indexation l[i] (sur une autre ligne ou après une virgule, c'est une liste)
+        crochetIndex() {
+          const a = this.actuel,
+            p = this.tokens[this.position - 1];
+          return !!a && a.type === TYPE.SYMBOLE && a.valeur === "[" && !!p && p.ligne === a.ligne;
+        }
         analyserPrimaire() {
           let e = this.analyserPrimaireBase();
-          while (this.estSymbole(".")) {
+          while (this.estSymbole(".") || this.crochetIndex()) {
+            if (this.estSymbole("[")) {
+              const lc = this.actuel.ligne;
+              this.avancer();
+              const indexExpr = this.analyserExpression();
+              this.consommer(TYPE.SYMBOLE, "]");
+              e = { type: "ExpressionLireElement", liste: e, indexExpr, ligne: lc };
+              continue;
+            }
             const pt = this.actuel;
             this.avancer();
             const nom = this.actuel;
@@ -4395,12 +4519,11 @@ fin</textarea
             if (s && s.type === TYPE.SYMBOLE && s.valeur === "(") {
               this.avancer();
               this.avancer();
-              return {
-                type: "AppelFonction",
-                nom: j.valeur,
-                arguments: this.argumentsEntre(")"),
-                ligne,
-              };
+              const args = this.argumentsEntre(")");
+              // saisir_nombre(invite) = nombre(saisir(invite)) : lit une réponse et la convertit (virgule décimale acceptée)
+              if (j.valeur === "saisir_nombre" && args.length <= 1)
+                return { type: "AppelFonction", nom: "nombre", arguments: [{ type: "AppelSaisir", inviteExpr: args[0] || null }], ligne };
+              return { type: "AppelFonction", nom: j.valeur, arguments: args, ligne };
             }
             this.avancer();
             return { type: "Variable", nom: j.valeur, ligne };
@@ -6040,6 +6163,8 @@ fin
           this.fonctions = new Map();
           this.globale = new Map();
           this.pile = [this.globale];
+          this.disparus = new Set(); // noms de variables créées dans un bloc déjà terminé (pour le message d'aide)
+          this.cacheBloc = new WeakMap();
           this.etapes = 0;
           this.limite = this.hote.limiteEtapes || 2e7;
           this.profondeur = 0;
@@ -6116,11 +6241,9 @@ fin
           }
           if (!m)
             throw new ErreurFadera(
-              'La variable "' +
-                nom +
-                "\" n'existe pas. Déclarez-la d'abord avec : soit " +
-                nom +
-                " = ...",
+              nom.includes(".")
+                ? 'La variable "' + nom + '" n\'existe pas (vérifiez l\'orthographe de "' + nom.split(".")[0] + '" et du champ).'
+                : 'La variable "' + nom + "\" n'existe pas. Déclarez-la d'abord avec : soit " + nom + " = ..." + this.aideBloc(nom),
               ligne,
             );
           return m.get(nom);
@@ -6155,6 +6278,63 @@ fin
             );
         }
 
+        // portée de bloc : un bloc (si, boucle, selon, essayer) a sa propre portée ; elle n'est créée que s'il déclare
+        // lui-même une variable (soit), pour ne rien coûter aux autres blocs
+        _declare(instructions) {
+          let d = this.cacheBloc.get(instructions);
+          if (d === undefined) {
+            d = instructions.some((i) => i.type === "DeclarationVariable");
+            this.cacheBloc.set(instructions, d);
+          }
+          return d;
+        }
+        // vrai si le corps contient une fonction anonyme (alors chaque tour de boucle a sa propre variable de boucle)
+        _contientLambda(noeud) {
+          let d = this.cacheBloc.get(noeud);
+          if (d === undefined) {
+            const vu = (x) => {
+              if (x === null || typeof x !== "object") return false;
+              if (Array.isArray(x)) return x.some(vu);
+              if (x.type === "ExpressionLambda") return true;
+              for (const k in x) if (k !== "type" && vu(x[k])) return true;
+              return false;
+            };
+            d = vu(noeud.corps);
+            this.cacheBloc.set(noeud, d);
+          }
+          return d;
+        }
+        _oublier(portee) {
+          if (this.disparus.size > 500) this.disparus.clear();
+          for (const k of portee.keys()) this.disparus.add(k);
+        }
+        aideBloc(nom) {
+          return this.disparus.has(nom)
+            ? "\nCette variable a été créée dans un bloc (si, boucle, selon, essayer) qui est terminé : elle n'existe plus après lui. Déclarez-la avant le bloc, par exemple : soit " + nom + " = ..."
+            : "";
+        }
+        // exécute une boucle : la variable de boucle (nom) vit dans une portée propre à la boucle
+        async boucle(nom, valeurs, n) {
+          const frais = this._contientLambda(n);
+          let c = new Map();
+          c.parent = this.memoire;
+          this.pile.push(c);
+          try {
+            for (const v of valeurs()) {
+              if (frais) {
+                c = new Map();
+                c.parent = this.pile[this.pile.length - 2] === undefined ? null : this.pile[this.pile.length - 2];
+                this.pile[this.pile.length - 1] = c;
+              }
+              c.set(nom, v);
+              if ((await this.corpsBoucle(n.corps)) === "rompre") break;
+              const p = this.tic();
+              if (p) await p;
+            }
+          } finally {
+            this._oublier(this.pile.pop());
+          }
+        }
         async corpsBoucle(corps) {
           try {
             await this.bloc(corps);
@@ -6182,7 +6362,24 @@ fin
             throw e;
           }
         }
-        async bloc(instructions) {
+        async bloc(instructions, nomVar, valVar) {
+          if (nomVar === undefined && !this._declare(instructions)) {
+            for (const i of instructions) await this.executer(i);
+            return;
+          }
+          const c = new Map();
+          c.parent = this.memoire;
+          if (nomVar !== undefined) c.set(nomVar, valVar);
+          this.pile.push(c);
+          try {
+            for (const i of instructions) await this.executer(i);
+          } finally {
+            this.pile.pop();
+            if (c.size) this._oublier(c);
+          }
+        }
+        // corps d'une fonction : la portée des paramètres est déjà créée par l'appel
+        async blocFonction(instructions) {
           for (const i of instructions) await this.executer(i);
         }
 
@@ -6222,11 +6419,9 @@ fin
               }
               if (!m)
                 throw new ErreurFadera(
-                  'La variable "' +
-                    n.nom +
-                    "\" n'existe pas. Déclarez-la d'abord avec : soit " +
-                    n.nom +
-                    " = ...",
+                  n.nom.includes(".")
+                    ? 'La variable "' + n.nom + '" n\'existe pas (vérifiez l\'orthographe de "' + n.nom.split(".")[0] + '" et du champ).'
+                    : 'La variable "' + n.nom + "\" n'existe pas. Déclarez-la d'abord avec : soit " + n.nom + " = ..." + this.aideBloc(n.nom),
                   n.ligne,
                 );
               m.set(n.nom, v);
@@ -6317,12 +6512,13 @@ fin
                 throw new ErreurFadera(
                   'Le pas de la boucle "pour" ne peut pas être 0.',
                 );
-              for (let i = debut; pas > 0 ? i <= fin : i >= fin; i += pas) {
-                this.memoire.set(n.compteurNom, i);
-                if ((await this.corpsBoucle(n.corps)) === "rompre") break;
-                const p = this.tic();
-                if (p) await p;
-              }
+              await this.boucle(
+                n.compteurNom,
+                function* () {
+                  for (let i = debut; pas > 0 ? i <= fin : i >= fin; i += pas) yield i;
+                },
+                n,
+              );
               return;
             }
             case "InstructionRompre":
@@ -6341,12 +6537,7 @@ fin
                     typeDe(it) +
                     ").",
                 );
-              for (const x of elems) {
-                this.memoire.set(n.compteurNom, x);
-                if ((await this.corpsBoucle(n.corps)) === "rompre") break;
-                const p = this.tic();
-                if (p) await p;
-              }
+              await this.boucle(n.compteurNom, () => elems, n);
               return;
             }
             case "InstructionSelon": {
@@ -6417,7 +6608,7 @@ fin
               }
               let ast;
               try {
-                ast = analyserCode(String(src), n.alias);
+                ast = analyserCode(String(src), n.alias, true);
               } catch (e) {
                 if (e instanceof ErreurFadera) {
                   e.message =
@@ -6470,8 +6661,7 @@ fin
                 let msg = e && e.message ? e.message : String(e);
                 if (e instanceof RangeError && /call stack/i.test(msg))
                   msg = "Pile d'appels dépassée (récursion trop profonde).";
-                this.memoire.set(n.nomErreur, msg);
-                await this.bloc(n.gestion);
+                await this.bloc(n.gestion, n.nomErreur, msg);
               }
               return;
             }
@@ -6589,8 +6779,8 @@ fin
                   "saisir n'est pas disponible dans cet environnement.",
                 );
               const r = await this.hote.saisir(invite);
-              if (typeof r === "string" && /^\s*-?\d+(\.\d+)?\s*$/.test(r))
-                return parseFloat(r);
+              if (typeof r === "string" && /^\s*-?\d+([.,]\d+)?\s*$/.test(r))
+                return parseFloat(r.replace(",", "."));
               return r == null ? "" : r;
             }
             case "ExpressionLireFichier": {
@@ -6897,7 +7087,7 @@ fin
           if (this.dbg !== null) this.appels.push({ nom, ligne: ligne || 0 });
           let retour = null;
           try {
-            await this.bloc(def.corps);
+            await this.blocFonction(def.corps);
           } catch (s) {
             if (s instanceof SignalRetour) retour = s.valeur;
             else {
@@ -7156,6 +7346,8 @@ fin
                   }
                 break;
             }
+          } else if (t.type === TYPE.IDENTIFIANT && (t.valeur === "répéter" || t.valeur === "repeter") && i + 1 < n && (toks[i + 1].type === TYPE.IDENTIFIANT || toks[i + 1].type === TYPE.NUMERO)) {
+            pile.push(null);
           } else if (t.type === TYPE.IDENTIFIANT && t.valeur === "classe" && i + 1 < n && toks[i + 1].type === TYPE.IDENTIFIANT) {
             declarer(toks[i + 1].valeur);
             pile.push("classe");
@@ -7197,10 +7389,12 @@ fin
         }
         return toks;
       }
-      function analyserCode(code, alias) {
+      function analyserCode(code, alias, estModule) {
         let toks = lexer(code);
         if (alias) toks = renommerModule(toks, alias);
-        return new Parser(toks).analyser();
+        const parseur = new Parser(toks);
+        parseur.estModule = !!estModule || !!alias;
+        return parseur.analyser();
       }
       // ---------- Formateur de code (`fadera fmt`) : même algorithme que src/fmt.rs du moteur Rust ----------
       // Il s'appuie sur le vrai lexeur (positions des jetons, commentaires) et sur l'analyseur : un code qui ne
@@ -7328,6 +7522,7 @@ fin
                   break;
               }
             } else if (estId(j, "classe") && suivant && suivant.t === TYPE.IDENTIFIANT) pile.push("N");
+            else if ((estId(j, "répéter") || estId(j, "repeter")) && suivant && (suivant.t === TYPE.IDENTIFIANT || suivant.t === TYPE.NUMERO)) pile.push("N");
             else if (estId(j, "tester") && suivant && suivant.t === TYPE.CHAINE) pile.push("N");
             derniere = ti;
           });
@@ -10585,7 +10780,7 @@ fin
                 const estDebut = debLigne === t;
                 if (v === "classe" && estDebut && suiv && suiv.type === TYPE.IDENTIFIANT) c = "mc";
                 else if (v === "tester" && estDebut && suiv && suiv.type === TYPE.CHAINE) c = "mc";
-                else if (v === "herite" && debV === "classe" && memeLigne(pre)) c = "mc";
+                else if ((v === "herite" || v === "hérite") && debV === "classe" && memeLigne(pre)) c = "mc";
                 else if (v === "comme" && debV === "importer" && memeLigne(pre)) c = "mc";
                 else if (v === "chaque" && pre && pre.valeur === "pour" && memeLigne(pre)) c = "mc";
                 else if ((v === "dans" || v === "pas") && debV === "pour" && memeLigne(pre)) c = "mc";
@@ -10594,7 +10789,7 @@ fin
                 // nom d'une classe / d'une fonction à la déclaration
                 if (pre && pre.type === TYPE.IDENTIFIANT && pre.valeur === "classe" && jetons[premierDeLigne.get(t.ligne)] === pre) c = "cl";
                 else if (pre && pre.type === TYPE.MOT_CLE && pre.valeur === "fonction") c = "fn";
-                else if (pre && pre.type === TYPE.IDENTIFIANT && pre.valeur === "herite" && debV === "classe" && memeLigne(pre)) c = "cl";
+                else if (pre && pre.type === TYPE.IDENTIFIANT && (pre.valeur === "herite" || pre.valeur === "hérite") && debV === "classe" && memeLigne(pre)) c = "cl";
                 else if (pre && pre.type === TYPE.IDENTIFIANT && pre.valeur === "comme" && debV === "importer" && memeLigne(pre)) c = "ns";
                 if (c) break;
                 // identifiant avec points : o.double, soi.solde, c.deposer(...)
@@ -10683,11 +10878,12 @@ fin
         const EXTRAITS = [
           { texte: "si", detail: "condition", insertion: "si condition alors\n    \nfin", curseur: 3, longueurSel: 9 },
           { texte: "si/sinon", detail: "condition avec sinon", insertion: "si condition alors\n    \nsinon\n    \nfin", curseur: 3, longueurSel: 9 },
-          { texte: "pour", detail: "boucle comptée", insertion: "pour i allantde 1 a 10 faire\n    \nfin", curseur: 5, longueurSel: 1 },
+          { texte: "pour", detail: "boucle comptée", insertion: "pour i allant de 1 à 10 faire\n    \nfin", curseur: 5, longueurSel: 1 },
           { texte: "pour chaque", detail: "parcourir une liste", insertion: "pour chaque x dans liste faire\n    \nfin", curseur: 12, longueurSel: 1 },
-          { texte: "tantque", detail: "boucle conditionnelle", insertion: "tantque condition faire\n    \nfin", curseur: 8, longueurSel: 9 },
+          { texte: "répéter", detail: "répéter n fois", insertion: "répéter 3 fois\n    \nfin", curseur: 8, longueurSel: 1 },
+          { texte: "tantque", detail: "boucle conditionnelle", insertion: "tant que condition faire\n    \nfin", curseur: 8, longueurSel: 9 },
           { texte: "fonction", detail: "déclaration", insertion: "fonction nom(parametre)\n    \nfin", curseur: 9, longueurSel: 3 },
-          { texte: "classe", detail: "déclaration", insertion: "classe Nom\n    fonction creer()\n        \n    fin\nfin", curseur: 7, longueurSel: 3 },
+          { texte: "classe", detail: "déclaration", insertion: "classe Nom\n    fonction créer()\n        \n    fin\nfin", curseur: 7, longueurSel: 3 },
           { texte: "tester", detail: "bloc de test", insertion: 'tester "nom du test"\n    verifier_egal(1 + 1, 2)\nfin', curseur: 8, longueurSel: 11 },
           { texte: "essayer", detail: "essayer / attraper", insertion: "essayer\n    \nattraper e\n    afficher e\nfin", curseur: 0, longueurSel: 0 },
           { texte: "selon", detail: "choix multiple", insertion: "selon valeur faire\n    cas 1 alors\n        \n    defaut\n        \nfin", curseur: 6, longueurSel: 6 },
@@ -11727,7 +11923,7 @@ fin
       // Version de Fadéra affichée à l'écran de démarrage et ici : elle doit être la même que fadera-rs/Cargo.toml
       // (le test verifier_ide.js le vérifie ; à changer à chaque nouvelle version avec le texte de #texteBoot).
       const LOGO_FADERA = "data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 256 256%22%3E%3Crect width=%22256%22 height=%22256%22 rx=%2256%22 fill=%22%230f1b33%22/%3E%3Cpath d=%22M86 204V70a14 14 0 0 1 14-14h92M86 130h74%22 fill=%22none%22 stroke=%22%23f2a93b%22 stroke-width=%2226%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3Crect x=%22176%22 y=%22164%22 width=%2240%22 height=%2240%22 rx=%228%22 fill=%22%23fff%22/%3E%3C/svg%3E";
-      const VERSION_FADERA = "0.8.5";
+      const VERSION_FADERA = "0.9.0";
       window.VERSION_FADERA = VERSION_FADERA;
       function afficherInfoVersion() {
         ecrireTerminal(
@@ -19355,7 +19551,8 @@ fin
               }
             }
             if (!fadera_ide) return;
-            const r = await fetch("/__ouvrir", { cache: "no-store" });
+            const meta = document.querySelector('meta[name="fadera-jeton"]');
+            const r = await fetch("/__ouvrir", { cache: "no-store", headers: { "X-Fadera-Jeton": meta ? meta.content : "" } });
             if (r.status !== 200) return;
             const j = await r.json();
             if (j && typeof j.nom === "string" && typeof j.texte === "string") integrer([{ chemin: j.nom, texte: j.texte }], []);
@@ -19387,16 +19584,16 @@ fin
       const SNIPPETS = {
         alg: '# Programme principal Fadéra\nfonction principale()\n    afficher "Bienvenue dans le langage Fadéra !"\nfin\n\nprincipale()',
         si: "si condition alors\n    # instructions si vrai\nsinon\n    # instructions si faux\nfin",
-        tantque: "tantque condition faire\n    # instructions à répéter\nfin",
-        pour: "pour i allantde 1 a 10 faire\n    # instructions\nfin",
+        tantque: "tant que condition faire\n    # instructions à répéter\nfin",
+        pour: "pour i allant de 1 à 10 faire\n    # instructions\nfin",
         fonction:
           "fonction maFonction(parametre)\n    # instructions\n    renvoyer parametre\nfin",
         selon:
-          "selon valeur faire\n    cas 1 alors\n        # instructions\n    cas 2, 3 alors\n        # instructions\n    defaut\n        # sinon\nfin",
+          "selon valeur faire\n    cas 1 alors\n        # instructions\n    cas 2, 3 alors\n        # instructions\n    défaut\n        # sinon\nfin",
         chaque: "pour chaque element dans liste faire\n    # instructions\nfin",
         essayer:
           'essayer\n    # instructions risquées\nattraper erreur\n    afficher "Erreur : " + erreur\nfin',
-        classe: "classe Point\n    fonction creer(x, y)\n        soi.x = x\n        soi.y = y\n    fin\n    fonction decrire()\n        renvoyer soi.x + \",\" + soi.y\n    fin\nfin\n\nsoit p = Point(3, 4)\nafficher p.decrire()",
+        classe: "classe Point\n    fonction créer(x, y)\n        soi.x = x\n        soi.y = y\n    fin\n    fonction decrire()\n        renvoyer soi.x + \",\" + soi.y\n    fin\nfin\n\nsoit p = Point(3, 4)\nafficher p.decrire()",
         tester: 'tester "addition"\n    verifier_egal(1 + 1, 2)\nfin',
         tableau: "[1, 2, 3]",
         matrice: "[[1, 2], [3, 4]]",

@@ -41,6 +41,7 @@ const etapes = [
   ["Plateforme d'apprentissage (10 leçons : solutions, tests, correcteur)", "node", [path.join("site", "apprendre", "verifier_cours.js"), path.join(rs, "target", "release", "fadera" + exe)], ici],
   ["Éditeur local « fadera ide » (serveur, fichier double-cliqué, sécurité)", "node", [path.join(rs, "tests", "verifier_ide_serveur.js"), path.join(ici, "index.html"), path.join(rs, "target", "release", "fadera" + exe)], ici],
   ["Gestionnaire de paquets et réseau de la ligne de commande", "node", [path.join(rs, "tests", "verifier_paquets.js"), path.join(rs, "target", "release", "fadera" + exe)], ici],
+  ["Mini-site en Fadéra (serveur web : pages, API JSON, erreurs, persistance)", "node", [path.join(rs, "tests", "verifier_serveur.js"), path.join(rs, "target", "release", "fadera" + exe), path.join(ici, "applications", "mini-site")], ici],
   ["Vitesse du moteur Rust (régression catastrophique)", "node", [path.join(rs, "tests", "vitesse.js"), path.join(ici, "index.html"), path.join(rs, "target", "release", "fadera" + exe)], ici],
   ["Maths : JS ≡ Rust bit à bit + valeurs mpmath", "node", [path.join(rs, "tests", "verifier_maths.js"), path.join(ici, "index.html"), path.join(rs, "target", "release", "examples", "dump_maths" + exe)], ici],
 ];

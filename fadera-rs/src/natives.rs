@@ -149,7 +149,7 @@ pub fn trouver(nom: &str) -> Option<NatFn> {
         "__instance" => nat_instance,
         "classe_de" => nat_classe_de,
         "est_instance" => nat_est_instance,
-        _ => return stdlib::trouver(nom),
+        _ => return crate::serveur::trouver(nom).or_else(|| stdlib::trouver(nom)),
     })
 }
 

@@ -9,7 +9,7 @@
       let r;
       try { r = JSON.parse(executer(code, t.saisies.slice())); }
       catch (e) { return { reussi: false, erreur: "Le moteur n'a pas pu exécuter le programme (" + e + ").", details }; }
-      if (r.erreur) return { reussi: false, erreur: String(r.erreur), source: r.source || "", details };
+      if (r.erreur) return { reussi: false, erreur: String(r.erreur), source: r.source || "", aide: r.aide || [], details };
       const obtenu = (r.sortie || []).map(normaliser);
       const attendu = t.sortie.map(normaliser);
       const ok = obtenu.length === attendu.length && obtenu.every((l, i) => l === attendu[i]);

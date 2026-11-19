@@ -1,11 +1,36 @@
-# Journal des versions
+﻿# Journal des versions
 
 Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et la numérotation [SemVer](https://semver.org/lang/fr/) :
 `MAJEUR.MINEUR.CORRECTIF`. La version publiée est celle de `fadera-rs/Cargo.toml` ; l'étiquette Git est `v` + ce numéro.
 
 ## [Non publié]
 
+## [0.9.0] — 2026-11-18
+
+### Changé (incompatible : portée de bloc)
+- **Chaque bloc a sa propre portée** (moteurs JavaScript et Rust identiques) : une variable créée par `soit` dans un `si` / `sinon`, `tant que`, `pour`, `pour chaque`, `répéter`, un `cas` / `défaut` de `selon` ou un `essayer` / `attraper` n'existe plus après le bloc. Un `soit` du même nom qu'une variable extérieure la **masque** dans le bloc ; `x = …` (sans `soit`) modifie toujours la variable extérieure.
+- **La variable de boucle est privée à la boucle**, et chaque tour reçoit la sienne : les fonctions anonymes créées dans le corps gardent la valeur de leur tour. Le nom de l'erreur de `attraper` est privé au bloc `attraper`.
+- **Message d'aide** : utiliser après un bloc une variable qu'il avait créée ajoute « Cette variable a été créée dans un bloc … Déclarez-la avant le bloc, par exemple : soit x = … ».
+- **Pour migrer** : si un programme lisait après un bloc une variable créée dedans, déclarez-la avant le bloc (`soit signe = ""`) puis modifiez-la dans le bloc. Les programmes du dépôt (exemples, exercices, bibliothèque standard, leçons, tests) passent sans changement ; seuls deux exemples de la spécification (§8) ont été réécrits.
+- Spécification (§8, §15), guide (« Portée ») et tutoriel (piège n°9) mis à jour.
+
+### Changé (français correct dans le langage)
+- **Formes françaises acceptées** (moteurs JavaScript et Rust identiques) : `tant que`, `allant de`, `défaut`, `hérite`, `créer` (avec accents et espaces), et `pour x dans liste faire … fin` (comme `pour chaque x dans liste faire`). Les anciennes formes (`tantque`, `allantde`, `defaut`, `herite`, `creer`) restent valides.
+- **Noms libres** : `liste`, `taille`, `hasard`, `saisir`, `ajouter`, `lireElement`, `modifierElement`, `modifierCle`, `lireCle`, `lireFichier`, `ecrireFichier` ne sont des mots du langage que suivis d'une parenthèse (`taille(x)`) ; `soit taille = 1.75` et `soit liste = [1, 2]` fonctionnent. `structure` n'est un mot du langage que suivi d'un nom sur la même ligne. `fnf` reste réservé par compatibilité.
+- `saisir` accepte la virgule décimale (`1,5` donne le nombre 1.5) ; nouvelle fonction `saisir_nombre(message)` qui exige un nombre.
+- **Alias français des fonctions** (dans un appel) : `écrire_fichier`, `lire_fichier`, `lire_élément`, `modifier_élément`, `lire_clé`, `modifier_clé`, `masque_réseau`, `plage_réseau`, `créer_réseau`, `ia_entraîner`, `ia_prédire` ; les écritures historiques restent valides.
+- **Crochets pour les listes** : `l[i]` lit un élément, `l[i] = v` le remplace (équivalents de `lireElement` / `modifierElement`), enchaînables : `grille[i][j] = v`, `soi.items[i]`, `f()[0]`. Le `[` doit être sur la même ligne que la valeur qui le précède.
+- **`soit p.x = …` refusé** (message clair) : il créait une variable fantôme « p.x » sans modifier le champ de l'objet. On écrit `p.x = …` ; dans une classe, `soi.x = x`. Le message « variable introuvable » ne conseille plus `soit zz.foo`.
+- **Synonymes français** : `longueur(x)` (= `taille(x)`, désactivé si le programme déclare sa propre fonction `longueur`) et `répéter n fois … fin` (le `faire` est facultatif).
+- Les leçons du site (`site/apprendre`) sont écrites avec les formes françaises : **reconstruire le WebAssembly avant de publier le site**, sinon les leçons échouent.
+- Messages d'erreur, extraits de l'éditeur (`tant que`, `allant de … à`, `défaut`, `créer`), spécification, guide et tutoriel écrits avec les formes françaises.
+- Textes corrigés : référence de `saisir`, piège n°1 et n°3 du tutoriel, commande d'exécution dans le guide (`fadera monscript.fa`).
+- **Sécurité de l'éditeur local** : `/__ouvrir` (lecture et dépôt) exige désormais le jeton secret et une origine locale ; le jeton est déposé dans `~/.fadera/ide.jeton` pour le lancement `fadera fichier.fa`. L'en-tête `Host` est comparé exactement (`127.0.0.1:4747` ou `localhost:4747`), plus de simple « contient localhost ».
+
 ### Ajouté
+- **Serveur web** (ligne de commande) : `serveur_http(port, gestionnaire)` fait d'un programme Fadéra un site ou une API ; fonctions de dossiers et fichiers (`fichier_existe`, `dossier_creer`, `dossier_lister`, `fichier_supprimer`, `dossier_supprimer`, `fichier_renommer`, `fichier_copier`, `fichier_ecrire_sur`), d'environnement (`environnement`, `arguments`, `dossier_programme`, `adresses_reseau`, `arreter`) et de sécurité (`crypto_scrypt`, `crypto_hmac_base64url`, `crypto_egal_constant`, `crypto_aleatoire_entier`, `base64url_encoder`, `base64url_decoder`). Indisponibles dans le navigateur. Documentation : `docs/SERVEUR.md` et chapitre 18 du tutoriel.
+- **Application d'exemple** : `applications/mini-site` (liste de tâches, 70 lignes), vérifiée par `verifier_serveur.js`.
+- Messages d'erreur : « Tu voulais écrire … ? » dans la ligne de commande et dans les leçons (comme dans l'IDE) quand un nom de variable, de fonction ou de mot-clé est mal écrit.
 - Apprendre Fadéra : leçons sur les listes, les textes et les structures (18 leçons au total, en 7 chapitres).
 
 ## [0.8.5] — 2026-11-02
