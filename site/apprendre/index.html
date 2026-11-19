@@ -252,10 +252,15 @@ button:disabled { opacity: .5; cursor: wait; }
     $("#executer").onclick = async () => {
       if (!(await pret())) return;
       const saisies = $("#entrees").value.split(",").map((s) => s.trim()).filter((s, k, t) => s !== "" || k < t.length - 1);
-      const r = JSON.parse(executer(zone.value, $("#entrees").value.trim() ? saisies : []));
+      const caseVide = !$("#entrees").value.trim();
+      const r = JSON.parse(executer(zone.value, caseVide ? [] : saisies));
       sortie.className = "sortie " + (r.erreur ? "ko" : "neutre");
+      // le programme demande une réponse (saisir) mais la case des réponses est vide : l'erreur vient presque toujours de là
+      const aideSaisir = r.erreur && caseVide && /\bsaisir(_nombre)?\s*\(/.test(zone.value)
+        ? ["Ton programme demande une réponse avec saisir, mais la case grise est vide. Écris ta réponse dans la case grise (par exemple 3), puis clique Exécuter. Ce qui est entre les parenthèses de saisir est seulement la question affichée, pas la réponse."]
+        : [];
       sortie.innerHTML = r.erreur
-        ? "<strong>Erreur</strong><pre>" + echapper(r.erreur) + (r.source ? "\n" + echapper(r.source) : "") + "</pre>" + aideErreur(r.aide)
+        ? "<strong>Erreur</strong><pre>" + echapper(r.erreur) + (r.source ? "\n" + echapper(r.source) : "") + "</pre>" + aideErreur((r.aide || []).concat(aideSaisir))
         : "<strong>Résultat</strong><pre>" + (r.sortie.length ? echapper(r.sortie.join("\n")) : "(rien n'a été affiché)") + "</pre>";
     };
 
