@@ -59,34 +59,34 @@
     },
     {
       id: "pour", chapitre: "3. Répéter", titre: "La boucle pour",
-      lecon: `<p>Pour répéter des instructions, on utilise une <strong>boucle</strong>. <code>pour i allantde 1 a 5 faire … fin</code> exécute le bloc 5 fois, avec <code>i</code> qui vaut 1, puis 2, … puis 5.</p>
-<p>On peut compter autrement avec <code>pas</code> : <code>pour i allantde 0 a 10 pas 2 faire</code> donne 0, 2, 4, …</p>`,
-      exemple: `pour i allantde 1 a 5 faire\n    afficher i\nfin`,
+      lecon: `<p>Pour répéter des instructions, on utilise une <strong>boucle</strong>. <code>pour i allant de 1 à 5 faire … fin</code> exécute le bloc 5 fois, avec <code>i</code> qui vaut 1, puis 2, … puis 5.</p>
+<p>On peut compter autrement avec <code>pas</code> : <code>pour i allant de 0 à 10 pas 2 faire</code> donne 0, 2, 4, …</p>`,
+      exemple: `pour i allant de 1 à 5 faire\n    afficher i\nfin`,
       consigne: `Demande un nombre <code>n</code> et affiche la table de multiplication de 7 jusqu'à <code>n</code>. Pour n = 3 : <code>7 x 1 = 7</code>, <code>7 x 2 = 14</code>, <code>7 x 3 = 21</code> (une ligne chacune).`,
       depart: `soit n = saisir("Jusqu'à combien ? ")\n`,
-      indice: `<code>pour i allantde 1 a n faire</code> puis <code>afficher "7 x " + i + " = " + 7 * i</code>`,
-      solution: `soit n = saisir("Jusqu'à combien ? ")\npour i allantde 1 a n faire\n    afficher "7 x " + i + " = " + 7 * i\nfin`,
+      indice: `<code>pour i allant de 1 à n faire</code> puis <code>afficher "7 x " + i + " = " + 7 * i</code>`,
+      solution: `soit n = saisir("Jusqu'à combien ? ")\npour i allant de 1 à n faire\n    afficher "7 x " + i + " = " + 7 * i\nfin`,
       tests: [{ saisies: ["3"], sortie: ["7 x 1 = 7", "7 x 2 = 14", "7 x 3 = 21"] }, { saisies: ["1"], sortie: ["7 x 1 = 7"] }, { saisies: ["5"], sortie: ["7 x 1 = 7", "7 x 2 = 14", "7 x 3 = 21", "7 x 4 = 28", "7 x 5 = 35"] }],
     },
     {
       id: "somme", chapitre: "3. Répéter", titre: "Accumuler : la somme",
       lecon: `<p>Une boucle devient puissante quand elle <strong>fait évoluer une variable</strong>. On crée un « compteur » avant la boucle, puis on le modifie à chaque tour : <code>total = total + i</code>.</p>
 <p>Attention : <code>soit</code> sert à <em>créer</em> une variable ; pour la modifier ensuite, on écrit simplement <code>nom = …</code>.</p>`,
-      exemple: `soit total = 0\npour i allantde 1 a 4 faire\n    total = total + i\nfin\nafficher total   # 1+2+3+4 = 10`,
+      exemple: `soit total = 0\npour i allant de 1 à 4 faire\n    total = total + i\nfin\nafficher total   # 1+2+3+4 = 10`,
       consigne: `Demande un nombre <code>n</code> et affiche la somme des entiers de 1 à <code>n</code>. Pour n = 4 : <code>10</code>.`,
       depart: `soit n = saisir("n ? ")\nsoit total = 0\n`,
-      indice: `Dans la boucle <code>pour i allantde 1 a n</code>, écris <code>total = total + i</code>. Affiche <code>total</code> <strong>après</strong> la boucle (après son <code>fin</code>).`,
-      solution: `soit n = saisir("n ? ")\nsoit total = 0\npour i allantde 1 a n faire\n    total = total + i\nfin\nafficher total`,
+      indice: `Dans la boucle <code>pour i allant de 1 à n</code>, écris <code>total = total + i</code>. Affiche <code>total</code> <strong>après</strong> la boucle (après son <code>fin</code>).`,
+      solution: `soit n = saisir("n ? ")\nsoit total = 0\npour i allant de 1 à n faire\n    total = total + i\nfin\nafficher total`,
       tests: [{ saisies: ["4"], sortie: ["10"] }, { saisies: ["10"], sortie: ["55"] }, { saisies: ["1"], sortie: ["1"] }, { saisies: ["100"], sortie: ["5050"] }],
     },
     {
-      id: "tantque", chapitre: "3. Répéter", titre: "La boucle tantque",
-      lecon: `<p>Quand on ne sait pas à l'avance combien de tours il faudra, on utilise <code>tantque condition faire … fin</code> : le bloc se répète <strong>tant que</strong> la condition est vraie.</p>
+      id: "tantque", chapitre: "3. Répéter", titre: "La boucle tant que",
+      lecon: `<p>Quand on ne sait pas à l'avance combien de tours il faudra, on utilise <code>tant que condition faire … fin</code> : le bloc se répète <strong>tant que</strong> la condition est vraie.</p>
 <p>⚠ Il faut que quelque chose, dans la boucle, finisse par rendre la condition fausse — sinon le programme tourne sans fin !</p>`,
       exemple: `soit i = 3\ntantque i > 0 faire\n    afficher i\n    i = i - 1\nfin\nafficher "Décollage !"`,
       consigne: `Demande un nombre <code>n</code> et fais un compte à rebours de <code>n</code> jusqu'à 1, puis affiche <code>Décollage !</code>. Pour n = 3 : <code>3</code>, <code>2</code>, <code>1</code>, <code>Décollage !</code>.`,
       depart: `soit n = saisir("Départ du compte à rebours ? ")\n`,
-      indice: `<code>tantque n > 0 faire</code>, affiche <code>n</code>, puis <code>n = n - 1</code>. Le message final va après la boucle.`,
+      indice: `<code>tant que n > 0 faire</code>, affiche <code>n</code>, puis <code>n = n - 1</code>. Le message final va après la boucle.`,
       solution: `soit n = saisir("Départ du compte à rebours ? ")\ntantque n > 0 faire\n    afficher n\n    n = n - 1\nfin\nafficher "Décollage !"`,
       tests: [{ saisies: ["3"], sortie: ["3", "2", "1", "Décollage !"] }, { saisies: ["1"], sortie: ["1", "Décollage !"] }, { saisies: ["0"], sortie: ["Décollage !"] }],
     },
@@ -105,11 +105,11 @@
       id: "parcourir", chapitre: "4. Les listes", titre: "Parcourir une liste",
       lecon: `<p>Pour traiter chaque valeur d'une liste, on combine une boucle <code>pour</code> et les places de la liste : elles vont de <code>0</code> à <code>taille(liste) - 1</code>.</p>
 <p>À chaque tour, <code>i</code> est la place, et <code>lireElement(liste, i)</code> donne la valeur.</p>`,
-      exemple: `soit prix = [5, 12, 3]\nsoit total = 0\npour i allantde 0 a taille(prix) - 1 faire\n    total = total + lireElement(prix, i)\nfin\nafficher "Total : " + total`,
+      exemple: `soit prix = [5, 12, 3]\nsoit total = 0\npour i allant de 0 à taille(prix) - 1 faire\n    total = total + lireElement(prix, i)\nfin\nafficher "Total : " + total`,
       consigne: `Demande d'abord combien de notes il y a (<code>n</code>), puis lis les <code>n</code> notes. Affiche la moyenne sous la forme <code>Moyenne : 12</code> (pour 10, 14 et 12).`,
       depart: `soit n = saisir("Combien de notes ? ")\nsoit notes = []\n`,
-      indice: `Une première boucle <code>pour i allantde 1 a n</code> ajoute chaque note. Une seconde boucle (ou la même) fait la somme, puis divise par <code>n</code>.`,
-      solution: `soit n = saisir("Combien de notes ? ")\nsoit notes = []\npour i allantde 1 a n faire\n    ajouter(notes, saisir("Note ? "))\nfin\nsoit total = 0\npour i allantde 0 a taille(notes) - 1 faire\n    total = total + lireElement(notes, i)\nfin\nafficher "Moyenne : " + total / n`,
+      indice: `Une première boucle <code>pour i allant de 1 à n</code> ajoute chaque note. Une seconde boucle (ou la même) fait la somme, puis divise par <code>n</code>.`,
+      solution: `soit n = saisir("Combien de notes ? ")\nsoit notes = []\npour i allant de 1 à n faire\n    ajouter(notes, saisir("Note ? "))\nfin\nsoit total = 0\npour i allant de 0 à taille(notes) - 1 faire\n    total = total + lireElement(notes, i)\nfin\nafficher "Moyenne : " + total / n`,
       tests: [{ saisies: ["3", "10", "14", "12"], sortie: ["Moyenne : 12"] }, { saisies: ["2", "10", "15"], sortie: ["Moyenne : 12.5"] }, { saisies: ["1", "17"], sortie: ["Moyenne : 17"] }, { saisies: ["4", "8", "8", "8", "8"], sortie: ["Moyenne : 8"] }],
     },
     {
@@ -149,11 +149,11 @@
       id: "voyelles", chapitre: "5. Les textes", titre: "Lire un texte lettre par lettre",
       lecon: `<p><code>caractere(texte, place)</code> donne la lettre à une place donnée (la première est la place <code>0</code>), exactement comme pour les listes. On peut donc <strong>parcourir un texte</strong> avec une boucle.</p>
 <p><code>contient("aeiou", lettre)</code> répond <code>vrai</code> si la lettre fait partie de ces voyelles.</p>`,
-      exemple: `soit mot = "bonjour"\npour i allantde 0 a taille(mot) - 1 faire\n    afficher caractere(mot, i)\nfin`,
+      exemple: `soit mot = "bonjour"\npour i allant de 0 à taille(mot) - 1 faire\n    afficher caractere(mot, i)\nfin`,
       consigne: `Demande un mot (en minuscules, sans accent) et affiche <code>Voyelles : </code> suivi de leur nombre. Pour « bonjour » : <code>Voyelles : 3</code>.`,
       depart: `soit mot = saisir("Un mot ? ")\nsoit compte = 0\n`,
       indice: `Dans la boucle, <code>si contient("aeiou", caractere(mot, i)) alors</code> ajoute 1 à <code>compte</code>.`,
-      solution: `soit mot = saisir("Un mot ? ")\nsoit compte = 0\npour i allantde 0 a taille(mot) - 1 faire\n    si contient("aeiou", caractere(mot, i)) alors\n        compte = compte + 1\n    fin\nfin\nafficher "Voyelles : " + compte`,
+      solution: `soit mot = saisir("Un mot ? ")\nsoit compte = 0\npour i allant de 0 à taille(mot) - 1 faire\n    si contient("aeiou", caractere(mot, i)) alors\n        compte = compte + 1\n    fin\nfin\nafficher "Voyelles : " + compte`,
       tests: [{ saisies: ["bonjour"], sortie: ["Voyelles : 3"] }, { saisies: ["fadera"], sortie: ["Voyelles : 3"] }, { saisies: ["rythme"], sortie: ["Voyelles : 1"] }, { saisies: ["strt"], sortie: ["Voyelles : 0"] }, { saisies: ["aeiou"], sortie: ["Voyelles : 5"] }],
     },
     {
@@ -171,11 +171,11 @@
       id: "classe", chapitre: "6. Les structures", titre: "Une liste de structures",
       lecon: `<p>On peut mettre des structures <strong>dans une liste</strong> : c'est ainsi qu'on représente un tableau de données (une classe d'élèves, un stock, des factures…).</p>
 <p>Pour lire un champ du 3<sup>e</sup> élément : <code>lireCle(lireElement(eleves, 2), "nom")</code>.</p>`,
-      exemple: `soit eleves = [{ nom: "Ansou", note: 14 }, { nom: "Fatima", note: 17 }]\npour i allantde 0 a taille(eleves) - 1 faire\n    soit e = lireElement(eleves, i)\n    afficher lireCle(e, "nom") + " : " + lireCle(e, "note")\nfin`,
+      exemple: `soit eleves = [{ nom: "Ansou", note: 14 }, { nom: "Fatima", note: 17 }]\npour i allant de 0 à taille(eleves) - 1 faire\n    soit e = lireElement(eleves, i)\n    afficher lireCle(e, "nom") + " : " + lireCle(e, "note")\nfin`,
       consigne: `Demande combien d'élèves, puis, pour chacun, son nom et sa note. Affiche à la fin <code>Major : </code> suivi du nom de l'élève qui a la <strong>meilleure note</strong>. (Les notes seront toutes différentes.)`,
       depart: `soit n = saisir("Combien d'élèves ? ")\nsoit eleves = []\n`,
-      indice: `Une boucle <code>pour i allantde 1 a n</code> ajoute <code>{ nom: …, note: … }</code> à la liste. Une seconde boucle garde le nom et la note du meilleur vus jusque-là.`,
-      solution: `soit n = saisir("Combien d'élèves ? ")\nsoit eleves = []\npour i allantde 1 a n faire\n    soit nom = saisir("Nom ? ")\n    soit note = saisir("Note ? ")\n    ajouter(eleves, { nom: nom, note: note })\nfin\nsoit major = lireElement(eleves, 0)\npour i allantde 1 a taille(eleves) - 1 faire\n    soit e = lireElement(eleves, i)\n    si lireCle(e, "note") > lireCle(major, "note") alors\n        major = e\n    fin\nfin\nafficher "Major : " + lireCle(major, "nom")`,
+      indice: `Une boucle <code>pour i allant de 1 à n</code> ajoute <code>{ nom: …, note: … }</code> à la liste. Une seconde boucle garde le nom et la note du meilleur vus jusque-là.`,
+      solution: `soit n = saisir("Combien d'élèves ? ")\nsoit eleves = []\npour i allant de 1 à n faire\n    soit nom = saisir("Nom ? ")\n    soit note = saisir("Note ? ")\n    ajouter(eleves, { nom: nom, note: note })\nfin\nsoit major = lireElement(eleves, 0)\npour i allant de 1 à taille(eleves) - 1 faire\n    soit e = lireElement(eleves, i)\n    si lireCle(e, "note") > lireCle(major, "note") alors\n        major = e\n    fin\nfin\nafficher "Major : " + lireCle(major, "nom")`,
       tests: [{ saisies: ["2", "Ansou", "14", "Fatima", "17"], sortie: ["Major : Fatima"] }, { saisies: ["3", "Li", "9", "Fatima", "18", "Kofi", "12"], sortie: ["Major : Fatima"] }, { saisies: ["1", "Solo", "10"], sortie: ["Major : Solo"] }, { saisies: ["3", "A", "20", "B", "5", "C", "7"], sortie: ["Major : A"] }],
     },
     {
@@ -196,8 +196,8 @@
       exemple: `fonction estPair(n)\n    renvoyer n % 2 == 0\nfin\n\nafficher estPair(8)\nafficher estPair(7)`,
       consigne: `Demande un nombre <code>n</code>. Affiche, une par ligne, tous les nombres <strong>pairs</strong> de 1 à <code>n</code>, puis <code>Somme : </code> suivi de leur somme. Pour n = 7 : <code>2</code>, <code>4</code>, <code>6</code>, <code>Somme : 12</code>.`,
       depart: `soit n = saisir("n ? ")\n`,
-      indice: `Boucle <code>pour i allantde 1 a n</code> ; dedans, <code>si i % 2 == 0 alors</code> affiche <code>i</code> et ajoute-le à un total. Affiche la somme après la boucle.`,
-      solution: `soit n = saisir("n ? ")\nsoit somme = 0\npour i allantde 1 a n faire\n    si i % 2 == 0 alors\n        afficher i\n        somme = somme + i\n    fin\nfin\nafficher "Somme : " + somme`,
+      indice: `Boucle <code>pour i allant de 1 à n</code> ; dedans, <code>si i % 2 == 0 alors</code> affiche <code>i</code> et ajoute-le à un total. Affiche la somme après la boucle.`,
+      solution: `soit n = saisir("n ? ")\nsoit somme = 0\npour i allant de 1 à n faire\n    si i % 2 == 0 alors\n        afficher i\n        somme = somme + i\n    fin\nfin\nafficher "Somme : " + somme`,
       tests: [{ saisies: ["7"], sortie: ["2", "4", "6", "Somme : 12"] }, { saisies: ["10"], sortie: ["2", "4", "6", "8", "10", "Somme : 30"] }, { saisies: ["1"], sortie: ["Somme : 0"] }],
     },
   ];

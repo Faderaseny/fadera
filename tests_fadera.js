@@ -76,6 +76,15 @@ await t("bissextile",'afficher est_bissextile(2024) + " " + est_bissextile(1900)
 await t("date inconnue unité",'afficher date_ajouter(0, 1, "lustres")',/ERR:.*unité inconnue/);
 await t("remplir",'afficher texte_remplir_gauche("7", 3, "0") + "|" + texte_remplir_droite("ab", 4, ".")',"007|ab..");
 await t("capitaliser/titre",'afficher texte_capitaliser("fADÉRA") + " " + texte_titre("le petit prince")',"Fadéra Le Petit Prince");
+  groupe = "portée de bloc";
+  await t("bloc: soit masque l'extérieure", 'soit x = 1\nsi vrai alors\n  soit x = 2\n  afficher x\nfin\nafficher x', "2\n1");
+  await t("bloc: x = … modifie l'extérieure", 'soit y = 0\nsi vrai alors\n  y = 5\nfin\nafficher y', "5");
+  await t("bloc: variable disparue + aide", 'si vrai alors\n  soit z = 7\nfin\nafficher z', "ERR:Ligne 4 : La variable \"z\" n'existe pas. Déclarez-la d'abord avec : soit z = ...\nCette variable a été créée dans un bloc (si, boucle, selon, essayer) qui est terminé : elle n'existe plus après lui. Déclarez-la avant le bloc, par exemple : soit z = ...");
+  await t("bloc: variable de boucle privée", 'pour i allant de 1 à 2 faire\n  afficher i\nfin\nafficher i', /^1\n2\nERR:Ligne 4 : La variable "i" n'existe pas/);
+  await t("bloc: un tour = une variable", 'soit fs = liste()\npour i allant de 1 à 3 faire\n  ajouter(fs, fonction() renvoyer i fin)\nfin\npour chaque f dans fs faire\n  afficher f()\nfin', "1\n2\n3");
+  await t("bloc: rompre/continuer dans un bloc", 'soit n = 0\ntant que n < 6 faire\n  n = n + 1\n  si n == 2 alors\n    soit t = 1\n    continuer\n  fin\n  si n == 4 alors\n    soit u = 1\n    rompre\n  fin\nfin\nafficher n', "4");
+  await t("bloc: renvoyer depuis un bloc", 'fonction g(x)\n  si x > 0 alors\n    soit r = x * 2\n    renvoyer r\n  fin\n  renvoyer 0\nfin\nafficher g(4)\nafficher g(0)', "8\n0");
+  await t("bloc: nom de l'erreur privé", 'essayer\n  lever("boum")\nattraper e\n  afficher e\nfin\nafficher e', /^boum\nERR:Ligne 6 : La variable "e" n'existe pas/);
 await t("slug",'afficher texte_slug("Été à Dakar : 2026 !")',"ete-a-dakar-2026");
 await t("palindrome",'afficher texte_est_palindrome("Esope reste ici et se repose") + " " + texte_est_palindrome("Fadera")',"vrai faux");
 await t("distance",'afficher texte_distance("chat","chats") + "-" + texte_distance("kitten","sitting")',"1-3");

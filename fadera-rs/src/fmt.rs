@@ -227,6 +227,8 @@ pub fn formater_source(src: &str, indentation: usize) -> Result<String, ErreurFa
                 pile.push(Bloc::Normal);
             } else if est_id(j, "tester") && matches!(suivant, Some(s) if s.t == Type::Chaine) {
                 pile.push(Bloc::Normal);
+            } else if (est_id(j, "répéter") || est_id(j, "repeter")) && matches!(suivant, Some(s) if s.t == Type::Identifiant || s.t == Type::Numero) {
+                pile.push(Bloc::Normal);
             }
             derniere = Some(ti);
         }

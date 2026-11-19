@@ -6,7 +6,7 @@ Fadéra n'est pas réservé à l'enseignement : le même langage sert à écrire
 
 Deux façons d'exécuter du Fadéra :
 - **Référence précise** : `SPEC_FADERA.md` définit la grammaire, les priorités, l'égalité, la copie/référence, la portée et les erreurs. Ses exemples sont vérifiés automatiquement sur les deux moteurs (`node verifier_spec.js`).
-- **En ligne de commande** : `node fadera.js monscript.fa` (ou l'exécutable packagé). Seule cette version donne accès à `lireFichier`/`ecrireFichier`.
+- **En ligne de commande** : `fadera monscript.fa` (l'exécutable Rust ; ou `node fadera.js monscript.fa` si vous avez le lanceur Node). Seule cette version donne accès à `lireFichier`/`ecrireFichier`.
 - **Dans le navigateur (Fadéra OS)** : l'éditeur web publié en artefact. `saisir(...)` y ouvre une fenêtre au lieu de lire le clavier ; `lireFichier`/`ecrireFichier` n'y sont pas disponibles.
 
 ---
@@ -55,7 +55,7 @@ afficher "Bonjour, monde !"
 On l'exécute avec :
 
 ```
-node fadera.js monscript.fa
+fadera monscript.fa
 ```
 
 Un script est une suite d'**instructions**, exécutées de haut en bas (sauf pour les fonctions, qui peuvent être appelées avant leur déclaration — voir section 8). Chaque instruction commence en général par un mot-clé (`soit`, `si`, `afficher`, `pour`...) ou par le nom d'une variable/fonction.
@@ -95,9 +95,9 @@ Exemple de noms valides : `age`, `_compteur`, `prénom`, `résultat_final`, `x1`
 
 ### Mots réservés (à ne jamais utiliser comme nom de variable)
 ```
-soit  si  alors  sinon  fin  afficher  tantque  faire  fonction  renvoyer
+soit  si  alors  sinon  fin  afficher  tant que  faire  fonction  renvoyer
 saisir  liste  ajouter  taille  lireElement  modifierElement  modifierCle
-hasard  structure  lireCle  pour  allantde  lireFichier  ecrireFichier
+hasard  structure  lireCle  pour  allant de  lireFichier  ecrireFichier
 vrai  faux  non  et  ou
 ```
 Si vous essayez d'utiliser l'un de ces mots comme nom de variable, Fadéra refuse avec un message clair :
@@ -105,7 +105,7 @@ Si vous essayez d'utiliser l'un de ces mots comme nom de variable, Fadéra refus
 soit si = 5   # ❌ "si" est un mot réservé du langage : choisissez un autre nom.
 ```
 
-> **À noter** : `a` (le séparateur de la boucle `pour ... allantde ... a ...`) et `pas` (le pas optionnel) ne sont **pas** des mots réservés globaux — ils ne sont interprétés spécialement qu'à cet endroit précis de la grammaire. Vous pouvez donc avoir une variable nommée `a` ailleurs dans votre script sans problème.
+> **À noter** : `a` (le séparateur de la boucle `pour ... allant de ... à ...`) et `pas` (le pas optionnel) ne sont **pas** des mots réservés globaux — ils ne sont interprétés spécialement qu'à cet endroit précis de la grammaire. Vous pouvez donc avoir une variable nommée `a` ailleurs dans votre script sans problème.
 
 ### Opérateurs reconnus
 ```
@@ -164,6 +164,18 @@ score = 10   # ❌ La variable "score" n'existe pas. Déclarez-la d'abord avec :
 
 ### Portée
 Chaque fonction a sa propre mémoire locale (ses paramètres et les `soit` faits à l'intérieur). Le script principal a sa mémoire globale, visible en lecture depuis les fonctions.
+
+**Depuis la version 0.9.0, chaque bloc a aussi sa portée** : une variable créée par `soit` dans un `si`, un `sinon`, une boucle (`tant que`, `pour`, `pour chaque`, `répéter`), un `cas` de `selon` ou un `essayer` / `attraper` **disparaît à la fin du bloc**. La variable d'une boucle (`i` dans `pour i allant de 1 à 3`) est elle aussi privée à la boucle. Pour garder une valeur après le bloc, déclarez la variable **avant** lui :
+```
+soit signe = ""            # déclarée avant le bloc
+si x < 0 alors
+  signe = "négatif"        # sans soit : on modifie la variable extérieure
+sinon
+  signe = "positif ou nul"
+fin
+afficher signe
+```
+Si vous écrivez `soit signe = …` dans le bloc, vous créez une **autre** variable, qui masque la première et disparaît avec le bloc. Utiliser après le bloc une variable qu'il avait créée donne un message qui l'explique : « Cette variable a été créée dans un bloc … Déclarez-la avant le bloc ».
 
 ---
 
@@ -247,28 +259,28 @@ sinon
 fin
 ```
 
-### Boucle `tantque`
+### Boucle `tant que`
 ```
 soit i = 0
-tantque i < 5 faire
+tant que i < 5 faire
     afficher i
     i = i + 1
 fin
 ```
 
-### Boucle `pour ... allantde ... a ... faire`
+### Boucle `pour ... allant de ... à ... faire`
 ```
-pour i allantde 1 a 5 faire
+pour i allant de 1 à 5 faire
     afficher i
 fin
 ```
 Avec un pas personnalisé (`pas`) — utile pour compter par 2, ou à l'envers avec un pas négatif :
 ```
-pour i allantde 0 a 10 pas 2 faire
+pour i allant de 0 à 10 pas 2 faire
     afficher i          # 0, 2, 4, 6, 8, 10
 fin
 
-pour i allantde 10 a 1 pas -1 faire
+pour i allant de 10 à 1 pas -1 faire
     afficher i          # compte à rebours : 10, 9, 8, ... 1
 fin
 ```
@@ -351,6 +363,7 @@ soit matrice = [[1, 2], [3, 4]]
 | Lire un élément (index commence à 0) | `lireElement(liste, index)` | `lireElement(l, 0)` → `1` |
 | Ajouter à la fin | `ajouter(liste, valeur)` | `ajouter(l, 4)` |
 | Modifier un élément | `modifierElement(liste, index, valeur)` | `modifierElement(l, 0, 99)` |
+| Lire / modifier avec des crochets | `liste[index]` · `liste[index] = valeur` | `l[0]` · `l[0] = 99` |
 
 ```
 soit notes = [12, 15, 8]
@@ -444,7 +457,7 @@ Dans l'IDE, une erreur ne se limite plus à une phrase : le terminal montre **la
 - **Soulignement dans l'éditeur** : l'endroit fautif est souligné en rouge (ligne teintée, mot souligné en vague) et l'éditeur défile jusqu'à lui. Le repère disparaît dès que vous modifiez le texte ou relancez le programme.
 - **« Tu voulais écrire… ? »** : pour une variable, une fonction (déclarée ou native) ou une instruction mal écrite, Fadéra propose le nom le plus proche. Les accents et les majuscules sont ignorés (`eleve` → `élève`), et une lettre manquante, en trop, fausse ou deux lettres échangées sont tolérées.
 - **Variable déclarée plus bas** : si le nom existe plus loin dans le script, le message l'indique (« n'est déclarée qu'à la ligne 7 : place cette déclaration avant son utilisation »).
-- **`=` au lieu de `==`** : dans un `si` ou un `tantque`, Fadéra rappelle que `==` sert à comparer.
+- **`=` au lieu de `==`** : dans un `si` ou un `tant que`, Fadéra rappelle que `==` sert à comparer.
 - **Pile d'appels** : quand l'erreur survient dans une fonction, le terminal indique le chemin parcouru, de la fonction fautive jusqu'au programme :
 
 ```
@@ -627,7 +640,7 @@ afficher crypto_dechiffrer_asymetrique(chiffre, lireCle(cles, "cle_privee"))
 
 ## 14. Bonnes pratiques et pièges à éviter
 
-- **`fin` obligatoire** pour fermer `si`, `tantque`, `pour` et `fonction`. Un bloc non fermé donne une erreur indiquant la ligne où il a été ouvert.
+- **`fin` obligatoire** pour fermer `si`, `tant que`, `pour` et `fonction`. Un bloc non fermé donne une erreur indiquant la ligne où il a été ouvert.
 - **Comparer avec `==`, pas `=`** : `=` sert uniquement à affecter une valeur.
 - **Les index de liste commencent à 0**, pas à 1.
 - **Ne réutilisez pas un mot réservé** comme nom de variable (voir la liste en section 2).
@@ -654,7 +667,7 @@ soit eleves = [
 # Fonction : calcule la moyenne d'une liste de notes
 fonction moyenneListe(notes)
     soit somme = 0
-    pour i allantde 0 a taille(notes) - 1 faire
+    pour i allant de 0 à taille(notes) - 1 faire
         somme = somme + lireElement(notes, i)
     fin
     renvoyer somme / taille(notes)
@@ -662,7 +675,7 @@ fin
 
 afficher "=== Bulletin de classe ==="
 
-pour i allantde 0 a taille(eleves) - 1 faire
+pour i allant de 0 à taille(eleves) - 1 faire
     soit eleve = lireElement(eleves, i)
     soit nom = lireCle(eleve, "nom")
     soit notes = lireCle(eleve, "notes")
@@ -679,7 +692,7 @@ fin
 
 # Un peu de statistiques sur toutes les moyennes de la classe
 soit moyennesClasse = liste()
-pour i allantde 0 a taille(eleves) - 1 faire
+pour i allant de 0 à taille(eleves) - 1 faire
     soit eleve = lireElement(eleves, i)
     ajouter(moyennesClasse, moyenneListe(lireCle(eleve, "notes")))
 fin
@@ -694,9 +707,9 @@ afficher "Écart-type : " + arrondir(stats_ecart_type(moyennesClasse), 2)
 ## 16. Nouveautés : contrôle de flux, fonctions valeurs, texte, modules
 
 ### 16.1 `rompre` et `continuer`
-Valables dans `pour`, `tantque` et `pour chaque`. `rompre` sort de la boucle, `continuer` passe à l'itération suivante. En dehors d'une boucle, c'est une erreur claire.
+Valables dans `pour`, `tant que` et `pour chaque`. `rompre` sort de la boucle, `continuer` passe à l'itération suivante. En dehors d'une boucle, c'est une erreur claire.
 ```
-pour i allantde 1 a 10 faire
+pour i allant de 1 à 10 faire
     si i % 2 == 0 alors
         continuer
     fin
@@ -723,7 +736,7 @@ selon note faire
         afficher "Parfait"
     cas 10, 11, 12 alors
         afficher "Passable"
-    defaut
+    défaut
         afficher "Autre"
 fin
 ```
@@ -1248,7 +1261,7 @@ Une classe regroupe des données (les champs d'un objet) et les fonctions qui le
 
 ```
 classe Compte
-    fonction creer(titulaire, solde)
+    fonction créer(titulaire, solde)
         soi.titulaire = titulaire
         soi.solde = solde
     fin
@@ -1270,7 +1283,7 @@ afficher c              # Compte { titulaire: "Fatima", solde: 150 }
 - **`soi`** désigne l'objet courant dans chaque méthode ; il est ajouté tout seul aux paramètres (ne l'écrivez pas).
 - **`creer`** est le constructeur, facultatif. `Compte("Fatima", 100)` crée l'objet, appelle `creer`, et renvoie l'objet.
 - Un objet est une **structure** : `c.solde` se lit et s'écrit comme n'importe quel champ, `taille(c)` compte ses champs, `copier(c)` le duplique en gardant sa classe.
-- **Héritage** : `classe Epargne herite Compte` reprend les méthodes de `Compte`. Le constructeur n'est pas hérité : écrivez `creer` et appelez celui du parent avec `Compte.creer(soi, titulaire, solde)`.
+- **Héritage** : `classe Epargne hérite Compte` reprend les méthodes de `Compte`. Le constructeur n'est pas hérité : écrivez `creer` et appelez celui du parent avec `Compte.creer(soi, titulaire, solde)`.
 - `classe_de(c)` donne le nom de la classe (ou `rien`), `est_instance(c, "Compte")` dit si `c` est un `Compte` ou en hérite.
 - Les méthodes s'appellent aussi sur une **structure ordinaire** si elle contient une fonction dans un champ : `{f: x => x * 2}.f(3)` s'écrit `s.f(3)`.
 - **Enchaînement** : `Compte("Fatima", 1).deposer(5).resume()` est accepté ; chaque point lit un champ ou appelle une méthode sur le résultat précédent. Le point doit suivre immédiatement la `)` ou le `]`.
@@ -1287,7 +1300,7 @@ Le débogueur et les tests marchent avec les classes : une pause s'arrête dans 
 
 **Recherche et remplacement.** `Ctrl+F` (recherche) et `Ctrl+H` (recherche et remplacement) ouvrent le panneau en haut à droite ; une sélection d'une ligne est reprise comme texte cherché. Toutes les occurrences sont surlignées et comptées. `Entrée` / `Maj+Entrée` (ou `F3` / `Maj+F3`) vont à la suivante / précédente en bouclant. Options : `Aa` respecter la casse (`Alt+C`), `ab` mot entier (`Alt+W`, les lettres accentuées comptent comme des lettres), `.*` expression régulière (`Alt+R`, avec `$1`, `$2`, `$&` dans le remplacement ; une expression invalide met le champ en rouge). **Remplacer** change l'occurrence courante, **Tout** remplace tout **en une seule étape d'annulation** (`Ctrl+Z`).
 
-**Coloration.** Elle vient du vrai lexeur et du vrai analyseur du langage, pas d'expressions régulières : mots-clés, textes, nombres, commentaires, noms de fonctions et de classes (à la déclaration comme à l'appel), paramètres, champs (`soi.solde`), espaces de noms d'import (`o.double`), fonctions natives. Les mots contextuels (`classe`, `herite`, `tester`, `comme`, `chaque`, `dans`, `pas`) ne sont colorés comme mots-clés que là où l'analyseur les reconnaît : une variable nommée `pas` reste une variable. Un texte non fermé n'abîme pas la coloration des autres lignes. Après une courte pause de frappe, si l'analyseur refuse le code, l'endroit fautif est souligné en rouge et le message s'affiche dans la barre d'état (un clic y amène le curseur).
+**Coloration.** Elle vient du vrai lexeur et du vrai analyseur du langage, pas d'expressions régulières : mots-clés, textes, nombres, commentaires, noms de fonctions et de classes (à la déclaration comme à l'appel), paramètres, champs (`soi.solde`), espaces de noms d'import (`o.double`), fonctions natives. Les mots contextuels (`classe`, `hérite`, `tester`, `comme`, `chaque`, `dans`, `pas`) ne sont colorés comme mots-clés que là où l'analyseur les reconnaît : une variable nommée `pas` reste une variable. Un texte non fermé n'abîme pas la coloration des autres lignes. Après une courte pause de frappe, si l'analyseur refuse le code, l'endroit fautif est souligné en rouge et le message s'affiche dans la barre d'état (un clic y amène le curseur).
 
 **Complétion.** Elle apparaît en tapant (ou avec `Ctrl+Espace`) ; `↑` `↓` choisissent, `Tab` ou `Entrée` valident, `Échap` ferme. `Entrée` sur un mot déjà tapé en entier fait simplement un retour à la ligne (et les raccourcis `si`, `pour`… + `Entrée` se développent comme avant). Les propositions viennent de l'analyseur :
 - variables, compteurs de boucle, paramètres, fonctions et classes **visibles à l'endroit du curseur** (une variable déclarée plus bas, ou un paramètre d'une autre fonction, n'est pas proposé) ;

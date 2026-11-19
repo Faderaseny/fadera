@@ -36,7 +36,7 @@ async function executer(code, etiquette, erreurs) {
   return j;
 }
 
-const LANGAGE = new Set(["afficher", "saisir", "liste", "ajouter", "taille", "lireElement", "modifierElement", "lireCle", "modifierCle", "hasard", "lireFichier", "ecrireFichier"]);
+const LANGAGE = new Set(["afficher", "saisir", "saisir_nombre", "liste", "ajouter", "taille", "lireElement", "modifierElement", "lireCle", "modifierCle", "hasard", "lireFichier", "ecrireFichier"]);
 const INTERNES = new Set(["__instance"]);
 // Fonctions d'aide internes des modules std, volontairement non documentées
 const AIDES_STD = new Set(["nettoyer_droite", "aplatir_vers", "inverser_liste", "comparer_naturel", "comparer_inverse", "ordre_naturel", "fusionner_triees", "comparer_multi"]);

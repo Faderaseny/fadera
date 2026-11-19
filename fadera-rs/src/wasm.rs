@@ -56,6 +56,8 @@ fn resultat(code: &str, it: Option<&crate::Interp>, err: Option<crate::ErreurFad
                 .map(|(f, l)| Valeur::struct_de(vec![("fonction", Valeur::texte(f.as_str())), ("ligne", Valeur::Nombre(*l as f64))]))
                 .collect();
             detail.push(("pile", Valeur::liste(pile)));
+            let aide: Vec<Valeur> = crate::suggestion::aides(&e.message, e.ligne, code).into_iter().map(Valeur::texte).collect();
+            detail.push(("aide", Valeur::liste(aide)));
             detail.push(("ligne_programme", e.cadre.map(|l| Valeur::Nombre(l as f64)).unwrap_or(Valeur::Rien)));
             (Valeur::texte(t), Valeur::texte(s))
         }

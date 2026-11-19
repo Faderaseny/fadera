@@ -97,6 +97,7 @@ button:disabled { opacity: .5; cursor: wait; }
 .cmp h4 { margin: 0 0 4px; font: 600 .8rem var(--body); text-transform: uppercase; letter-spacing: .05em; }
 .aide { margin-top: 14px; padding: 12px 14px; border-left: 4px solid var(--accent-bg); background: var(--bg); border-radius: 0 8px 8px 0; font-size: .95rem; }
 .aide[hidden] { display: none; }
+.aide-erreur { margin: 8px 0 0; font-weight: 600; }
 .aide pre { margin: 8px 0 0; font-size: .9rem; white-space: pre-wrap; }
 .nav { display: flex; justify-content: space-between; gap: 12px; margin-top: 26px; flex-wrap: wrap; }
 .etat-moteur { font-size: .85rem; color: var(--muted); margin-top: 12px; }
@@ -247,13 +248,14 @@ button:disabled { opacity: .5; cursor: wait; }
     }
     pret();
 
+    const aideErreur = (a) => (a && a.length ? a.map((x) => '<p class="aide-erreur">💡 ' + echapper(x) + "</p>").join("") : "");
     $("#executer").onclick = async () => {
       if (!(await pret())) return;
       const saisies = $("#entrees").value.split(",").map((s) => s.trim()).filter((s, k, t) => s !== "" || k < t.length - 1);
       const r = JSON.parse(executer(zone.value, $("#entrees").value.trim() ? saisies : []));
       sortie.className = "sortie " + (r.erreur ? "ko" : "neutre");
       sortie.innerHTML = r.erreur
-        ? "<strong>Erreur</strong><pre>" + echapper(r.erreur) + (r.source ? "\n" + echapper(r.source) : "") + "</pre>"
+        ? "<strong>Erreur</strong><pre>" + echapper(r.erreur) + (r.source ? "\n" + echapper(r.source) : "") + "</pre>" + aideErreur(r.aide)
         : "<strong>Résultat</strong><pre>" + (r.sortie.length ? echapper(r.sortie.join("\n")) : "(rien n'a été affiché)") + "</pre>";
     };
 
@@ -270,7 +272,7 @@ button:disabled { opacity: .5; cursor: wait; }
       nbEchecs++;
       sortie.className = "sortie ko";
       if (res.erreur) {
-        sortie.innerHTML = "<strong>Ton programme contient une erreur</strong><pre>" + echapper(res.erreur) + (res.source ? "\n" + echapper(res.source) : "") + "</pre>";
+        sortie.innerHTML = "<strong>Ton programme contient une erreur</strong><pre>" + echapper(res.erreur) + (res.source ? "\n" + echapper(res.source) : "") + "</pre>" + aideErreur(res.aide);
         return;
       }
       const d = res.details.find((x) => !x.ok);

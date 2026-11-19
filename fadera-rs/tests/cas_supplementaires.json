@@ -218,5 +218,17 @@
  "afficher 0 ** -1",
  "afficher (-8) ** 0.5",
  "afficher \"a\" ** 2",
- "soit n = { le: 3, chat: 2, ete: 2, chien: 1 }\nafficher trier_par(cles(n), m => [-lireCle(n, m), m])\nafficher trier([[2, \"b\"], [10, \"a\"], [2, \"a\"], [1]])\nafficher trier_par([\"bb\", \"a\", \"cc\"], m => [taille(m), m])"
+ "soit n = { le: 3, chat: 2, ete: 2, chien: 1 }\nafficher trier_par(cles(n), m => [-lireCle(n, m), m])\nafficher trier([[2, \"b\"], [10, \"a\"], [2, \"a\"], [1]])\nafficher trier_par([\"bb\", \"a\", \"cc\"], m => [taille(m), m])",
+ "soit x = 1\nsi vrai alors\n  soit x = 2\n  afficher x\nfin\nafficher x",
+ "soit y = 0\nsi vrai alors\n  y = 5\n  soit z = 7\nfin\nafficher y\nafficher z",
+ "pour i allant de 1 à 3 faire\n  afficher i\nfin\nafficher i",
+ "soit fs = liste()\npour i allant de 1 à 3 faire\n  soit k = i * 10\n  ajouter(fs, fonction() renvoyer k + i fin)\nfin\npour chaque f dans fs faire\n  afficher f()\nfin",
+ "soit fs = liste()\npour chaque c dans \"abc\" faire\n  ajouter(fs, fonction() renvoyer c fin)\nfin\npour chaque f dans fs faire\n  afficher f()\nfin",
+ "soit n = 0\ntant que n < 6 faire\n  n = n + 1\n  si n == 2 alors\n    soit t = 1\n    continuer\n  fin\n  si n == 4 alors\n    soit u = 1\n    rompre\n  fin\nfin\nafficher n",
+ "fonction g(x)\n  pour i allant de 1 à 10 faire\n    soit r = i * x\n    si r > 12 alors\n      renvoyer r\n    fin\n  fin\n  renvoyer 0\nfin\nafficher g(5)\nafficher g(1)",
+ "essayer\n  soit q = 1\n  lever(\"boum\")\nattraper e\n  soit z = e\n  afficher z\nfin\nafficher e",
+ "selon 2 faire\n  cas 2 alors\n    soit w = 5\n    afficher w\nfin\nafficher w",
+ "répéter 3 fois\n  soit a = 1\n  afficher a\nfin\nafficher a",
+ "pour i allant de 1 à 2 faire\n  pour j allant de 1 à 2 faire\n    soit s = i * 10 + j\n    afficher s\n    si j == 1 alors\n      continuer\n    fin\n  fin\nfin",
+ "soit total = 0\npour i allant de 1 à 4 faire\n  soit double = i * 2\n  total = total + double\nfin\nafficher total"
 ]

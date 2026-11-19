@@ -191,6 +191,9 @@ fn lancer(code: String, base: std::path::PathBuf) -> i32 {
             if !source.is_empty() {
                 eprintln!("    {}", source);
             }
+            for a in fadera::suggestion::aides(&e.message, e.ligne, &code) {
+                eprintln!("    💡 {}", a);
+            }
             1
         }
     }

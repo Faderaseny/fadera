@@ -68,7 +68,38 @@ a
 Une lettre (Unicode) ou `_`, puis des lettres, chiffres ou `_`. Les identifiants sont **sensibles à la casse**. Un identifiant peut contenir des points suivis d'une lettre : `o.double` est **un seul** identifiant (espaces de noms de modules, §11).
 
 ### 1.5 Mots réservés
-`soit fnf si alors sinon fin afficher tantque faire fonction renvoyer saisir liste ajouter taille lireElement modifierElement modifierCle hasard structure lireCle pour allantde lireFichier ecrireFichier vrai faux non essayer attraper selon cas defaut rompre continuer importer`, ainsi que `et` et `ou`. On ne peut pas les utiliser comme noms de variables ou de fonctions.
+`soit fnf si alors sinon fin afficher tantque faire fonction renvoyer saisir liste ajouter taille lireElement modifierElement modifierCle hasard structure lireCle pour allantde lireFichier ecrireFichier vrai faux non essayer attraper selon cas defaut rompre continuer importer`, ainsi que `et` et `ou`. On ne peut pas les utiliser comme noms de variables ou de fonctions, **sauf** les mots d'appel ci-dessous.
+
+**Mots d'appel libres.** `liste`, `taille`, `hasard`, `saisir`, `ajouter`, `lireElement`, `modifierElement`, `modifierCle`, `lireCle`, `lireFichier` et `ecrireFichier` ne sont des mots du langage que lorsqu'une parenthèse ouvrante les suit (`taille(x)`). Ailleurs, ce sont des noms ordinaires : `soit taille = 1.75`, `soit liste = [3, 1, 2]`. De même `structure` n'est un mot du langage que s'il est suivi d'un nom sur la même ligne (`structure Point = …`).
+
+**Formes françaises.** Le lexeur accepte aussi `défaut` (= `defaut`), `tant que` (= `tantque`), `allant de` (= `allantde`), `hérite` (= `herite`) et `créer` (= `creer`), ainsi que `pour x dans liste faire … fin` (= `pour chaque x dans liste faire … fin`).
+
+**Synonymes français.** `longueur(x)` est un synonyme de `taille(x)` (désactivé si le programme déclare lui-même `fonction longueur`). Les fonctions du langage s'écrivent aussi en français accentué ou en `snake_case` dans un appel : `écrire_fichier`, `lire_fichier`, `lire_élément`, `modifier_élément`, `lire_clé`, `modifier_clé`. L'instruction `répéter n fois … fin` (le `faire` est facultatif) exécute le bloc `n` fois ; elle équivaut à `pour i allant de 1 à n`, sans nom de compteur. `répéter` n'est pas un mot réservé : ce n'est une instruction que suivi d'un nombre ou d'un nom.
+
+```fa-test
+afficher longueur([1, 2, 3])
+afficher longueur("abc")
+soit n = 2
+répéter n fois
+  afficher "x"
+  répéter 2 fois
+    afficher "-"
+  fin
+fin
+répéter 0 fois
+  afficher "jamais"
+fin
+```
+```sortie
+3
+3
+x
+-
+-
+x
+-
+-
+```
 
 `a`, `pas`, `chaque`, `dans` et `comme` ne sont **pas** réservés : ils n'ont un sens spécial qu'à l'endroit précis de la grammaire où ils sont attendus.
 
@@ -77,9 +108,34 @@ soit comme = 3
 soit pas = 4
 afficher comme + pas
 soit taille = 3
+afficher taille
+soit liste = [3, 1, 2]
+pour x dans liste faire
+  afficher x
+fin
+afficher taille(liste)
+soit n = 0
+tant que n < 2 faire
+  n = n + 1
+fin
+afficher n
 ```
 ```sortie
-ERR:Ligne 4 : "taille" est un mot réservé du langage : choisissez un autre nom.
+7
+3
+3
+1
+2
+3
+2
+```
+
+```fa-test
+soit liste = 1
+soit si = 2
+```
+```sortie
+ERR:Ligne 2 : "si" est un mot réservé du langage : choisissez un autre nom.
 ```
 
 ---
@@ -149,8 +205,8 @@ instruction  = "soit" ID "=" expr
              | ID "=" expr                       (affectation)
              | "afficher" expr ("," expr)*
              | "si" expr "alors" instruction* {"sinon" "si" expr "alors" instruction*} ["sinon" instruction*] "fin"
-             | "tantque" expr "faire" instruction* "fin"
-             | "pour" ID "allantde" expr "a" expr ["pas" expr] "faire" instruction* "fin"
+             | "tant que" expr "faire" instruction* "fin"
+             | "pour" ID "allant de" expr ("à" | "a") expr ["pas" expr] "faire" instruction* "fin"
              | "pour" "chaque" ID "dans" expr "faire" instruction* "fin"
              | "fonction" ID "(" [ID ("," ID)*] ")" instruction* "fin"
              | "renvoyer" [expr]
@@ -461,10 +517,22 @@ afficher modifierCle(s, "b", 2)
 
 ## 8. Variables et portée
 
-- `soit x = …` crée la variable dans **la portée courante** : le script (portée globale) ou le corps de la fonction. Re-déclarer le même nom dans la même portée **remplace** la valeur.
-- **Il n'y a pas de portée de bloc** : un `soit` dans un `si`, un `tantque` ou un `pour` reste visible après le bloc.
+- `soit x = …` crée la variable dans **la portée courante** : le script (portée globale), le corps de la fonction ou **le bloc** où elle est écrite. Re-déclarer le même nom dans la même portée **remplace** la valeur.
+- **Portée de bloc (depuis la version 0.9.0).** Chacun des blocs `si` / `sinon`, `tant que`, `pour`, `pour chaque`, `répéter`, `selon` (chaque `cas` et `défaut`) et `essayer` / `attraper` a sa propre portée : une variable créée par `soit` dans un bloc **n'existe plus après lui**. Un `soit` qui porte le nom d'une variable extérieure crée une **nouvelle** variable qui la masque dans le bloc ; l'extérieure garde sa valeur. Écrire `x = …` (sans `soit`) dans un bloc modifie la variable extérieure `x`. Pour utiliser une valeur après un bloc, on déclare la variable **avant** lui (`soit signe = ""`), puis on la modifie dans le bloc.
+- Utiliser après un bloc une variable qu'il avait créée est une erreur dont le message ajoute l'explication : « Cette variable a été créée dans un bloc (si, boucle, selon, essayer) qui est terminé… Déclarez-la avant le bloc ».
+- Le nom déclaré par `soit` (ou `structure`) **ne contient pas de point** dans un programme : `soit p.x = 5` est une erreur, car il ne modifierait pas le champ `x` de `p` mais créerait une variable fantôme nommée « p.x ». On écrit `p.x = 5` (sans `soit`) pour modifier un champ. (Les modules importés, eux, reçoivent des noms pointés par le mécanisme des espaces de noms : §11.)
 - `x = …` (sans `soit`) modifie une variable **existante**, en remontant les portées ; si elle n'existe pas, c'est une erreur.
-- La variable d'une boucle `pour` appartient à la portée courante et **reste visible** après la boucle, avec sa dernière valeur. L'affecter dans le corps change la valeur vue par le corps, mais pas le nombre de tours.
+- La variable d'une boucle (`pour`, `pour chaque`, `répéter`) est **privée à la boucle** : elle n'existe plus après elle. Chaque tour reçoit sa propre variable : une fonction anonyme créée dans le corps garde la valeur de **son** tour. L'affecter dans le corps change la valeur vue par le corps, mais pas le nombre de tours. Le nom de l'erreur de `attraper` est privé au bloc `attraper`.
+
+```fa-test
+structure p = { x: 1 }
+p.x = 5
+afficher p.x
+soit p.y = 6
+```
+```sortie
+ERR:Ligne 4 : "soit p.y = …" ne crée pas de champ : pour modifier le champ "y" de "p", écrivez p.y = … (sans "soit"). Pour une variable ordinaire, choisissez un nom sans point.
+```
 
 ```fa-test
 soit x = 1
@@ -473,18 +541,28 @@ si vrai alors
   afficher x
 fin
 afficher x
-si vrai alors
-  soit y = 5
-fin
-afficher y
 soit x = 3
 afficher x
 ```
 ```sortie
 2
-2
-5
+1
 3
+```
+
+```fa-test
+soit y = 0
+si vrai alors
+  y = 5
+  soit z = 7
+fin
+afficher y
+afficher z
+```
+```sortie
+5
+ERR:Ligne 7 : La variable "z" n'existe pas. Déclarez-la d'abord avec : soit z = ...
+Cette variable a été créée dans un bloc (si, boucle, selon, essayer) qui est terminé : elle n'existe plus après lui. Déclarez-la avant le bloc, par exemple : soit z = ...
 ```
 
 ```fa-test
@@ -507,7 +585,7 @@ ERR:Ligne 5 : La variable "x" n'existe pas. Déclarez-la d'abord avec : soit x =
 ```
 
 ```fa-test
-pour i allantde 1 a 3 faire
+pour i allant de 1 à 3 faire
   i = 10
   afficher i
 fin
@@ -517,7 +595,26 @@ afficher i
 10
 10
 10
-10
+ERR:Ligne 5 : La variable "i" n'existe pas. Déclarez-la d'abord avec : soit i = ...
+Cette variable a été créée dans un bloc (si, boucle, selon, essayer) qui est terminé : elle n'existe plus après lui. Déclarez-la avant le bloc, par exemple : soit i = ...
+```
+
+Chaque tour de boucle a sa propre variable : les fonctions anonymes créées dans le corps ne partagent pas la même.
+
+```fa-test
+soit fs = liste()
+pour i allant de 1 à 3 faire
+  soit k = i * 10
+  ajouter(fs, fonction() renvoyer k + i fin)
+fin
+pour chaque f dans fs faire
+  afficher f()
+fin
+```
+```sortie
+11
+22
+33
 ```
 
 ---
@@ -676,19 +773,19 @@ ERR:Ligne 3 : Valeur ou expression attendue, mais "afficher" trouvé.
 ## 10. Structures de contrôle
 
 ### 10.1 `pour`
-`pour i allantde a a b [pas p]` : `i` prend les valeurs `a`, `a+p`, `a+2p`… tant que `i <= b` (si `p > 0`) ou `i >= b` (si `p < 0`). Le pas par défaut est `1`. Les bornes sont **incluses**. Le pas `0` est une erreur. Les bornes peuvent être décimales.
+`pour i allant de a à b [pas p]` : `i` prend les valeurs `a`, `a+p`, `a+2p`… tant que `i <= b` (si `p > 0`) ou `i >= b` (si `p < 0`). Le pas par défaut est `1`. Les bornes sont **incluses**. Le pas `0` est une erreur. Les bornes peuvent être décimales.
 
 ```fa-test
-pour i allantde 5 a 1 pas -2 faire
+pour i allant de 5 à 1 pas -2 faire
   afficher i
 fin
-pour i allantde 1 a 0 faire
+pour i allant de 1 à 0 faire
   afficher i
 fin
-pour i allantde 1 a 2.5 faire
+pour i allant de 1 à 2.5 faire
   afficher i
 fin
-pour i allantde 1 a 3 pas 0 faire
+pour i allant de 1 à 3 pas 0 faire
   afficher i
 fin
 ```
@@ -719,17 +816,17 @@ a
 b
 ```
 
-### 10.3 `tantque`, `rompre`, `continuer`
+### 10.3 `tant que`, `rompre`, `continuer`
 `rompre` quitte la boucle la plus proche ; `continuer` passe au tour suivant. Hors d'une boucle, ils sont une erreur de **syntaxe** (détectée avant l'exécution). Une boucle qui dépasse **20 millions de pas** d'exécution est interrompue par une erreur (protection contre les boucles infinies).
 
 ```fa-test
 soit i = 0
-tantque i < 3 faire
+tant que i < 3 faire
   i = i + 1
   si i == 2 alors continuer fin
   afficher i
 fin
-tantque vrai faire
+tant que vrai faire
 fin
 ```
 ```sortie
@@ -747,7 +844,7 @@ selon 2 faire
     afficher "un"
   cas 2, 3 alors
     afficher "deux ou trois"
-  defaut
+  défaut
     afficher "autre"
 fin
 selon 2 faire
@@ -759,7 +856,7 @@ fin
 selon "2" faire
   cas 2 alors
     afficher "nombre"
-  defaut
+  défaut
     afficher "autre"
 fin
 ```
@@ -799,7 +896,7 @@ fonction f()
   fin
 fin
 afficher f()
-pour i allantde 1 a 5 faire
+pour i allant de 1 à 5 faire
   essayer
     si i == 2 alors afficher 1 / 0 fin
     si i == 4 alors rompre fin
@@ -848,11 +945,11 @@ afficher m.factorielle(3)
 
 ## 11b. Classes et méthodes
 
-`classe` et `herite` ne sont **pas** des mots réservés : `classe` suivi d'un nom ouvre une classe, `herite` n'a de sens que sur la ligne de `classe`, après le nom. Une variable nommée `classe` reste donc possible.
+`classe` et `hérite` ne sont **pas** des mots réservés : `classe` suivi d'un nom ouvre une classe, `hérite` n'a de sens que sur la ligne de `classe`, après le nom. Une variable nommée `classe` reste donc possible.
 
 ```
-classe Nom [herite Parent]
-    fonction creer(a, b)      # constructeur (facultatif)
+classe Nom [hérite Parent]
+    fonction créer(a, b)      # constructeur (facultatif)
         soi.a = a
     fin
     fonction methode(x)
@@ -867,7 +964,7 @@ Une instance est une **structure ordinaire** portant une étiquette cachée : le
 
 ```fa-test
 classe Point
-    fonction creer(x, y)
+    fonction créer(x, y)
         soi.x = x
         soi.y = y
     fin
@@ -900,19 +997,19 @@ Point { x: 11, y: 5 }
 
 ### 11b.1 Héritage
 
-`herite Parent` fait remonter la recherche d'une méthode au parent (puis au parent du parent, 100 niveaux au plus). Le constructeur n'est **pas** hérité : une classe fille écrit son `creer` et appelle, si elle le veut, celui du parent par `Parent.creer(soi, …)`. `est_instance(x, "C")` est vrai si la classe de `x` est `C` ou en hérite.
+`hérite Parent` fait remonter la recherche d'une méthode au parent (puis au parent du parent, 100 niveaux au plus). Le constructeur n'est **pas** hérité : une classe fille écrit son `creer` et appelle, si elle le veut, celui du parent par `Parent.creer(soi, …)`. `est_instance(x, "C")` est vrai si la classe de `x` est `C` ou en hérite.
 
 ```fa-test
 classe Forme
-    fonction creer(nom)
+    fonction créer(nom)
         soi.nom = nom
     fin
     fonction decrire()
         renvoyer "Forme " + soi.nom
     fin
 fin
-classe Cercle herite Forme
-    fonction creer(r)
+classe Cercle hérite Forme
+    fonction créer(r)
         Forme.creer(soi, "cercle")
         soi.r = r
     fin
@@ -937,7 +1034,7 @@ Quand `a.b.m(args)` est appelé : si l'objet a un **champ** `m`, c'est lui (il d
 
 ```fa-test
 classe Point
-    fonction creer(x)
+    fonction créer(x)
         soi.x = x
     fin
     fonction norme()
@@ -965,7 +1062,7 @@ Le champ "z" n'existe pas dans "p" (champs disponibles : x).
 La méthode "norme" de la classe "Point" attend 0 argument(s), 1 reçu(s).
 La méthode "nope" n'existe pas dans la classe "Point".
 Impossible d'écrire le champ "x" : "n" est de type nombre (une structure ou une instance est attendue).
-La variable "zz.foo" n'existe pas. Déclarez-la d'abord avec : soit zz.foo = ...
+La variable "zz.foo" n'existe pas (vérifiez l'orthographe de "zz" et du champ).
 ```
 
 ### 11b.3 Enchaînements
@@ -974,7 +1071,7 @@ Après un appel ou un index, un point enchaîne : `Compte(1).deposer(2).solde`, 
 
 ```fa-test
 classe Compte
-    fonction creer(s)
+    fonction créer(s)
         soi.s = s
     fin
     fonction plus(m)
@@ -1155,6 +1252,29 @@ b
 ERR:Ligne 3 : Index -1 hors limites (indices valides : 0 à 2).
 ```
 
+**Crochets.** `l[i]` lit un élément et `l[i] = v` le remplace ; ce sont exactement `lireElement(l, i)` et `modifierElement(l, i, v)`, avec les mêmes règles d'indice et les mêmes erreurs. Ils s'enchaînent (`m[i][j]`, `m[i][j] = v`, `soi.items[i]`, `f()[0]`). Le `[` doit être sur la même ligne que la valeur qui le précède : au début d'une ligne, ou après une virgule, un `=` ou un opérateur, c'est une liste.
+
+```fa-test
+soit l = [10, 20, 30]
+afficher l[0] + l[taille(l) - 1]
+l[1] = 99
+afficher l
+soit m = [[1, 2], [3, 4]]
+m[1][0] = 7
+afficher m[1][0] + m[0][1]
+afficher [5, 6, 7][2]
+afficher "abc"[1]
+afficher l[3]
+```
+```sortie
+40
+[10, 99, 30]
+9
+7
+b
+ERR:Ligne 10 : Index 3 hors limites (indices valides : 0 à 2).
+```
+
 ---
 
 ## 14. Ce que cette spécification ne fixe pas
@@ -1169,9 +1289,8 @@ ERR:Ligne 3 : Index -1 hors limites (indices valides : 0 à 2).
 Des comportements **actuels et identiques** dans les deux moteurs, mais que la spécification signale comme discutables, pour qu'un changement futur soit décidé en connaissance de cause plutôt que découvert par accident :
 
 1. La liste vide `[]` est **vraie** (alors que `0` et `""` sont faux).
-2. Pas de portée de bloc : un `soit` dans un `si` fuit dans la portée englobante.
-3. Les fonctions nommées imbriquées ne capturent pas les variables locales (§9.3).
-4. `1 < 2 < 3` est une erreur au lieu d'une comparaison chaînée.
-5. `renvoyer` au niveau du script arrête le programme sans le dire, et `renvoyer` sans valeur n'est permis que juste avant `fin`, `sinon`, `cas`, `defaut`, `attraper` ou la fin du programme (§9.5).
-6. Pas d'indice négatif (`lireElement(l, -1)`).
-7. Les comparaisons de textes se font par unités UTF-16, pas par points de code ni par ordre alphabétique localisé.
+2. Les fonctions nommées imbriquées ne capturent pas les variables locales (§9.3).
+3. `1 < 2 < 3` est une erreur au lieu d'une comparaison chaînée.
+4. `renvoyer` au niveau du script arrête le programme sans le dire, et `renvoyer` sans valeur n'est permis que juste avant `fin`, `sinon`, `cas`, `defaut`, `attraper` ou la fin du programme (§9.5).
+5. Pas d'indice négatif (`lireElement(l, -1)`).
+6. Les comparaisons de textes se font par unités UTF-16, pas par points de code ni par ordre alphabétique localisé.

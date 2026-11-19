@@ -159,6 +159,61 @@ fn acces_prive(entetes: &str, jeton: &str) -> bool {
     }
 }
 
+/// Le champ « Host » doit être exactement `127.0.0.1:PORT` ou `localhost:PORT` (et non un nom qui contiendrait seulement « localhost »,
+/// comme `localhost.evil.com`).
+fn hote_local_exact(hote: Option<&str>) -> bool {
+    match hote {
+        Some(h) => {
+            let h = h.to_ascii_lowercase();
+            h == format!("127.0.0.1:{}", PORT) || h == format!("localhost:{}", PORT)
+        }
+        None => false,
+    }
+}
+
+/// Fichier où le serveur dépose son jeton secret, dans le dossier personnel de l'utilisateur : le second lancement
+/// (`fadera fichier.fa`) le lit pour prouver qu'il est bien du même utilisateur. Une page web, elle, ne peut pas le lire.
+fn fichier_jeton() -> Option<PathBuf> {
+    let maison = std::env::var_os("USERPROFILE").or_else(|| std::env::var_os("HOME")).map(PathBuf::from)?;
+    Some(maison.join(".fadera").join("ide.jeton"))
+}
+
+fn ecrire_fichier_jeton(jeton: &str) {
+    if let Some(p) = fichier_jeton() {
+        if let Some(d) = p.parent() {
+            let _ = std::fs::create_dir_all(d);
+        }
+        let _ = std::fs::write(&p, jeton);
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            let _ = std::fs::set_permissions(&p, std::fs::Permissions::from_mode(0o600));
+        }
+    }
+}
+
+fn lire_fichier_jeton() -> Option<String> {
+    std::fs::read_to_string(fichier_jeton()?).ok().map(|s| s.trim().to_string()).filter(|s| !s.is_empty())
+}
+
+fn route_ouvrir(f: &mut TcpStream, methode: &str, corps: &str, etat: &Arc<Mutex<Etat>>) {
+    if methode == "GET" {
+        let pris = etat.lock().unwrap().en_attente.take();
+        match pris {
+            Some((nom, texte)) => {
+                let j = format!("{{\"nom\":{},\"texte\":{}}}", echapper_json(&nom), echapper_json(&texte));
+                repondre(f, "200 OK", "application/json", j.as_bytes());
+            }
+            None => repondre(f, "204 No Content", "text/plain", b""),
+        }
+    } else if let (Some(nom), Some(texte)) = (lire_json_chaine(corps, "nom"), lire_json_chaine(corps, "texte")) {
+        etat.lock().unwrap().en_attente = Some((nom, texte));
+        repondre(f, "200 OK", "text/plain", b"ok");
+    } else {
+        repondre(f, "400 Bad Request", "text/plain", b"json invalide");
+    }
+}
+
 fn parametre_url(url: &str, cle: &str) -> Option<String> {
     let requete = url.split('#').next()?.split_once('?')?.1;
     for paire in requete.split('&') {
@@ -475,10 +530,7 @@ fn traiter(mut f: TcpStream, etat: &Arc<Mutex<Etat>>) {
     let methode = mots.next().unwrap_or("");
     let url = mots.next().unwrap_or("/");
     // protection contre le « DNS rebinding » : seul localhost est accepté comme hôte
-    let hote_ok = entetes.lines().any(|l| {
-        let m = l.to_ascii_lowercase();
-        m.starts_with("host:") && (m.contains("127.0.0.1") || m.contains("localhost"))
-    });
+    let hote_ok = hote_local_exact(entete(&entetes, "host"));
     if !hote_ok {
         repondre(&mut f, "403 Forbidden", "text/plain", b"hote refuse");
         return;
@@ -503,23 +555,14 @@ fn traiter(mut f: TcpStream, etat: &Arc<Mutex<Etat>>) {
             etat.lock().unwrap().dernier_signal = Some(Instant::now());
             repondre(&mut f, "200 OK", "text/plain", b"ok");
         }
-        ("GET", "/__ouvrir") => {
-            let pris = etat.lock().unwrap().en_attente.take();
-            match pris {
-                Some((nom, texte)) => {
-                    let j = format!("{{\"nom\":{},\"texte\":{}}}", echapper_json(&nom), echapper_json(&texte));
-                    repondre(&mut f, "200 OK", "application/json", j.as_bytes());
-                }
-                None => repondre(&mut f, "204 No Content", "text/plain", b""),
+        ("GET" | "POST", "/__ouvrir") => {
+            // lecture comme dépôt de fichier : réservés à l'éditeur (jeton + origine locale) ou au lancement `fadera fichier.fa`
+            let jeton = etat.lock().unwrap().jeton.clone();
+            if !acces_prive(&entetes, &jeton) {
+                repondre(&mut f, "403 Forbidden", "text/plain", b"jeton refuse");
+                return;
             }
-        }
-        ("POST", "/__ouvrir") => {
-            if let (Some(nom), Some(texte)) = (lire_json_chaine(&corps, "nom"), lire_json_chaine(&corps, "texte")) {
-                etat.lock().unwrap().en_attente = Some((nom, texte));
-                repondre(&mut f, "200 OK", "text/plain", b"ok");
-            } else {
-                repondre(&mut f, "400 Bad Request", "text/plain", b"json invalide");
-            }
+            route_ouvrir(&mut f, methode, &corps, &etat);
         }
         ("GET", _) => {
             let (racine, jeton) = {
@@ -608,7 +651,7 @@ fn serveur_deja_lance() -> bool {
     match TcpStream::connect_timeout(&format!("127.0.0.1:{}", PORT).parse().unwrap(), Duration::from_millis(500)) {
         Ok(mut s) => {
             let _ = s.set_read_timeout(Some(Duration::from_secs(2)));
-            let _ = s.write_all(b"GET /__fadera HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n");
+            let _ = s.write_all(b"GET /__fadera HTTP/1.1\r\nHost: 127.0.0.1:4747\r\nConnection: close\r\n\r\n");
             let mut r = String::new();
             let _ = s.read_to_string(&mut r);
             r.contains("fadera-ide")
@@ -620,8 +663,11 @@ fn serveur_deja_lance() -> bool {
 fn envoyer_fichier(nom: &str, texte: &str) {
     if let Ok(mut s) = TcpStream::connect_timeout(&format!("127.0.0.1:{}", PORT).parse().unwrap(), Duration::from_millis(500)) {
         let corps = format!("{{\"nom\":{},\"texte\":{}}}", echapper_json(nom), echapper_json(texte));
+        let jeton = lire_fichier_jeton().unwrap_or_default();
         let req = format!(
-            "POST /__ouvrir HTTP/1.1\r\nHost: 127.0.0.1\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
+            "POST /__ouvrir HTTP/1.1\r\nHost: 127.0.0.1:{}\r\nX-Fadera-Jeton: {}\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
+            PORT,
+            jeton,
             corps.len(),
             corps
         );
@@ -717,7 +763,9 @@ pub fn commande(args: &[String]) -> i32 {
         println!("Fermez la fenêtre de l'éditeur pour arrêter ce serveur (ou appuyez sur Ctrl+C).");
     }
     let espace = dossier_espace(args);
-    let etat = Arc::new(Mutex::new(Etat { racine, en_attente: a_ouvrir, dernier_signal: None, debut: Instant::now(), jeton: jeton_aleatoire(), espace }));
+    let jeton = jeton_aleatoire();
+    ecrire_fichier_jeton(&jeton);
+    let etat = Arc::new(Mutex::new(Etat { racine, en_attente: a_ouvrir, dernier_signal: None, debut: Instant::now(), jeton, espace }));
     {
         let etat = Arc::clone(&etat);
         std::thread::spawn(move || loop {

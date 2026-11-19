@@ -2,7 +2,7 @@
 
 > Ce fichier est **généré** par `node docs/generer_reference.js` : chaque exemple a été exécuté sur les deux moteurs (navigateur et `fadera`) et le résultat affiché est le résultat réel. Ne le modifiez pas à la main : éditez `docs/reference/fonctions.txt`.
 
-196 fonctions natives, 12 fonctions du langage, 12 modules standard. Pour une première approche, lisez plutôt le [tutoriel](TUTORIEL.md).
+196 fonctions natives, 13 fonctions du langage, 12 modules standard. Pour une première approche, lisez plutôt le [tutoriel](TUTORIEL.md).
 
 ## Sommaire
 
@@ -26,7 +26,9 @@ Ces fonctions font partie du langage : elles s'écrivent comme les autres (nom s
 
 **`afficher valeur`** — Écrit la valeur dans la console (mot-clé : sans parenthèses).
 
-**`saisir(message)`** — Demande une réponse à l'utilisateur et la renvoie sous forme de texte.
+**`saisir(message)`** — Demande une réponse à l'utilisateur. Renvoie un nombre si la réponse est un nombre (la virgule décimale « 1,5 » est acceptée), sinon un texte. Pour exiger un nombre, utilisez `saisir_nombre(message)` (erreur claire si la réponse n'en est pas un).
+
+**`saisir_nombre(message)`** — Comme saisir, mais exige un nombre (virgule décimale acceptée) : erreur claire si la réponse n'en est pas un.
 
 **`hasard(min, max)`** — Entier aléatoire entre min et max inclus.
 

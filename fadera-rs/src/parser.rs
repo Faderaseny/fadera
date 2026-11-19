@@ -132,6 +132,7 @@ impl Parser {
             match (j.valeur.as_str(), self.suivant(1).map(|s| s.t)) {
                 ("classe", Some(Type::Identifiant)) => return self.analyser_classe(),
                 ("tester", Some(Type::Chaine)) => return self.analyser_test(),
+                ("répéter" | "repeter", Some(Type::Identifiant | Type::Numero)) => return self.analyser_repeter(),
                 _ => {}
             }
         }
@@ -176,7 +177,7 @@ impl Parser {
                 "rompre" | "continuer" => {
                     if self.prof_boucle == 0 {
                         return err(
-                            format!("\"{}\" ne peut être utilisé qu'à l'intérieur d'une boucle (pour, tantque).", j.valeur),
+                            format!("\"{}\" ne peut être utilisé qu'à l'intérieur d'une boucle (pour, tant que).", j.valeur),
                             j.ligne,
                         );
                     }
@@ -211,7 +212,7 @@ impl Parser {
                 }
                 "fin" | "sinon" => {
                     return err(
-                        format!("\"{}\" inattendu : aucun bloc (si, pour, tantque, fonction) n'est ouvert à cet endroit.", j.valeur),
+                        format!("\"{}\" inattendu : aucun bloc (si, pour, tant que, fonction) n'est ouvert à cet endroit.", j.valeur),
                         j.ligne,
                     )
                 }
@@ -222,6 +223,22 @@ impl Parser {
             if let Some(s) = self.suivant(1) {
                 if s.t == Type::Symbole && s.valeur == "(" {
                     return Ok(StmtK::Expr(self.analyser_expression()?));
+                }
+                // « l[i] = valeur » : modifie un élément (équivaut à modifierElement(l, i, valeur))
+                if s.t == Type::Symbole && s.valeur == "[" && s.ligne == j.ligne {
+                    let cible = self.analyser_primaire()?;
+                    let ok_eq = matches!(self.actuel(), Some(a) if a.t == Type::Operateur && a.valeur == "=");
+                    return match cible {
+                        Expr::LireElement(l, i, _) if ok_eq => {
+                            self.avancer();
+                            let v = self.analyser_expression()?;
+                            Ok(StmtK::Expr(Expr::ModifElem(l, i, Box::new(v), j.ligne)))
+                        }
+                        _ => err(
+                            format!("\"=\" attendu après {}[…] pour modifier un élément (exemple : {}[0] = 5), mais {} trouvé.", j.valeur, j.valeur, decrire(self.actuel())),
+                            j.ligne,
+                        ),
+                    };
                 }
                 if s.t == Type::Operateur && s.valeur == "=" {
                     self.avancer();
@@ -246,7 +263,7 @@ impl Parser {
         let nom = self.consommer(Type::Identifiant, None)?.valeur;
         let mut parent: Option<String> = None;
         if let Some(a) = self.actuel() {
-            if a.t == Type::Identifiant && a.valeur == "herite" && a.ligne == l {
+            if a.t == Type::Identifiant && (a.valeur == "herite" || a.valeur == "hérite") && a.ligne == l {
                 self.avancer();
                 match self.actuel() {
                     Some(p) if p.t == Type::Identifiant => {
@@ -290,19 +307,21 @@ impl Parser {
                 StmtK::DeclFonction(d) => d,
                 _ => unreachable!(),
             };
-            if vues.contains(&d.nom) {
+            // « créer » (avec accent) est le constructeur, comme « creer »
+            let mnom: String = if d.nom == "créer" { "creer".to_string() } else { d.nom.clone() };
+            if vues.contains(&mnom) {
                 return err(format!("La méthode \"{}\" est déjà définie dans la classe \"{}\".", d.nom, nom), lm);
             }
-            vues.push(d.nom.clone());
+            vues.push(mnom.clone());
             if d.parametres.iter().any(|p| &*p.s == "soi") {
                 return err("\"soi\" est réservé dans une méthode : il désigne déjà l'objet courant.", lm);
             }
-            if d.nom == "creer" {
+            if mnom == "creer" {
                 creer = Some(d.parametres.to_vec());
             }
             let mut params = vec![soi.clone()];
             params.extend(d.parametres.iter().cloned());
-            let complet = format!("{}.{}", nom, d.nom);
+            let complet = format!("{}.{}", nom, mnom);
             noeuds.push(Stmt {
                 ligne: lm,
                 k: StmtK::DeclFonction(Rc::new(FnDef {
@@ -373,15 +392,34 @@ impl Parser {
         })
     }
 
+    /// « soit p.x = 5 » créerait une variable nommée « p.x » sans toucher à l'objet p : piège de débutant, refusé dans le code de l'utilisateur
+    /// (les modules importés, eux, reçoivent des noms pointés par le mécanisme des espaces de noms).
+    fn verifier_nom_sans_point(&self, nom: &str, ligne: usize) -> PR<()> {
+        if self.module.is_some() || !nom.contains('.') {
+            return Ok(());
+        }
+        let (base, champ) = nom.split_once('.').unwrap();
+        err(
+            format!(
+                "\"soit {} = …\" ne crée pas de champ : pour modifier le champ \"{}\" de \"{}\", écrivez {} = … (sans \"soit\"). Pour une variable ordinaire, choisissez un nom sans point.",
+                nom, champ, base, nom
+            ),
+            ligne,
+        )
+    }
     fn analyser_variable(&mut self) -> PR<StmtK> {
         self.consommer(Type::MotCle, Some("soit"))?;
-        let nom = self.consommer(Type::Identifiant, None)?.valeur;
+        let t = self.consommer(Type::Identifiant, None)?;
+        let nom = t.valeur.clone();
+        self.verifier_nom_sans_point(&nom, t.ligne)?;
         self.consommer(Type::Operateur, Some("="))?;
         Ok(StmtK::DeclVar(Nom::nouveau(&nom), self.analyser_expression()?))
     }
     fn analyser_structure(&mut self) -> PR<StmtK> {
         self.consommer(Type::MotCle, Some("structure"))?;
-        let nom = self.consommer(Type::Identifiant, None)?.valeur;
+        let t = self.consommer(Type::Identifiant, None)?;
+        let nom = t.valeur.clone();
+        self.verifier_nom_sans_point(&nom, t.ligne)?;
         self.consommer(Type::Operateur, Some("="))?;
         Ok(StmtK::DeclVar(Nom::nouveau(&nom), self.analyser_litteral_structure()?))
     }
@@ -579,6 +617,19 @@ impl Parser {
                 }
             }
         }
+        // forme française naturelle : « pour x dans liste faire » (comme « pour chaque x dans liste faire »)
+        if matches!((self.suivant(0), self.suivant(1)), (Some(a), Some(b)) if a.t == Type::Identifiant && b.t == Type::Identifiant && b.valeur == "dans") {
+            let nom = self.consommer(Type::Identifiant, None)?.valeur;
+            self.avancer();
+            let iterable = self.analyser_expression()?;
+            self.consommer(Type::MotCle, Some("faire"))?;
+            self.prof_boucle += 1;
+            let corps = self.analyser_bloc(&["fin"], "pour", l);
+            self.prof_boucle -= 1;
+            let corps = corps?;
+            self.consommer(Type::MotCle, Some("fin"))?;
+            return Ok(StmtK::PourChaque { nom: Nom::nouveau(&nom), iterable, corps });
+        }
         let nom = self.consommer(Type::Identifiant, None)?.valeur;
         self.consommer(Type::MotCle, Some("allantde"))?;
         let debut = self.analyser_expression()?;
@@ -588,7 +639,7 @@ impl Parser {
             _ => {
                 return err(
                     format!(
-                        "\"a\" attendu entre les deux bornes (exemple : pour i allantde 1 a 10 faire), mais {} trouvé.",
+                        "\"a\" attendu entre les deux bornes (exemple : pour i allant de 1 à 10 faire), mais {} trouvé.",
                         decrire(sep.as_ref())
                     ),
                     sep.as_ref().map(|s| s.ligne).unwrap_or(l),
@@ -609,6 +660,29 @@ impl Parser {
         let corps = corps?;
         self.consommer(Type::MotCle, Some("fin"))?;
         Ok(StmtK::Pour { nom: Nom::nouveau(&nom), debut, fin, pas, corps })
+    }
+    /// « répéter n fois … fin » : n répétitions (équivaut à `pour i allant de 1 à n`).
+    fn analyser_repeter(&mut self) -> PR<Stmt> {
+        let l = self.consommer(Type::Identifiant, None)?.ligne;
+        let fin = self.analyser_expression()?;
+        match self.actuel().cloned() {
+            Some(a) if a.t == Type::Identifiant && a.valeur == "fois" => self.avancer(),
+            autre => {
+                return err(
+                    format!("\"fois\" attendu après le nombre de répétitions (exemple : répéter 3 fois), mais {} trouvé.", decrire(autre.as_ref())),
+                    autre.as_ref().map(|a| a.ligne).unwrap_or(l),
+                )
+            }
+        }
+        if matches!(self.actuel(), Some(a) if a.t == Type::MotCle && a.valeur == "faire") {
+            self.avancer();
+        }
+        self.prof_boucle += 1;
+        let corps = self.analyser_bloc(&["fin"], "répéter", l);
+        self.prof_boucle -= 1;
+        let corps = corps?;
+        self.consommer(Type::MotCle, Some("fin"))?;
+        Ok(Stmt { ligne: l, k: StmtK::Pour { nom: Nom::nouveau(&format!("__rep{}", l)), debut: Expr::Lit(Valeur::Nombre(1.0)), fin, pas: None, corps } })
     }
     fn analyser_fonction(&mut self) -> PR<StmtK> {
         let l = self.consommer(Type::MotCle, Some("fonction"))?.ligne;
@@ -738,9 +812,24 @@ impl Parser {
         Ok(base)
     }
     /// Valeur primaire suivie d'éventuels enchaînements : `Compte(1).deposer(2).solde`.
+    /// « [ » collé à la suite d'une valeur, sur la même ligne : indexation l[i] (sur une autre ligne ou après une virgule, c'est une liste).
+    fn crochet_index(&self) -> bool {
+        match (self.actuel(), self.pos.checked_sub(1).and_then(|k| self.toks.get(k))) {
+            (Some(a), Some(p)) => a.t == Type::Symbole && a.valeur == "[" && p.ligne == a.ligne,
+            _ => false,
+        }
+    }
     fn analyser_primaire(&mut self) -> PR<Expr> {
         let mut e = self.primaire_base()?;
-        while self.est_symbole(".") {
+        while self.est_symbole(".") || self.crochet_index() {
+            if self.est_symbole("[") {
+                let lc = self.actuel().unwrap().ligne;
+                self.avancer();
+                let i = self.analyser_expression()?;
+                self.consommer(Type::Symbole, Some("]"))?;
+                e = Expr::LireElement(Box::new(e), Box::new(i), lc);
+                continue;
+            }
             let pt = self.actuel().unwrap().clone();
             self.avancer();
             let nom = match self.actuel() {
@@ -804,7 +893,13 @@ impl Parser {
                 if s.t == Type::Symbole && s.valeur == "(" {
                     self.avancer();
                     self.avancer();
-                    return Ok(Expr::Appel(Nom::nouveau(&j.valeur), self.arguments_entre(")")?, ligne));
+                    let mut args = self.arguments_entre(")")?;
+                    // saisir_nombre(invite) = nombre(saisir(invite)) : lit une réponse et la convertit (virgule décimale acceptée)
+                    if j.valeur == "saisir_nombre" && args.len() <= 1 {
+                        let inv = if args.is_empty() { None } else { Some(Box::new(args.remove(0))) };
+                        return Ok(Expr::Appel(Nom::nouveau("nombre"), vec![Expr::Saisir(inv)], ligne));
+                    }
+                    return Ok(Expr::Appel(Nom::nouveau(&j.valeur), args, ligne));
                 }
             }
             self.avancer();

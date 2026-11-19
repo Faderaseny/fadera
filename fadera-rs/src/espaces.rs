@@ -132,6 +132,8 @@ pub fn renommer(toks: &mut [Jeton], alias: &str) {
                 }
                 _ => {}
             }
+        } else if t.t == Type::Identifiant && (t.valeur == "répéter" || t.valeur == "repeter") && i + 1 < n && (toks[i + 1].t == Type::Identifiant || toks[i + 1].t == Type::Numero) {
+            pile.push(Bloc::Rien);
         } else if t.t == Type::Identifiant && t.valeur == "classe" && i + 1 < n && toks[i + 1].t == Type::Identifiant {
             let nom = toks[i + 1].valeur.clone();
             declarer(&nom, &mut fns, &mut haut);

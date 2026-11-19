@@ -73,8 +73,13 @@ pub enum Instr {
     PourStep,
     ChaqueInit,
     ChaqueNext(Nom, usize),
+    /// fin de boucle : retire l'état de la boucle et la portée de sa variable
     LoopPop,
-    ExecArbre { stmt: *const Stmt, encl: Option<usize>, brk: usize, cont: usize },
+    /// ouvre une portée de bloc (le bloc déclare une variable)
+    PushPortee,
+    /// ferme `n` portées de bloc
+    PopPortee(usize),
+    ExecArbre { stmt: *const Stmt, encl: Option<usize>, brk: usize, cont: usize, pops: usize },
 }
 
 pub enum OperandeConcat {
@@ -88,6 +93,7 @@ pub struct Code {
 
 // ------------------------------------------------------------------ compilation
 struct Boucle {
+    base: usize,          // nombre de portées de bloc ouvertes à l'entrée du corps
     sorties: Vec<usize>,  // sauts à pointer vers la sortie
     suites: Vec<usize>,   // sauts à pointer vers LoopTic
     arbres: Vec<usize>,   // ExecArbre à compléter (brk, cont)
@@ -96,10 +102,12 @@ struct Boucle {
 struct Compilateur {
     ops: Vec<Instr>,
     boucles: Vec<Boucle>,
+    /// nombre de portées de bloc ouvertes à ce point du code
+    portees: usize,
 }
 
 pub fn compiler(stmts: &[Stmt]) -> Code {
-    let mut c = Compilateur { ops: Vec::new(), boucles: Vec::new() };
+    let mut c = Compilateur { ops: Vec::new(), boucles: Vec::new(), portees: 0 };
     c.bloc(stmts, None);
     Code { ops: c.ops }
 }
@@ -160,14 +168,37 @@ impl Compilateur {
         self.emettre(Instr::SiNon(0))
     }
 
+    /// Corps d'une fonction ou programme principal : pas de portée supplémentaire.
     fn bloc(&mut self, stmts: &[Stmt], encl: Option<usize>) {
         for s in stmts {
             self.instruction(s, encl);
         }
     }
 
+    /// Bloc de si / selon / boucle : une portée propre, ouverte seulement si le bloc déclare une variable.
+    fn bloc_portee(&mut self, stmts: &[Stmt], encl: Option<usize>) {
+        let declare = stmts.iter().any(|s| matches!(s.k, StmtK::DeclVar(..)));
+        if declare {
+            self.emettre(Instr::PushPortee);
+            self.portees += 1;
+        }
+        self.bloc(stmts, encl);
+        if declare {
+            self.portees -= 1;
+            self.emettre(Instr::PopPortee(1));
+        }
+    }
+
+    fn boucle_neuve(&mut self) -> Boucle {
+        Boucle { base: self.portees, sorties: vec![], suites: vec![], arbres: vec![] }
+    }
+
     fn arbre(&mut self, s: &Stmt, encl: Option<usize>) {
-        let i = self.emettre(Instr::ExecArbre { stmt: s as *const Stmt, encl, brk: AUCUN, cont: AUCUN });
+        let pops = match self.boucles.last() {
+            Some(b) => self.portees - b.base,
+            None => 0,
+        };
+        let i = self.emettre(Instr::ExecArbre { stmt: s as *const Stmt, encl, brk: AUCUN, cont: AUCUN, pops });
         if let Some(b) = self.boucles.last_mut() {
             b.arbres.push(i);
         }
@@ -223,13 +254,13 @@ impl Compilateur {
             StmtK::Si(c, alors, sinon) => {
                 self.emettre(Instr::Stmt { ligne: l, encl, synth: false });
                 let saut = self.condition(c);
-                self.bloc(alors, Some(l));
+                self.bloc_portee(alors, Some(l));
                 match sinon {
                     Some(b) => {
                         let fin = self.emettre(Instr::Jump(0));
                         let ici = self.ici();
                         self.cibler(saut, ici);
-                        self.bloc(b, Some(l));
+                        self.bloc_portee(b, Some(l));
                         let ici = self.ici();
                         self.cibler(fin, ici);
                     }
@@ -243,8 +274,9 @@ impl Compilateur {
                 self.emettre(Instr::Stmt { ligne: l, encl, synth: false });
                 let tete = self.ici();
                 let sortie = self.condition(c);
-                self.boucles.push(Boucle { sorties: vec![], suites: vec![], arbres: vec![] });
-                self.bloc(corps, Some(l));
+                let b = self.boucle_neuve();
+                self.boucles.push(b);
+                self.bloc_portee(corps, Some(l));
                 let suite = self.ici();
                 self.emettre(Instr::TicSaut(l, tete));
                 let fin = self.ici();
@@ -262,14 +294,18 @@ impl Compilateur {
                     }
                 }
                 self.emettre(Instr::PourInit);
+                self.emettre(Instr::PushPortee); // portée de la variable de boucle (fermée par LoopPop)
+                self.portees += 1;
                 let test = self.emettre(Instr::PourTest(nom.clone(), 0));
                 let debut_corps = self.ici();
-                self.boucles.push(Boucle { sorties: vec![], suites: vec![], arbres: vec![] });
-                self.bloc(corps, Some(l));
+                let b = self.boucle_neuve();
+                self.boucles.push(b);
+                self.bloc_portee(corps, Some(l));
                 let suite = self.ici();
                 self.emettre(Instr::PourSuite { l, nom: nom.clone(), corps: debut_corps });
                 let fin_ = self.ici();
                 self.emettre(Instr::LoopPop);
+                self.portees -= 1;
                 self.cibler(test, fin_);
                 self.fermer_boucle(suite, fin_, true);
             }
@@ -277,14 +313,18 @@ impl Compilateur {
                 self.emettre(Instr::Stmt { ligne: l, encl, synth: false });
                 self.expr(iterable);
                 self.emettre(Instr::ChaqueInit);
+                self.emettre(Instr::PushPortee);
+                self.portees += 1;
                 let test = self.emettre(Instr::ChaqueNext(nom.clone(), 0));
-                self.boucles.push(Boucle { sorties: vec![], suites: vec![], arbres: vec![] });
-                self.bloc(corps, Some(l));
+                let b = self.boucle_neuve();
+                self.boucles.push(b);
+                self.bloc_portee(corps, Some(l));
                 let suite = self.ici();
                 self.emettre(Instr::LoopTic(l));
                 self.emettre(Instr::Jump(test));
                 let fin_ = self.ici();
                 self.emettre(Instr::LoopPop);
+                self.portees -= 1;
                 self.cibler(test, fin_);
                 self.fermer_boucle(suite, fin_, true);
             }
@@ -294,6 +334,10 @@ impl Compilateur {
                 if self.boucles.is_empty() {
                     self.emettre(Instr::Lever(rompre));
                 } else {
+                    let pops = self.portees - self.boucles.last().unwrap().base;
+                    if pops > 0 {
+                        self.emettre(Instr::PopPortee(pops));
+                    }
                     let j = self.emettre(Instr::Jump(0));
                     let b = self.boucles.last_mut().unwrap();
                     if rompre {
@@ -435,7 +479,7 @@ fn avec_ligne(e: Flow, ligne: Option<usize>) -> Flow {
 /// Exécute le corps d'une fonction (compilé à la première utilisation). Renvoie la valeur renvoyée (Rien sinon).
 pub fn executer_corps(it: &mut Interp, corps: &Rc<Corps>) -> R<Valeur> {
     if it.arbre {
-        return match it.bloc(&corps.stmts) {
+        return match it.bloc_sans_portee(&corps.stmts) {
             Ok(()) => Ok(Valeur::Rien),
             Err(Flow::Retour(v)) => Ok(v),
             Err(e) => Err(e),
@@ -462,8 +506,11 @@ pub fn executer_programme(it: &mut Interp, stmts: &[Stmt]) -> R<()> {
 
 fn executer_code(it: &mut Interp, code: &Code) -> R<Option<Valeur>> {
     let base = it.vs.len();
+    let taille_pile = it.pile.len();
     let r = boucle(it, code);
     it.vs.truncate(base);
+    // renvoyer / erreur au milieu de blocs : on referme les portées de bloc restées ouvertes
+    it.fermer_jusqua(taille_pile);
     r
 }
 
@@ -851,6 +898,7 @@ fn tranche(it: &mut Interp, code: &Code, st: &mut EtatVm) -> R<Pas> {
                     *i += *pas;
                     let continuer = if *pas > 0.0 { *i <= *fin } else { *i >= *fin };
                     if continuer {
+                        it.renouveler_portee_boucle();
                         it.definir(nom, Valeur::Nombre(*i));
                         pc = *corps;
                     }
@@ -886,6 +934,7 @@ fn tranche(it: &mut Interp, code: &Code, st: &mut EtatVm) -> R<Pas> {
                 if let Some(EtatBoucle::Pour { i, fin, pas }) = boucles.last() {
                     let continuer = if *pas > 0.0 { *i <= *fin } else { *i >= *fin };
                     if continuer {
+                        it.renouveler_portee_boucle();
                         it.definir(nom, Valeur::Nombre(*i));
                     } else {
                         pc = *sortie;
@@ -925,20 +974,38 @@ fn tranche(it: &mut Interp, code: &Code, st: &mut EtatVm) -> R<Pas> {
                     } else {
                         let x = elems[*k].clone();
                         *k += 1;
+                        it.renouveler_portee_boucle();
                         it.definir(nom, x);
                     }
                 }
             }
             Instr::LoopPop => {
                 boucles.pop();
+                it.fermer_portee();
             }
-            Instr::ExecArbre { stmt, encl, brk, cont } => {
+            Instr::PushPortee => it.ouvrir_portee(),
+            Instr::PopPortee(n) => {
+                for _ in 0..*n {
+                    it.fermer_portee();
+                }
+            }
+            Instr::ExecArbre { stmt, encl, brk, cont, pops } => {
                 let s: &Stmt = unsafe { &**stmt };
                 ligne = *encl;
                 match it.executer(s) {
                     Ok(()) => {}
-                    Err(Flow::Rompre) if *brk != AUCUN => pc = *brk,
-                    Err(Flow::Continuer) if *cont != AUCUN => pc = *cont,
+                    Err(Flow::Rompre) if *brk != AUCUN => {
+                        for _ in 0..*pops {
+                            it.fermer_portee();
+                        }
+                        pc = *brk
+                    }
+                    Err(Flow::Continuer) if *cont != AUCUN => {
+                        for _ in 0..*pops {
+                            it.fermer_portee();
+                        }
+                        pc = *cont
+                    }
                     Err(Flow::Retour(v)) => return Ok(Pas::Fin(Some(v))),
                     Err(e) => return Err(avec_ligne(e, ligne)),
                 }
