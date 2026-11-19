@@ -83,11 +83,11 @@
       id: "tantque", chapitre: "3. Répéter", titre: "La boucle tant que",
       lecon: `<p>Quand on ne sait pas à l'avance combien de tours il faudra, on utilise <code>tant que condition faire … fin</code> : le bloc se répète <strong>tant que</strong> la condition est vraie.</p>
 <p>⚠ Il faut que quelque chose, dans la boucle, finisse par rendre la condition fausse — sinon le programme tourne sans fin !</p>`,
-      exemple: `soit i = 3\ntantque i > 0 faire\n    afficher i\n    i = i - 1\nfin\nafficher "Décollage !"`,
+      exemple: `soit i = 3\ntant que i > 0 faire\n    afficher i\n    i = i - 1\nfin\nafficher "Décollage !"`,
       consigne: `Demande un nombre <code>n</code> et fais un compte à rebours de <code>n</code> jusqu'à 1, puis affiche <code>Décollage !</code>. Pour n = 3 : <code>3</code>, <code>2</code>, <code>1</code>, <code>Décollage !</code>.`,
       depart: `soit n = saisir("Départ du compte à rebours ? ")\n`,
       indice: `<code>tant que n > 0 faire</code>, affiche <code>n</code>, puis <code>n = n - 1</code>. Le message final va après la boucle.`,
-      solution: `soit n = saisir("Départ du compte à rebours ? ")\ntantque n > 0 faire\n    afficher n\n    n = n - 1\nfin\nafficher "Décollage !"`,
+      solution: `soit n = saisir("Départ du compte à rebours ? ")\ntant que n > 0 faire\n    afficher n\n    n = n - 1\nfin\nafficher "Décollage !"`,
       tests: [{ saisies: ["3"], sortie: ["3", "2", "1", "Décollage !"] }, { saisies: ["1"], sortie: ["1", "Décollage !"] }, { saisies: ["0"], sortie: ["Décollage !"] }],
     },
     {
