@@ -13,6 +13,39 @@ use crate::valeur::*;
 
 pub type NatFn = fn(&mut Interp, &[Valeur], usize) -> R<Valeur>;
 
+/// Nombre d'arguments des fonctions natives : source unique `docs/reference/arites.txt` (recopiée dans index.html par
+/// `docs/generer_arites.js`). Une fonction absente de la table n'est pas contrôlée.
+fn table_arites() -> &'static std::collections::HashMap<&'static str, (usize, usize)> {
+    static T: std::sync::OnceLock<std::collections::HashMap<&'static str, (usize, usize)>> = std::sync::OnceLock::new();
+    T.get_or_init(|| {
+        let mut m = std::collections::HashMap::new();
+        for l in include_str!("../../docs/reference/arites.txt").lines() {
+            let l = l.trim();
+            if l.is_empty() || l.starts_with('#') {
+                continue;
+            }
+            let mut p = l.split(' ');
+            if let (Some(n), Some(a), Some(b)) = (p.next(), p.next(), p.next()) {
+                if let (Ok(a), Ok(b)) = (a.parse(), b.parse()) {
+                    m.insert(n, (a, b));
+                }
+            }
+        }
+        m
+    })
+}
+
+/// Vérifie le nombre d'arguments d'un appel de fonction native ; Err(message) s'il est trop petit ou trop grand.
+pub fn verifier_arite(nom: &str, n: usize) -> Result<(), String> {
+    match table_arites().get(nom) {
+        Some(&(min, max)) if n < min || n > max => {
+            let att = if min == max { min.to_string() } else { format!("{} à {}", min, max) };
+            Err(format!("La fonction \"{}\" attend {} argument(s), {} reçu(s).", nom, att, n))
+        }
+        _ => Ok(()),
+    }
+}
+
 pub fn existe(nom: &str) -> bool {
     trouver(nom).is_some()
 }

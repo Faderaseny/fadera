@@ -1189,6 +1189,9 @@ impl Interp {
             return self.appeler_def(&def.parametres, &def.corps, vals, ligne, nom, None);
         }
         if let Some(f) = natives::trouver(nom) {
+            if let Err(m) = natives::verifier_arite(nom, vals.len()) {
+                return Err(fad_l(m, ligne));
+            }
             return match f(self, &vals, ligne) {
                 Err(Flow::Nat(m)) => Err(fad_l(format!("{} : {}", nom, m), ligne)),
                 r => r,
@@ -1220,6 +1223,9 @@ impl Interp {
         };
         if let Some(nom) = &f.natif {
             let nf = natives::trouver(nom).unwrap();
+            if let Err(m) = natives::verifier_arite(nom, args.as_ref().len()) {
+                return Err(fad_l(m, ligne));
+            }
             return match nf(self, args.as_ref(), ligne) {
                 Err(Flow::Nat(m)) => Err(fad_l(format!("{} : {}", nom, m), ligne)),
                 r => r,

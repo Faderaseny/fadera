@@ -230,5 +230,12 @@
  "selon 2 faire\n  cas 2 alors\n    soit w = 5\n    afficher w\nfin\nafficher w",
  "répéter 3 fois\n  soit a = 1\n  afficher a\nfin\nafficher a",
  "pour i allant de 1 à 2 faire\n  pour j allant de 1 à 2 faire\n    soit s = i * 10 + j\n    afficher s\n    si j == 1 alors\n      continuer\n    fin\n  fin\nfin",
- "soit total = 0\npour i allant de 1 à 4 faire\n  soit double = i * 2\n  total = total + double\nfin\nafficher total"
+ "soit total = 0\npour i allant de 1 à 4 faire\n  soit double = i * 2\n  total = total + double\nfin\nafficher total",
+ "afficher majuscule(\"a\", \"b\")",
+ "afficher racine()",
+ "afficher texte_remplir_gauche(\"7\")",
+ "afficher texte_remplir_gauche(\"7\", 3) + \"|\" + texte_remplir_gauche(\"7\", 3, \"0\")",
+ "soit f = majuscule\nafficher f(\"a\", \"b\")",
+ "fonction majuscule(a, b)\n  renvoyer a + b\nfin\nafficher majuscule(\"x\", \"y\")",
+ "soit r = []\nafficher liste_trier_par(r)"
 ]

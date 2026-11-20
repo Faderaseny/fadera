@@ -85,6 +85,13 @@ await t("capitaliser/titre",'afficher texte_capitaliser("fADÉRA") + " " + texte
   await t("bloc: rompre/continuer dans un bloc", 'soit n = 0\ntant que n < 6 faire\n  n = n + 1\n  si n == 2 alors\n    soit t = 1\n    continuer\n  fin\n  si n == 4 alors\n    soit u = 1\n    rompre\n  fin\nfin\nafficher n', "4");
   await t("bloc: renvoyer depuis un bloc", 'fonction g(x)\n  si x > 0 alors\n    soit r = x * 2\n    renvoyer r\n  fin\n  renvoyer 0\nfin\nafficher g(4)\nafficher g(0)', "8\n0");
   await t("bloc: nom de l'erreur privé", 'essayer\n  lever("boum")\nattraper e\n  afficher e\nfin\nafficher e', /^boum\nERR:Ligne 6 : La variable "e" n'existe pas/);
+  groupe = "arguments des fonctions natives";
+  await t("arité: trop d'arguments", 'afficher majuscule("a", "b")', 'ERR:Ligne 1 : La fonction "majuscule" attend 1 argument(s), 2 reçu(s).');
+  await t("arité: pas assez", 'afficher racine()', 'ERR:Ligne 1 : La fonction "racine" attend 1 argument(s), 0 reçu(s).');
+  await t("arité: intervalle", 'afficher texte_remplir_gauche("7")', 'ERR:Ligne 1 : La fonction "texte_remplir_gauche" attend 2 à 3 argument(s), 1 reçu(s).');
+  await t("arité: arguments optionnels acceptés", 'afficher texte_remplir_gauche("7", 3) + "|" + texte_remplir_gauche("7", 3, "0")', "  7|007");
+  await t("arité: via une valeur de fonction", 'soit f = majuscule\nafficher f("a", "b")', 'ERR:Ligne 2 : La fonction "majuscule" attend 1 argument(s), 2 reçu(s).');
+  await t("arité: fonction utilisateur non touchée", 'fonction majuscule(a, b)\n  renvoyer a + b\nfin\nafficher majuscule("x", "y")', "xy");
 await t("slug",'afficher texte_slug("Été à Dakar : 2026 !")',"ete-a-dakar-2026");
 await t("palindrome",'afficher texte_est_palindrome("Esope reste ici et se repose") + " " + texte_est_palindrome("Fadera")',"vrai faux");
 await t("distance",'afficher texte_distance("chat","chats") + "-" + texte_distance("kitten","sitting")',"1-3");

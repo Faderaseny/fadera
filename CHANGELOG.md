@@ -1,9 +1,14 @@
-﻿# Journal des versions
+# Journal des versions
 
 Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et la numérotation [SemVer](https://semver.org/lang/fr/) :
 `MAJEUR.MINEUR.CORRECTIF`. La version publiée est celle de `fadera-rs/Cargo.toml` ; l'étiquette Git est `v` + ce numéro.
 
 ## [Non publié]
+
+### Changé (arguments des fonctions natives)
+- **Le nombre d'arguments des fonctions natives est vérifié** (moteurs JavaScript et Rust identiques) : `majuscule("a", "b")` ou `racine()` donnent maintenant l'erreur « La fonction "majuscule" attend 1 argument(s), 2 reçu(s). » (ou « attend 2 à 3 argument(s) » quand il y a des arguments facultatifs). Avant, les arguments en trop étaient ignorés et les manquants donnaient une erreur peu claire.
+- Le contrôle s'applique aussi quand la fonction native est passée comme valeur (`soit f = majuscule`). Les fonctions écrites par l'utilisateur ne changent pas.
+- Table unique `docs/reference/arites.txt` (220 fonctions) ; `docs/generer_arites.js` la recopie dans `index.html` et `fadera-rs/tests/verifier_arites.js` (étape de `verifier_tout.js`) vérifie qu'elle couvre toutes les fonctions des deux moteurs. Tous les programmes `.fa` du dépôt passent sans changement.
 
 ## [0.9.0] — 2026-11-18
 
