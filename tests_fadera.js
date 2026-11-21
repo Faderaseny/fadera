@@ -34,6 +34,11 @@ async function tt(nom, code, att) {
   const bon = att instanceof RegExp ? att.test(r) : r === att;
   if (bon) ok++; else { ko++; console.log("✗ [" + groupe + "] " + nom + "\n    obtenu : " + JSON.stringify(r) + "\n    attendu: " + String(att)); }
 }
+async function ts(nom, code, saisies, att) {
+  const r = await run(code, saisies.slice());
+  const bon = att instanceof RegExp ? att.test(r) : r === att;
+  if (bon) ok++; else { ko++; console.log("✗ [" + groupe + "] " + nom + "\n    obtenu : " + JSON.stringify(r) + "\n    attendu: " + String(att)); }
+}
 async function t(nom, code, att) {
   const r = await run(code);
   const bon = att instanceof RegExp ? att.test(r) : r === att;
@@ -43,13 +48,13 @@ async function t(nom, code, att) {
 async function moteur() {
   groupe = "moteur";
 await t("arith",'afficher 2+3*4',"14");
-await t("fnf stmt",'fnf afficher "a"','a');
-await t("fnf hasard",'fnf hasard(5,5)',"");
-await t("fnf expr",'soit x = fnf hasard(5,5)\nafficher x',"5");
+await t("fnf supprimé: instruction", 'fnf afficher "a"', /^ERR:Ligne 1 : Instruction inconnue : "fnf"\./);
+await t("hasard sans fnf",'hasard(5,5)',"");
+await t("fnf devenu un nom libre",'soit fnf = 3\nafficher fnf + 1',"4");
 await t("masque",'afficher masqueReseau(26)',"255.255.255.192");
-await t("masque fnf",'soit m = fnf masqueReseau(24)\nafficher m',"255.255.255.0");
+await t("masque fnf",'soit m = masqueReseau(24)\nafficher m',"255.255.255.0");
 await t("plage",'afficher plageReseau("192.168.1.77", 26)',"192.168.1.64 - 192.168.1.127");
-await t("plage stmt",'fnf plageReseau("10.0.0.5",8)',"");
+await t("plage stmt",'plageReseau("10.0.0.5",8)',"");
 await t("reseau",'soit r = creerReseau(2,3,1)\nsoit p = iaPredire(r,[0,1])\nafficher taille(p)\nafficher r',/^1\n\[Réseau 2-3-1\]$/);
 await t("entrainer",'soit r = creerReseau(2,4,1)\nsoit e0 = 0\npour i allantde 1 a 3000 faire\n iaEntrainer(r,[0,1],[1])\n iaEntrainer(r,[1,0],[1])\n iaEntrainer(r,[0,0],[0])\n iaEntrainer(r,[1,1],[0])\nfin\nafficher lireElement(iaPredire(r,[0,1]),0) > 0.8',"vrai");
 await t("ajouter expr",'soit l=[1]\nl = ajouter(l, 15)\nafficher l',"[1, 15]");
@@ -92,6 +97,13 @@ await t("capitaliser/titre",'afficher texte_capitaliser("fADÉRA") + " " + texte
   await t("arité: arguments optionnels acceptés", 'afficher texte_remplir_gauche("7", 3) + "|" + texte_remplir_gauche("7", 3, "0")', "  7|007");
   await t("arité: via une valeur de fonction", 'soit f = majuscule\nafficher f("a", "b")', 'ERR:Ligne 2 : La fonction "majuscule" attend 1 argument(s), 2 reçu(s).');
   await t("arité: fonction utilisateur non touchée", 'fonction majuscule(a, b)\n  renvoyer a + b\nfin\nafficher majuscule("x", "y")', "xy");
+  groupe = "saisir (texte) et saisir_nombre";
+  await ts("saisir renvoie toujours du texte", 'soit n = saisir("n ?")\nafficher n + 1\nafficher type_de(n)', ["41"], "411\ntexte");
+  await ts("saisir_nombre renvoie un nombre", 'soit n = saisir_nombre("n ?")\nafficher n + 1\nafficher type_de(n)', ["41"], "42\nnombre");
+  await ts("saisir_nombre accepte la virgule", 'afficher saisir_nombre() * 2', ["1,5"], "3");
+  await ts("saisir_nombre refuse un texte", 'afficher saisir_nombre()', ["abc"], /^ERR:.*impossible de convertir "abc" en nombre/);
+  await ts("saisir_nombre refuse une réponse vide", 'afficher saisir_nombre()', [], /^ERR:.*impossible de convertir "" en nombre/);
+  await ts("nombre(saisir()) équivaut à saisir_nombre", 'afficher nombre(saisir()) + 1', ["9"], "10");
 await t("slug",'afficher texte_slug("Été à Dakar : 2026 !")',"ete-a-dakar-2026");
 await t("palindrome",'afficher texte_est_palindrome("Esope reste ici et se repose") + " " + texte_est_palindrome("Fadera")',"vrai faux");
 await t("distance",'afficher texte_distance("chat","chats") + "-" + texte_distance("kitten","sitting")',"1-3");
@@ -261,7 +273,7 @@ await t("std deux fois",'importer "std/maths"\nimporter "std/maths.fa"\nafficher
 await t("std + module utilisateur",'importer "std/maths"\nimporter "outils"\nafficher double(factorielle(3))',"12");
 // régressions
 await t("fonction récursive",'fonction f(n)\n si n == 0 alors\n  renvoyer 0\n fin\n renvoyer n + f(n - 1)\nfin\nafficher f(100)',"5050");
-await t("fnf",'fnf afficher "ok"',"ok");
+await t("fnf supprimé (message)",'fnf afficher "ok"',/^ERR:.*"fnf"/);
 await t("variable cas réservé msg",'soit cas = 1',/ERR:.*cas/);
 
 // ---- tests intégrés au langage

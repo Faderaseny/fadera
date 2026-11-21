@@ -26,9 +26,9 @@ Ces fonctions font partie du langage : elles s'écrivent comme les autres (nom s
 
 **`afficher valeur`** — Écrit la valeur dans la console (mot-clé : sans parenthèses).
 
-**`saisir(message)`** — Demande une réponse à l'utilisateur. Renvoie un nombre si la réponse est un nombre (la virgule décimale « 1,5 » est acceptée), sinon un texte. Pour exiger un nombre, utilisez `saisir_nombre(message)` (erreur claire si la réponse n'en est pas un).
+**`saisir(message)`** — Demande une réponse à l'utilisateur. Renvoie toujours un texte (depuis la version 0.10.0). Pour obtenir un nombre, utilisez `saisir_nombre(message)`.
 
-**`saisir_nombre(message)`** — Comme saisir, mais exige un nombre (virgule décimale acceptée) : erreur claire si la réponse n'en est pas un.
+**`saisir_nombre(message)`** — Comme saisir, mais renvoie un nombre (la virgule décimale « 1,5 » est acceptée) : erreur claire si la réponse n'en est pas un.
 
 **`hasard(min, max)`** — Entier aléatoire entre min et max inclus.
 

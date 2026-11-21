@@ -1074,13 +1074,8 @@ impl Interp {
                     Err(HoteErr::Indisponible) => Err(fad("saisir n'est pas disponible dans cet environnement.")),
                     Err(HoteErr::Msg(m)) => Err(interne(m)),
                     Ok(None) => Ok(Valeur::texte("")),
-                    Ok(Some(r)) => {
-                        if est_nombre_saisi(&r) {
-                            Ok(Valeur::Nombre(js_trim(&r).replacen(',', ".", 1).parse().unwrap_or(f64::NAN)))
-                        } else {
-                            Ok(Valeur::texte(r))
-                        }
-                    }
+                    // depuis 0.10.0 : saisir renvoie toujours du texte (saisir_nombre pour un nombre)
+                    Ok(Some(r)) => Ok(Valeur::texte(r)),
                 }
             }
             Expr::LireFichier(p) => {
@@ -1356,21 +1351,6 @@ impl Interp {
         let debut = self.vs.len() - argc;
         let vals: Vec<Valeur> = self.vs.drain(debut..).collect();
         self.appeler_vals(nom, vals, ligne)
-    }
-}
-
-fn est_nombre_saisi(r: &str) -> bool {
-    // /^\s*-?\d+([.,]\d+)?\s*$/
-    let t = js_trim(r);
-    let t = t.strip_prefix('-').unwrap_or(t);
-    let mut parts = t.splitn(2, |c| c == '.' || c == ',');
-    let a = parts.next().unwrap_or("");
-    if a.is_empty() || !a.bytes().all(|b| b.is_ascii_digit()) {
-        return false;
-    }
-    match parts.next() {
-        None => true,
-        Some(b) => !b.is_empty() && b.bytes().all(|c| c.is_ascii_digit()),
     }
 }
 

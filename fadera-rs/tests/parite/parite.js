@@ -21,7 +21,7 @@ const cas = [];
 const ts = fs.readFileSync(path.join(base, "tests_fadera.js"), "utf8");
 const dm = ts.indexOf("async function moteur() {"), fm = ts.indexOf("async function shell()");
 const corps = ts.slice(dm, fm).replace("async function moteur() {", "").replace(/}\s*$/, "");
-new Function("t", "groupe", "return (async()=>{" + corps + "})()")((nom, code) => { cas.push({ nom, code }); return Promise.resolve(); }, "");
+new Function("t", "groupe", "ts", "return (async()=>{" + corps + "})()")((nom, code) => { cas.push({ nom, code }); return Promise.resolve(); }, "", (nom, code) => { cas.push({ nom, code }); return Promise.resolve(); });
 // 2) blocs de code des exercices
 for (const f of ["EXERCICES_FADERA_MATHS.md", "EXERCICES_FADERA_MATHS_AVANCES.md", "GUIDE_FADERA.md"]) {
   const p = path.join(base, f);

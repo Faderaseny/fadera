@@ -160,19 +160,6 @@ impl Parser {
                     let p = a.pop().unwrap();
                     return Ok(StmtK::EcrireFichier(p, c));
                 }
-                "fnf" => {
-                    self.avancer();
-                    if let Some(a) = self.actuel() {
-                        if a.t == Type::MotCle && a.valeur != "fnf" {
-                            let a = a.clone();
-                            return self.instruction(&a);
-                        }
-                    }
-                    let id = self.consommer(Type::Identifiant, None)?;
-                    self.consommer(Type::Symbole, Some("("))?;
-                    let args = self.arguments_entre(")")?;
-                    return Ok(StmtK::Expr(Expr::Appel(Nom::nouveau(&id.valeur), args, id.ligne)));
-                }
                 "essayer" => return self.analyser_essayer(),
                 "rompre" | "continuer" => {
                     if self.prof_boucle == 0 {
@@ -939,17 +926,6 @@ impl Parser {
                     return Ok(Expr::Hasard(Box::new(c), Box::new(b), ligne));
                 }
                 "fonction" => return self.analyser_lambda(),
-                "fnf" => {
-                    self.avancer();
-                    if let Some(a) = self.actuel() {
-                        if a.t == Type::MotCle && a.valeur != "fnf" {
-                            return self.analyser_primaire();
-                        }
-                    }
-                    let id = self.consommer(Type::Identifiant, None)?;
-                    self.consommer(Type::Symbole, Some("("))?;
-                    return Ok(Expr::Appel(Nom::nouveau(&id.valeur), self.arguments_entre(")")?, id.ligne));
-                }
                 "ajouter" => {
                     let mut a = self.appel_mot("ajouter", 2, 2)?;
                     let e = a.pop().unwrap();

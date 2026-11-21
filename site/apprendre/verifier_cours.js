@@ -13,7 +13,7 @@ const dossier = fs.mkdtempSync(path.join(path.dirname(path.resolve(exe)), "fader
 // Imite le moteur WebAssembly du navigateur : l'invite de saisir() n'est pas affichée.
 function executer(code, saisies) {
   const f = path.join(dossier, "p.fa");
-  fs.writeFileSync(f, code.replace(/saisir\s*\(\s*(?:"[^"]*")?\s*\)/g, 'saisir("")'));
+  fs.writeFileSync(f, code.replace(/(saisir(?:_nombre)?)\s*\(\s*(?:"[^"]*")?\s*\)/g, '$1("")'));
   const r = cp.spawnSync(exe, ["run", f], { input: saisies.join("\n") + "\n", encoding: "utf8", timeout: 20000 });
   if (r.status !== 0) { const m = /Ligne (\d+)/.exec(r.stderr + r.stdout); return JSON.stringify({ sortie: [], erreur: (r.stderr || r.stdout).trim().split("\n")[0], source: m ? m[1] : "" }); }
   const lignes = r.stdout.replace(/\r/g, "").split("\n"); if (lignes[lignes.length - 1] === "") lignes.pop();

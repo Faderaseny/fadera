@@ -14,7 +14,7 @@ fn hasard_dans_les_bornes() {
 
 #[test]
 fn saisie() {
-    let r = executer_capture("soit n = saisir(\"x ?\")\nsoit t = saisir()\nsoit v = saisir()\nafficher n + 1\nafficher t\nafficher \"[\" + v + \"]\"", vec!["41".into(), "texte".into()], &[]);
+    let r = executer_capture("soit n = saisir_nombre(\"x ?\")\nsoit t = saisir()\nsoit v = saisir()\nafficher n + 1\nafficher t\nafficher \"[\" + v + \"]\"", vec!["41".into(), "texte".into()], &[]);
     assert_eq!(r, "42\ntexte\n[]");
 }
 

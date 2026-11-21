@@ -32,7 +32,7 @@ fonction jouer(secret, proposer)
 fin
 
 soit joueur_dichotomie = (bas, haut) => entier((bas + haut) / 2)
-soit joueur_humain = (bas, haut) => saisir("Un nombre entre " + bas + " et " + haut + " ? ")
+soit joueur_humain = (bas, haut) => saisir_nombre("Un nombre entre " + bas + " et " + haut + " ? ")
 
 soit secret = alea(100) + 1
 afficher "Le nombre secret est entre 1 et 100 (l'ordinateur le cherche)."

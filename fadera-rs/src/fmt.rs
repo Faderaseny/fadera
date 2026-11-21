@@ -11,7 +11,7 @@ use crate::lexer::{lexer_comm, Commentaire, Jeton, Type};
 /// Mots-clés qui s'utilisent comme des fonctions : `taille(l)`, pas `taille (l)`.
 const MOTS_APPEL: &[&str] = &[
     "taille", "ajouter", "liste", "saisir", "hasard", "lireElement", "lireCle", "modifierElement", "modifierCle",
-    "ecrireFichier", "lireFichier", "fnf",
+    "ecrireFichier", "lireFichier",
 ];
 /// Mots-clés dont l'espace avant « ( » est laissé comme l'auteur l'a écrit.
 const MOTS_LIBRES: &[&str] = &["afficher", "renvoyer"];

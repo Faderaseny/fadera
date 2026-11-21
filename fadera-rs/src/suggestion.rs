@@ -6,7 +6,7 @@ use regex::Regex;
 use unicode_normalization::UnicodeNormalization;
 
 const MOTS_CLES: &[&str] = &[
-    "soit", "fnf", "si", "alors", "sinon", "fin", "afficher", "tantque", "faire", "fonction", "renvoyer", "saisir", "liste", "ajouter", "taille",
+    "soit", "si", "alors", "sinon", "fin", "afficher", "tantque", "faire", "fonction", "renvoyer", "saisir", "liste", "ajouter", "taille",
     "lireElement", "modifierElement", "modifierCle", "hasard", "structure", "lireCle", "pour", "allantde", "lireFichier", "ecrireFichier", "vrai",
     "faux", "non", "essayer", "attraper", "selon", "cas", "defaut", "rompre", "continuer", "importer",
 ];

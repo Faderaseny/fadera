@@ -32,7 +32,7 @@ pub struct Commentaire {
 }
 
 pub const MOTS_CLES: &[&str] = &[
-    "soit", "fnf", "si", "alors", "sinon", "fin", "afficher", "tantque", "faire", "fonction", "renvoyer",
+    "soit", "si", "alors", "sinon", "fin", "afficher", "tantque", "faire", "fonction", "renvoyer",
     "saisir", "liste", "ajouter", "taille", "lireElement", "modifierElement", "modifierCle", "hasard",
     "structure", "lireCle", "pour", "allantde", "lireFichier", "ecrireFichier", "vrai", "faux", "non",
     "essayer", "attraper", "selon", "cas", "defaut", "rompre", "continuer", "importer",

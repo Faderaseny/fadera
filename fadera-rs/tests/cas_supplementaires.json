@@ -144,7 +144,6 @@
  "fonction g()\n x = 5\nfin\nsoit x = 1\ng()\nafficher x",
  "soit l = [1,2]\nsoit m = l\najouter(m, 3)\nafficher l",
  "soit f = fonction(a, b)\n si a > b alors\n  renvoyer a\n fin\n renvoyer b\nfin\nafficher f(3, 9)",
- "afficher fnf majuscule(\"a\")",
  "structure s = {nom: \"x\", liste: [1, {a: 2}]}\nafficher s\nafficher lireCle(lireCle(s, \"liste\")[0], 0)",
  "afficher [1, 2,\n 3]\nafficher {\n a: 1,\n b: 2\n}",
  "afficher 1 # commentaire\n// autre\nafficher 2",
@@ -237,5 +236,9 @@
  "afficher texte_remplir_gauche(\"7\", 3) + \"|\" + texte_remplir_gauche(\"7\", 3, \"0\")",
  "soit f = majuscule\nafficher f(\"a\", \"b\")",
  "fonction majuscule(a, b)\n  renvoyer a + b\nfin\nafficher majuscule(\"x\", \"y\")",
- "soit r = []\nafficher liste_trier_par(r)"
+ "soit r = []\nafficher liste_trier_par(r)",
+ "fnf afficher \"a\"",
+ "soit fnf = 3\nafficher fnf + 1",
+ "soit n = saisir(\"n ?\")\nafficher n + 1",
+ "afficher saisir_nombre()"
 ]
