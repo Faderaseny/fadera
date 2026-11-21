@@ -5,6 +5,11 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et la nu
 
 ## [Non publié]
 
+## [0.10.3] — 2026-11-21
+
+### Amélioré
+- **L'installateur Windows arrête lui-même l'éditeur avant de copier les fichiers** : `Fadera-IDE.exe` et `fadera.exe` lancés depuis le dossier d'installation sont fermés au début de l'installation (et de la désinstallation). Avant, si l'éditeur tournait, Windows ne pouvait pas remplacer `Fadera-IDE.exe` et l'ancienne version restait en place sans avertissement. Un `fadera.exe` lancé depuis un autre dossier (terminal, programme en cours) n'est jamais touché.
+
 ## [0.10.2] — 2026-11-21
 
 ### Corrigé
