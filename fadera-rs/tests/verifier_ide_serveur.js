@@ -53,6 +53,11 @@ const attendre = (ms) => new Promise((r) => setTimeout(r, ms));
     for (const h of ["localhost.evil.com:" + PORT, "127.0.0.1.evil.com:" + PORT, "evil.com/127.0.0.1", "127.0.0.1", "localhost:9999"])
       verifier("hôte « " + h + " » refusé (comparaison exacte)", (await requete("GET", "/", null, h)).code === 403);
     verifier("hôte localhost:" + PORT + " accepté", (await requete("GET", "/__fadera", null, "localhost:" + PORT)).code === 200);
+    // le lanceur Windows (fadera-ide) doit joindre le serveur avec « Host: 127.0.0.1:PORT » : sans le port, le serveur répond 403 et le
+    // lanceur croit que l'éditeur n'a pas démarré (régression 0.10.0 → 0.10.1)
+    verifier("hôte sans port refusé par le serveur", (await requete("GET", "/__fadera", null, "127.0.0.1")).code === 403);
+    const srcLanceur = fs.readFileSync(path.join(__dirname, "..", "..", "fadera-ide", "src", "main.rs"), "utf8");
+    verifier("le lanceur Windows envoie le port dans « Host »", /Host: 127\.0\.0\.1:\{\}/.test(srcLanceur) && !/Host: 127\.0\.0\.1\\r/.test(srcLanceur));
 
     const ouvert = await ouvrir();
     let j = null; try { j = JSON.parse(ouvert.texte); } catch (e) {}

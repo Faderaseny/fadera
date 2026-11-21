@@ -5,6 +5,11 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et la nu
 
 ## [Non publié]
 
+## [0.10.2] — 2026-11-21
+
+### Corrigé
+- **Le raccourci / double-clic « Fadéra IDE » (Windows) ne démarrait plus l'éditeur** (message « L'éditeur n'a pas démarré (port 4747 occupé…) ») alors que `fadera ide` fonctionnait dans un terminal. Cause : le lanceur vérifiait que le serveur répondait en envoyant `Host: 127.0.0.1` sans le port, et le serveur local (protection contre le « DNS rebinding ») refusait cet hôte ; le lanceur croyait donc que le serveur n'était pas démarré. Le lanceur envoie maintenant `Host: 127.0.0.1:4747`. Deux vérifications ajoutées à `verifier_ide_serveur.js`.
+
 ## [0.10.1] — 2026-11-21
 
 ### Ajouté
