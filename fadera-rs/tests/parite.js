@@ -42,7 +42,7 @@ const corpus = [];
 const src = fs.readFileSync(path.join(DOSSIER_LIVRES, "tests_fadera.js"), "utf8");
 const deb = src.indexOf("async function moteur() {"), fin = src.indexOf("async function shell()");
 const corps = src.slice(deb, fin).replace("async function moteur() {", "").replace(/}\s*$/, "");
-new Function("t", "tt", "groupe", "return (async()=>{" + corps + "})()")((nom, code) => { corpus.push({ nom, code }); return Promise.resolve(); }, (nom, code) => { corpus.push({ nom: "tester:" + nom, code, tester: true }); return Promise.resolve(); }, "");
+new Function("t", "tt", "groupe", "ts", "return (async()=>{" + corps + "})()")((nom, code) => { corpus.push({ nom, code }); return Promise.resolve(); }, (nom, code) => { corpus.push({ nom: "tester:" + nom, code, tester: true }); return Promise.resolve(); }, "", (nom, code) => { corpus.push({ nom, code }); return Promise.resolve(); });
 for (const f of ["EXERCICES_FADERA_MATHS.md", "EXERCICES_FADERA_MATHS_AVANCES.md"]) {
   const p = path.join(DOSSIER_LIVRES, f);
   if (!fs.existsSync(p)) continue;

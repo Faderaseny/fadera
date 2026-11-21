@@ -68,7 +68,7 @@ a
 Une lettre (Unicode) ou `_`, puis des lettres, chiffres ou `_`. Les identifiants sont **sensibles à la casse**. Un identifiant peut contenir des points suivis d'une lettre : `o.double` est **un seul** identifiant (espaces de noms de modules, §11).
 
 ### 1.5 Mots réservés
-`soit fnf si alors sinon fin afficher tantque faire fonction renvoyer saisir liste ajouter taille lireElement modifierElement modifierCle hasard structure lireCle pour allantde lireFichier ecrireFichier vrai faux non essayer attraper selon cas defaut rompre continuer importer`, ainsi que `et` et `ou`. On ne peut pas les utiliser comme noms de variables ou de fonctions, **sauf** les mots d'appel ci-dessous.
+`soit si alors sinon fin afficher tantque faire fonction renvoyer saisir liste ajouter taille lireElement modifierElement modifierCle hasard structure lireCle pour allantde lireFichier ecrireFichier vrai faux non essayer attraper selon cas defaut rompre continuer importer`, ainsi que `et` et `ou`. On ne peut pas les utiliser comme noms de variables ou de fonctions, **sauf** les mots d'appel ci-dessous.
 
 **Mots d'appel libres.** `liste`, `taille`, `hasard`, `saisir`, `ajouter`, `lireElement`, `modifierElement`, `modifierCle`, `lireCle`, `lireFichier` et `ecrireFichier` ne sont des mots du langage que lorsqu'une parenthèse ouvrante les suit (`taille(x)`). Ailleurs, ce sont des noms ordinaires : `soit taille = 1.75`, `soit liste = [3, 1, 2]`. De même `structure` n'est un mot du langage que s'il est suivi d'un nom sur la même ligne (`structure Point = …`).
 
@@ -227,7 +227,7 @@ unaire       = "-" unaire | puissance
 puissance    = primaire ["**" unaire]
 primaire     = NOMBRE | TEXTE | "vrai" | "faux" | ID | appel
              | "(" expr ")" | liste | structure | lambda
-appel        = ["fnf"] ID "(" [expr ("," expr)*] ")"
+appel        = ID "(" [expr ("," expr)*] ")"
 liste        = "[" [expr ("," expr)*] "]"  |  "liste" "(" [expr ("," expr)*] ")"
 structure    = "{" [ID ":" expr ("," ID ":" expr)*] "}"
 lambda       = ID "=>" expr  |  "(" [ID ("," ID)*] ")" "=>" expr  |  "fonction" "(" … ")" instruction* "fin"
@@ -235,7 +235,7 @@ lambda       = ID "=>" expr  |  "(" [ID ("," ID)*] ")" "=>" expr  |  "fonction" 
 
 `sinon si` sur **la même ligne** n'ouvre pas un nouveau bloc : un seul `fin` ferme toute la chaîne.
 
-Une instruction peut être une expression seule (un appel). Le préfixe `fnf` devant un appel est facultatif et sans effet sur le résultat.
+Une instruction peut être une expression seule (un appel). (Le préfixe `fnf`, facultatif et sans effet, a été supprimé en 0.10.0 : `fnf` est maintenant un nom libre.)
 
 ### 3.1 Priorités (de la plus faible à la plus forte)
 

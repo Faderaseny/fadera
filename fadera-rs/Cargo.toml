@@ -1,10 +1,13 @@
 [package]
 name = "fadera"
-version = "0.9.0"
+version = "0.10.0"
 edition = "2021"
 description = "Fadéra — langage de programmation en français (moteur Rust)"
 license = "MIT"
 
+# wasm-pack : l'optimiseur wasm-opt (fourni avec wasm-pack) s'arrête sur le WebAssembly produit par les compilateurs Rust
+# récents (« Only 1 table definition allowed in MVP ») : on le désactive. Le module est un peu plus gros, mais il est
+# déjà compilé en mode release ; à réactiver quand wasm-pack embarquera un wasm-opt plus récent.
 [package.metadata.wasm-pack.profile.release]
 wasm-opt = false
 

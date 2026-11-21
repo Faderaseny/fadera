@@ -5,6 +5,19 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et la nu
 
 ## [Non publié]
 
+## [0.10.0] — 2026-11-20
+
+### Changé (incompatible : `saisir` renvoie toujours du texte)
+- **`saisir(message)` renvoie toujours un texte** (moteurs JavaScript et Rust identiques). Avant, une réponse qui ressemblait à un nombre était convertie en secret, ce qui rendait le type de la variable imprévisible (`saisir()` donnait `"abc"` ou `42` selon ce que tapait la personne).
+- **Pour obtenir un nombre : `saisir_nombre(message)`** (la virgule décimale « 1,5 » est acceptée ; une réponse qui n'est pas un nombre donne l'erreur claire « impossible de convertir "abc" en nombre »). `nombre(saisir(message))` fait la même chose.
+- **Pour migrer** : remplacez `saisir(` par `saisir_nombre(` partout où vous calculez avec la réponse (`soit age = saisir_nombre("Âge ? ")`). Sinon `saisir("5") + 1` donne maintenant `"51"`. Les leçons, l'exemple 09 et la documentation ont été migrés.
+
+### Supprimé
+- **Le préfixe `fnf`** (`fnf hasard(10, 20)`), facultatif et sans effet, n'existe plus : écrivez simplement `hasard(10, 20)`. Le mot n'est plus réservé (`soit fnf = 3` fonctionne) ; l'ancienne écriture donne l'erreur « Instruction inconnue : "fnf" ».
+
+### Vérifié
+- La forme française **`pour i allant de 1 à 5 faire … fin`** (avec « à » accentué) est correcte et acceptée par les deux moteurs, comme `a` sans accent et `allantde`.
+
 ### Changé (arguments des fonctions natives)
 - **Le nombre d'arguments des fonctions natives est vérifié** (moteurs JavaScript et Rust identiques) : `majuscule("a", "b")` ou `racine()` donnent maintenant l'erreur « La fonction "majuscule" attend 1 argument(s), 2 reçu(s). » (ou « attend 2 à 3 argument(s) » quand il y a des arguments facultatifs). Avant, les arguments en trop étaient ignorés et les manquants donnaient une erreur peu claire.
 - Le contrôle s'applique aussi quand la fonction native est passée comme valeur (`soit f = majuscule`). Les fonctions écrites par l'utilisateur ne changent pas.
@@ -21,7 +34,7 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et la nu
 
 ### Changé (français correct dans le langage)
 - **Formes françaises acceptées** (moteurs JavaScript et Rust identiques) : `tant que`, `allant de`, `défaut`, `hérite`, `créer` (avec accents et espaces), et `pour x dans liste faire … fin` (comme `pour chaque x dans liste faire`). Les anciennes formes (`tantque`, `allantde`, `defaut`, `herite`, `creer`) restent valides.
-- **Noms libres** : `liste`, `taille`, `hasard`, `saisir`, `ajouter`, `lireElement`, `modifierElement`, `modifierCle`, `lireCle`, `lireFichier`, `ecrireFichier` ne sont des mots du langage que suivis d'une parenthèse (`taille(x)`) ; `soit taille = 1.75` et `soit liste = [1, 2]` fonctionnent. `structure` n'est un mot du langage que suivi d'un nom sur la même ligne. `fnf` reste réservé par compatibilité.
+- **Noms libres** : `liste`, `taille`, `hasard`, `saisir`, `ajouter`, `lireElement`, `modifierElement`, `modifierCle`, `lireCle`, `lireFichier`, `ecrireFichier` ne sont des mots du langage que suivis d'une parenthèse (`taille(x)`) ; `soit taille = 1.75` et `soit liste = [1, 2]` fonctionnent. `structure` n'est un mot du langage que suivi d'un nom sur la même ligne. (`fnf` était réservé ; il est supprimé depuis la 0.10.0.)
 - `saisir` accepte la virgule décimale (`1,5` donne le nombre 1.5) ; nouvelle fonction `saisir_nombre(message)` qui exige un nombre.
 - **Alias français des fonctions** (dans un appel) : `écrire_fichier`, `lire_fichier`, `lire_élément`, `modifier_élément`, `lire_clé`, `modifier_clé`, `masque_réseau`, `plage_réseau`, `créer_réseau`, `ia_entraîner`, `ia_prédire` ; les écritures historiques restent valides.
 - **Crochets pour les listes** : `l[i]` lit un élément, `l[i] = v` le remplace (équivalents de `lireElement` / `modifierElement`), enchaînables : `grille[i][j] = v`, `soi.items[i]`, `f()[0]`. Le `[` doit être sur la même ligne que la valeur qui le précède.

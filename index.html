@@ -1284,7 +1284,7 @@
     <div id="boot">
       <div class="logo-boot"><img class="logo-img" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 256 256%22%3E%3Crect width=%22256%22 height=%22256%22 rx=%2256%22 fill=%22%230f1b33%22/%3E%3Cpath d=%22M86 204V70a14 14 0 0 1 14-14h92M86 130h74%22 fill=%22none%22 stroke=%22%23f2a93b%22 stroke-width=%2226%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3Crect x=%22176%22 y=%22164%22 width=%2240%22 height=%2240%22 rx=%228%22 fill=%22%23fff%22/%3E%3C/svg%3E" alt="Fadéra" width="96" height="96" /></div>
       <div class="barre-charge"></div>
-      <div class="texte-boot" id="texteBoot">Démarrage de Fadéra v0.9.0…</div>
+      <div class="texte-boot" id="texteBoot">Démarrage de Fadéra v0.10.0…</div>
     </div>
 
     <div class="topbar">
@@ -2499,7 +2499,7 @@ fin</textarea
                 ligneReponse.style.color = "#a6e3a1";
                 ligneReponse.innerHTML =
                   `📄 <strong>AFFICHAGE DES 5 ${action} LIGNES DE "${argsBruts || "script.fa"}" :</strong><br>` +
-                  `<span style="color: #6c7086;">[1] # Langage Souverain FADÉRA v1.9<br>[2] fnf initialiser_reseau()<br>[3] soit masque = 26;</span>`;
+                  `<span style="color: #6c7086;">[1] # Langage Souverain FADÉRA v1.9<br>[2] initialiser_reseau()<br>[3] soit masque = 26;</span>`;
               } else if (
                 commandeBrute === "df -i" ||
                 commandeBrute === "inodes_disque"
@@ -2652,7 +2652,7 @@ fin</textarea
                 ligneReponse.style.color = "#a6e3a1";
                 ligneReponse.innerHTML =
                   `📄 <strong>[Head Engine] Affichage des 3 premières lignes de ${argsBruts || "script.fa"} :</strong><br>` +
-                  `<span style="color: #6c7086;">1 | # Noyau Souverain FADÉRA v1.9<br>2 | fnf initialiser_reseau()<br>3 | soit zone = "Dakar";</span>`;
+                  `<span style="color: #6c7086;">1 | # Noyau Souverain FADÉRA v1.9<br>2 | initialiser_reseau()<br>3 | soit zone = "Dakar";</span>`;
               } else if (
                 cmdPrincipale === "tail" ||
                 cmdPrincipale === "fin_flux"
@@ -2665,7 +2665,7 @@ fin</textarea
                 ligneReponse.style.color = "#cdd6f4";
                 ligneReponse.innerHTML =
                   "📘 <strong>AIDE DU TERMINAL FADÉRA</strong><br>" +
-                  "• Tapez n'importe quelle instruction Fadéra : <span style='color:#f5c451'>soit x = 5</span>, <span style='color:#f5c451'>afficher x * 2</span>, <span style='color:#f5c451'>fnf hasard(10, 20)</span><br>" +
+                  "• Tapez n'importe quelle instruction Fadéra : <span style='color:#f5c451'>soit x = 5</span>, <span style='color:#f5c451'>afficher x * 2</span>, <span style='color:#f5c451'>hasard(10, 20)</span><br>" +
                   "• Les variables et fonctions de votre script (bouton ▶) sont disponibles ici.<br>" +
                   "• Fonctions natives : stats_*, math_*, matrice_*, telecom_*, ia_*, crypto_*, masqueReseau, plageReseau, creerReseau…<br>" +
                   "• Commandes : ls, cd, pwd, cat, touch, env, functions, history, clear, date, whoami…<br>" +
@@ -2695,7 +2695,7 @@ fin</textarea
 
       // ---------- REPL : détection + exécution d'une ligne Fadéra ----------
       const _RE_INSTR_FADERA =
-        /^(?:(?:soit|structure|si|afficher|tantque|pour|fonction|renvoyer|essayer|attraper|selon|importer|rompre|continuer|ajouter|modifierElement|modifierCle|ecrireFichier|fnf)(?![\p{L}\p{N}_])|classe(?=\s+[\p{L}_])|tester(?=\s+["']))/u;
+        /^(?:(?:soit|structure|si|afficher|tantque|pour|fonction|renvoyer|essayer|attraper|selon|importer|rompre|continuer|ajouter|modifierElement|modifierCle|ecrireFichier)(?![\p{L}\p{N}_])|classe(?=\s+[\p{L}_])|tester(?=\s+["']))/u;
       const _RE_AFFECT = /^[\p{L}_][\p{L}\p{N}_]*\s*=(?!=)/u;
       function versMoteurFadera(cmd) {
         const c = cmd.trim();
@@ -2767,8 +2767,7 @@ fin</textarea
         if (window.faderaDebogueur && window.faderaDebogueur.enPause) return evaluerEnPause(code, ligneReponse);
         if (replRustActif()) {
           try {
-            const sansFnfR = code.replace(/^fnf\s+/, "");
-            const instrR = (_RE_INSTR_FADERA.test(sansFnfR) && !/^fnf(?![\p{L}\p{N}_])/u.test(sansFnfR)) || _RE_AFFECT.test(code);
+            const instrR = _RE_INSTR_FADERA.test(code) || _RE_AFFECT.test(code);
             const s = sessionRust();
             const r = JSON.parse(s.evaluer(code, instrR));
             if (r.erreur) {
@@ -2789,12 +2788,7 @@ fin</textarea
         it.etapes = 0;
         it.pile.length = 1;
         it.profondeur = 0;
-        // "fnf nom(...)" est une écriture de la forme "nom(...)" : on affiche sa valeur comme une expression
-        const sansFnf = code.replace(/^fnf\s+/, "");
-        const instruction =
-          (_RE_INSTR_FADERA.test(sansFnf) &&
-            !/^fnf(?![\p{L}\p{N}_])/u.test(sansFnf)) ||
-          _RE_AFFECT.test(code);
+        const instruction = _RE_INSTR_FADERA.test(code) || _RE_AFFECT.test(code);
         try {
           if (!instruction) {
             // Expression : on affiche sa valeur (comme un REPL)
@@ -2857,7 +2851,6 @@ fin</textarea
       };
       const MOTS_CLES = [
         "soit",
-        "fnf",
         "si",
         "alors",
         "sinon",
@@ -3716,28 +3709,6 @@ fin</textarea
                   contenuExpr: a[1],
                 };
               }
-              case "fnf": {
-                // "fnf nom(...)" = simple écriture équivalente à "nom(...)"
-                this.avancer();
-                if (
-                  this.actuel &&
-                  this.actuel.type === TYPE.MOT_CLE &&
-                  this.actuel.valeur !== "fnf"
-                )
-                  return this.instruction(this.actuel);
-                const idJeton = this.consommer(TYPE.IDENTIFIANT);
-                this.consommer(TYPE.SYMBOLE, "(");
-                const args = this.argumentsEntre(")");
-                return {
-                  type: "InstructionExpression",
-                  expression: {
-                    type: "AppelFonction",
-                    nom: idJeton.valeur,
-                    arguments: args,
-                    ligne: idJeton.ligne,
-                  },
-                };
-              }
               case "essayer":
                 return this.analyserEssayer();
               case "rompre":
@@ -4576,23 +4547,6 @@ fin</textarea
               }
               case "fonction":
                 return this.analyserLambda();
-              case "fnf": {
-                this.avancer();
-                if (
-                  this.actuel &&
-                  this.actuel.type === TYPE.MOT_CLE &&
-                  this.actuel.valeur !== "fnf"
-                )
-                  return this.analyserPrimaire();
-                const idJeton = this.consommer(TYPE.IDENTIFIANT);
-                this.consommer(TYPE.SYMBOLE, "(");
-                return {
-                  type: "AppelFonction",
-                  nom: idJeton.valeur,
-                  arguments: this.argumentsEntre(")"),
-                  ligne: idJeton.ligne,
-                };
-              }
               case "ajouter": {
                 const a = this.appelMot("ajouter", 2, 2);
                 return {
@@ -6779,9 +6733,8 @@ fin
                   "saisir n'est pas disponible dans cet environnement.",
                 );
               const r = await this.hote.saisir(invite);
-              if (typeof r === "string" && /^\s*-?\d+([.,]\d+)?\s*$/.test(r))
-                return parseFloat(r.replace(",", "."));
-              return r == null ? "" : r;
+              // depuis 0.10.0 : saisir renvoie toujours du texte (saisir_nombre pour un nombre)
+              return r == null ? "" : String(r);
             }
             case "ExpressionLireFichier": {
               if (!this.hote.lireFichier)
@@ -7409,7 +7362,7 @@ fin
       // Il s'appuie sur le vrai lexeur (positions des jetons, commentaires) et sur l'analyseur : un code qui ne
       // s'analyse pas n'est jamais reformaté. Il ne déplace aucun jeton d'une ligne à l'autre ; il ne change que les
       // espaces, l'indentation et les lignes vides, et vérifie que le texte produit se découpe en exactement les mêmes jetons.
-      const FMT_MOTS_APPEL = ["taille", "ajouter", "liste", "saisir", "hasard", "lireElement", "lireCle", "modifierElement", "modifierCle", "ecrireFichier", "lireFichier", "fnf"];
+      const FMT_MOTS_APPEL = ["taille", "ajouter", "liste", "saisir", "hasard", "lireElement", "lireCle", "modifierElement", "modifierCle", "ecrireFichier", "lireFichier"];
       const FMT_MOTS_LIBRES = ["afficher", "renvoyer"];
       function formaterSource(src, indentation) {
         if (indentation === undefined) indentation = 4;
@@ -11107,7 +11060,7 @@ fin
         }
 
         // ---- complétion
-        const MOTS_CLES_LISTE = () => MOTS_CLES.filter((m) => m !== "fnf");
+        const MOTS_CLES_LISTE = () => MOTS_CLES.slice();
         const EXTRAITS = [
           { texte: "si", detail: "condition", insertion: "si condition alors\n    \nfin", curseur: 3, longueurSel: 9 },
           { texte: "si/sinon", detail: "condition avec sinon", insertion: "si condition alors\n    \nsinon\n    \nfin", curseur: 3, longueurSel: 9 },
@@ -12156,7 +12109,7 @@ fin
       // Version de Fadéra affichée à l'écran de démarrage et ici : elle doit être la même que fadera-rs/Cargo.toml
       // (le test verifier_ide.js le vérifie ; à changer à chaque nouvelle version avec le texte de #texteBoot).
       const LOGO_FADERA = "data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 256 256%22%3E%3Crect width=%22256%22 height=%22256%22 rx=%2256%22 fill=%22%230f1b33%22/%3E%3Cpath d=%22M86 204V70a14 14 0 0 1 14-14h92M86 130h74%22 fill=%22none%22 stroke=%22%23f2a93b%22 stroke-width=%2226%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3Crect x=%22176%22 y=%22164%22 width=%2240%22 height=%2240%22 rx=%228%22 fill=%22%23fff%22/%3E%3C/svg%3E";
-      const VERSION_FADERA = "0.9.0";
+      const VERSION_FADERA = "0.10.0";
       window.VERSION_FADERA = VERSION_FADERA;
       function afficherInfoVersion() {
         ecrireTerminal(
@@ -13425,7 +13378,7 @@ fin
             "  <span style='color:#f5c451'>Tests</span>      tester [dossier]  (exécute test_*.fa ; dans le langage : verifier(cond, \"msg\"), verifier_egal(obtenu, attendu))\n" +
             "  <span style='color:#f5c451'>Fadéra</span>     nano fichier.fa  (ouvre dans l'éditeur)  ·  fadera fichier.fa  (exécute)  ·  ./fichier.fa  ·  fmt [-w] [--verifier] fichier.fa  (formate le code)\n" +
             "  <span style='color:#f5c451'>Shell</span>      cmd1 | cmd2  ·  cmd > fichier  ·  cmd >> fichier  ·  cmd1 && cmd2  ·  *.fa  ·  \"$HOME\"  ·  history  ·  Tab = complétion\n" +
-            "  <span style='color:#f5c451'>Langage</span>    soit x = 5  ·  afficher x * 2  ·  fnf hasard(10, 20)  ·  masqueReseau(26)\n" +
+            "  <span style='color:#f5c451'>Langage</span>    soit x = 5  ·  afficher x * 2  ·  hasard(10, 20)  ·  masqueReseau(26)\n" +
             "  <span style='color:#f5c451'>+ Linux</span>    awk cut tr tac rev nl paste diff cmp comm xxd strings base64 md5sum/sha256sum… date seq printf bc expr test [ ] xargs tee du df file ln alias export env sudo time man type\n" +
             "  <span style='color:#f5c451'>Scripts</span>    sh script.sh (if/for/while, $1, $(cmd), $((1+2)))  ·  cmd1 || cmd2  ·  VAR=valeur  ·  $?  ·  alias ll='ls -l' (persistant)\n" +
             "  <span style='color:#f5c451'>PACKS</span>      pkg list  ·  pkg install securite | reseau | dev | tout | monpack.json | outils.sh | outil.fa  ·  pkg remove nom\n" +
