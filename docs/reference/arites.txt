@@ -17,6 +17,7 @@ arc_tangente 1 1
 arc_tangente2 2 2
 arguments 0 0
 arreter 0 1
+__saisir_nombre 2 2
 arrondir 1 2
 base64_taille 1 1
 base64url_decoder 1 1

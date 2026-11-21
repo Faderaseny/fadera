@@ -416,7 +416,7 @@ Lire une clé qui n'existe pas donne une erreur listant les clés disponibles.
 soit nom = saisir("Quel est votre nom ? ")
 afficher "Bonjour " + nom
 ```
-- En CLI : lit une ligne au clavier. `saisir` renvoie **toujours du texte** (depuis la version 0.10.0). Pour un nombre, utilisez `saisir_nombre("Votre âge ? ")` : la virgule décimale « 1,5 » est acceptée, et une réponse qui n'est pas un nombre donne une erreur claire.
+- En CLI : lit une ligne au clavier. `saisir` renvoie **toujours du texte** (depuis la version 0.10.0). Pour un nombre, utilisez `saisir_nombre("Votre âge ? ")` : la virgule décimale « 1,5 » est acceptée, et une réponse qui n'est pas un nombre donne une erreur claire. Avec un second argument, vous choisissez le message : `saisir_nombre("Votre âge ? ", "Merci d'écrire un nombre, par exemple 25.")`.
 - Dans Fadéra OS (web) : ouvre une fenêtre de saisie et **met le script en pause** jusqu'à la réponse.
 
 ### Fichiers (CLI uniquement)

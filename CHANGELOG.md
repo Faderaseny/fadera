@@ -5,12 +5,18 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et la nu
 
 ## [Non publié]
 
+## [0.10.1] — 2026-11-21
+
+### Ajouté
+- **`saisir_nombre(message, erreur)`** : avec un second argument, une réponse qui n'est pas un nombre donne **votre** message d'erreur (rattrapable par `essayer` / `attraper`) au lieu du message technique. Exemple : `saisir_nombre("Votre âge ? ", "Merci d'écrire un nombre, par exemple 25.")`.
+
 ## [0.10.0] — 2026-11-20
 
 ### Changé (incompatible : `saisir` renvoie toujours du texte)
 - **`saisir(message)` renvoie toujours un texte** (moteurs JavaScript et Rust identiques). Avant, une réponse qui ressemblait à un nombre était convertie en secret, ce qui rendait le type de la variable imprévisible (`saisir()` donnait `"abc"` ou `42` selon ce que tapait la personne).
 - **Pour obtenir un nombre : `saisir_nombre(message)`** (la virgule décimale « 1,5 » est acceptée ; une réponse qui n'est pas un nombre donne l'erreur claire « impossible de convertir "abc" en nombre »). `nombre(saisir(message))` fait la même chose.
 - **Pour migrer** : remplacez `saisir(` par `saisir_nombre(` partout où vous calculez avec la réponse (`soit age = saisir_nombre("Âge ? ")`). Sinon `saisir("5") + 1` donne maintenant `"51"`. Les leçons, l'exemple 09 et la documentation ont été migrés.
+
 
 ### Supprimé
 - **Le préfixe `fnf`** (`fnf hasard(10, 20)`), facultatif et sans effet, n'existe plus : écrivez simplement `hasard(10, 20)`. Le mot n'est plus réservé (`soit fnf = 3` fonctionne) ; l'ancienne écriture donne l'erreur « Instruction inconnue : "fnf" ».
