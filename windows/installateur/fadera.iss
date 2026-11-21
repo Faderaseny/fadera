@@ -230,6 +230,34 @@ begin
   Result := Pos(';' + Uppercase(Dossier) + ';', ';' + Uppercase(Existant) + ';') = 0;
 end;
 
+{ Arrête l'éditeur (Fadera-IDE.exe) et le moteur (fadera.exe) lancés DEPUIS le dossier d'installation : Windows ne peut pas
+  remplacer ni supprimer un .exe qui tourne (sinon l'ancien lanceur reste en place sans que rien ne le dise).
+  Un fadera.exe lancé depuis un autre dossier (un terminal, un programme en cours) n'est jamais touché. }
+procedure ArreterFadera;
+var
+  Code: Integer;
+  Dossier, Commande: string;
+begin
+  Dossier := RemoveBackslash(ExpandConstant('{app}'));
+  StringChangeEx(Dossier, '''', '''''', True);
+  Commande := '-NoProfile -WindowStyle Hidden -Command "Get-CimInstance Win32_Process | Where-Object { $_.ExecutablePath -and $_.ExecutablePath.StartsWith(''@DOSSIER@\'', [StringComparison]::OrdinalIgnoreCase) -and ($_.Name -ieq ''fadera.exe'' -or $_.Name -ieq ''Fadera-IDE.exe'') } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }"';
+  StringChangeEx(Commande, '@DOSSIER@', Dossier, True);
+  Exec('powershell.exe', Commande, '', SW_HIDE, ewWaitUntilTerminated, Code);
+  Sleep(500);
+end;
+
+function PrepareToInstall(var NeedsRestart: Boolean): String;
+begin
+  ArreterFadera;
+  Result := '';
+end;
+
+function InitializeUninstall: Boolean;
+begin
+  ArreterFadera;
+  Result := True;
+end;
+
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 var
   Existant, Dossier: string;
