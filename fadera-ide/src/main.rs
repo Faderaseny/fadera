@@ -39,8 +39,9 @@ mod fenetre {
         match TcpStream::connect_timeout(&adresse, Duration::from_millis(300)) {
             Ok(mut s) => {
                 let _ = s.set_read_timeout(Some(Duration::from_secs(2)));
+                // « Host » doit contenir le port : le serveur refuse tout autre hôte (protection contre le DNS rebinding)
                 let _ = s.write_all(
-                    b"GET /__fadera HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n",
+                    format!("GET /__fadera HTTP/1.1\r\nHost: 127.0.0.1:{}\r\nConnection: close\r\n\r\n", PORT).as_bytes(),
                 );
                 let mut r = String::new();
                 let _ = s.read_to_string(&mut r);
