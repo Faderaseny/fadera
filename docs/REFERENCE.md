@@ -28,7 +28,7 @@ Ces fonctions font partie du langage : elles s'écrivent comme les autres (nom s
 
 **`saisir(message)`** — Demande une réponse à l'utilisateur. Renvoie toujours un texte (depuis la version 0.10.0). Pour obtenir un nombre, utilisez `saisir_nombre(message)`.
 
-**`saisir_nombre(message)`** — Comme saisir, mais renvoie un nombre (la virgule décimale « 1,5 » est acceptée) : erreur claire si la réponse n'en est pas un.
+**`saisir_nombre(message, erreur)`** — Comme saisir, mais renvoie un nombre (la virgule décimale « 1,5 » est acceptée). Sans second argument, une réponse qui n'est pas un nombre donne une erreur claire ; avec `erreur`, c'est votre message qui est affiché (rattrapable avec essayer/attraper).
 
 **`hasard(min, max)`** — Entier aléatoire entre min et max inclus.
 

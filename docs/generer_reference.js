@@ -37,7 +37,7 @@ async function executer(code, etiquette, erreurs) {
 }
 
 const LANGAGE = new Set(["afficher", "saisir", "saisir_nombre", "liste", "ajouter", "taille", "lireElement", "modifierElement", "lireCle", "modifierCle", "hasard", "lireFichier", "ecrireFichier"]);
-const INTERNES = new Set(["__instance"]);
+const INTERNES = new Set(["__instance", "__saisir_nombre"]);
 // Fonctions d'aide internes des modules std, volontairement non documentées
 const AIDES_STD = new Set(["nettoyer_droite", "aplatir_vers", "inverser_liste", "comparer_naturel", "comparer_inverse", "ordre_naturel", "fusionner_triees", "comparer_multi"]);
 const nomDe = sig => sig.match(/^[A-Za-z_0-9]+/)[0];

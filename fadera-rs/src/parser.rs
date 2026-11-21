@@ -886,6 +886,12 @@ impl Parser {
                         let inv = if args.is_empty() { None } else { Some(Box::new(args.remove(0))) };
                         return Ok(Expr::Appel(Nom::nouveau("nombre"), vec![Expr::Saisir(inv)], ligne));
                     }
+                    // saisir_nombre(invite, message_erreur) : même chose, avec votre message si la réponse n'est pas un nombre
+                    if j.valeur == "saisir_nombre" && args.len() == 2 {
+                        let msg = args.pop().unwrap();
+                        let inv = args.pop().unwrap();
+                        return Ok(Expr::Appel(Nom::nouveau("__saisir_nombre"), vec![Expr::Saisir(Some(Box::new(inv))), msg], ligne));
+                    }
                     return Ok(Expr::Appel(Nom::nouveau(&j.valeur), args, ligne));
                 }
             }

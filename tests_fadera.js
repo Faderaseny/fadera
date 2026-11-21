@@ -103,6 +103,9 @@ await t("capitaliser/titre",'afficher texte_capitaliser("fADÉRA") + " " + texte
   await ts("saisir_nombre accepte la virgule", 'afficher saisir_nombre() * 2', ["1,5"], "3");
   await ts("saisir_nombre refuse un texte", 'afficher saisir_nombre()', ["abc"], /^ERR:.*impossible de convertir "abc" en nombre/);
   await ts("saisir_nombre refuse une réponse vide", 'afficher saisir_nombre()', [], /^ERR:.*impossible de convertir "" en nombre/);
+  await ts("saisir_nombre: message d'erreur personnalisé", 'afficher saisir_nombre("n ?", "Merci d\'écrire un nombre.")', ["abc"], /^ERR:Ligne 1 : Merci d'écrire un nombre\.$/);
+  await ts("saisir_nombre avec message: réponse valide", 'afficher saisir_nombre("n ?", "Un nombre, svp.") + 1', ["4,5"], "5.5");
+  await ts("saisir_nombre avec message: rattrapable", 'essayer\n  afficher saisir_nombre("n ?", "Pas un nombre.")\nattraper e\n  afficher "capté : " + e\nfin', ["x"], "capté : Pas un nombre.");
   await ts("nombre(saisir()) équivaut à saisir_nombre", 'afficher nombre(saisir()) + 1', ["9"], "10");
 await t("slug",'afficher texte_slug("Été à Dakar : 2026 !")',"ete-a-dakar-2026");
 await t("palindrome",'afficher texte_est_palindrome("Esope reste ici et se repose") + " " + texte_est_palindrome("Fadera")',"vrai faux");

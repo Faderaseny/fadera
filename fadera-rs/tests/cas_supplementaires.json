@@ -240,5 +240,7 @@
  "fnf afficher \"a\"",
  "soit fnf = 3\nafficher fnf + 1",
  "soit n = saisir(\"n ?\")\nafficher n + 1",
- "afficher saisir_nombre()"
+ "afficher saisir_nombre()",
+ "afficher saisir_nombre(\"n ?\", \"Merci d'écrire un nombre.\")",
+ "essayer\n  afficher saisir_nombre(\"n ?\", \"Pas un nombre.\")\nattraper e\n  afficher \"capté : \" + e\nfin"
 ]

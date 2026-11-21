@@ -180,6 +180,7 @@ pub fn trouver(nom: &str) -> Option<NatFn> {
         "verifier_erreur" => verifier_erreur,
         "lever" => lever,
         "__instance" => nat_instance,
+        "__saisir_nombre" => f_saisir_nombre,
         "classe_de" => nat_classe_de,
         "est_instance" => nat_est_instance,
         _ => return crate::serveur::trouver(nom).or_else(|| stdlib::trouver(nom)),
@@ -389,6 +390,19 @@ fn f_nombre(_: &mut Interp, a: &[Valeur], _: usize) -> R<Valeur> {
     let v = js_nombre_texte(&tt);
     if tt.is_empty() || v.is_nan() {
         return Err(nat(format!("impossible de convertir \"{}\" en nombre.", formater(&x))));
+    }
+    Ok(n(v))
+}
+/// interne : saisir_nombre(invite, message) — la conversion de nombre(), avec le message de l'auteur en cas d'échec
+fn f_saisir_nombre(_: &mut Interp, a: &[Valeur], _: usize) -> R<Valeur> {
+    let x = a.get(0).cloned().unwrap_or(Valeur::Rien);
+    if let Valeur::Nombre(_) = x {
+        return Ok(x);
+    }
+    let tt = js_trim(&js_texte(&x)).replacen(',', ".", 1);
+    let v = js_nombre_texte(&tt);
+    if tt.is_empty() || v.is_nan() {
+        return Err(fad(a.get(1).map(formater).unwrap_or_default()));
     }
     Ok(n(v))
 }
