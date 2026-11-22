@@ -5,6 +5,11 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et la nu
 
 ## [Non publié]
 
+## [0.11.0] — 2026-11-22
+
+### Ajouté
+- **`crypto_totp(secret_base32 [, temps_ms])`** (module serveur) : code à 6 chiffres à usage unique (TOTP, RFC 6238), pour ajouter une **double authentification** à une application web écrite en Fadéra. Compatible avec Google Authenticator, Microsoft Authenticator, Aegis, FreeOTP. Vérifié avec les vecteurs de test de la RFC 6238.
+
 ## [0.10.3] — 2026-11-21
 
 ### Amélioré

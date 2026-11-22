@@ -51,6 +51,7 @@ crypto_hacher_sha512 1 1
 crypto_hmac_base64url 2 2
 crypto_hmac_sha256 2 2
 crypto_scrypt 2 3
+crypto_totp 1 2
 csv_lire 1 2
 csv_texte 1 2
 date_age 1 2
