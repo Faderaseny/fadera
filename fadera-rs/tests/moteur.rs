@@ -59,6 +59,20 @@ fn hachages_connus() {
 }
 
 #[test]
+fn totp_vecteurs_rfc6238() {
+    // RFC 6238, annexe B (SHA-1, secret « 12345678901234567890 »), 6 derniers chiffres du code à 8 chiffres
+    let s = "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ";
+    assert_eq!(run(&format!("afficher crypto_totp(\"{}\", 59000)", s)), "287082");
+    assert_eq!(run(&format!("afficher crypto_totp(\"{}\", 1111111109000)", s)), "081804");
+    assert_eq!(run(&format!("afficher crypto_totp(\"{}\", 1234567890000)", s)), "005924");
+    // minuscules et espaces acceptés
+    assert_eq!(run("afficher crypto_totp(\"gezd gnbv gy3t qojq gezd gnbv gy3t qojq\", 59000)"), "287082");
+    // sans temps : 6 chiffres
+    assert_eq!(run(&format!("afficher taille(crypto_totp(\"{}\"))", s)), "6");
+    assert!(run(&format!("essayer\n crypto_totp(\"abc\")\nattraper e\n afficher \"erreur\"\nfin")).contains("erreur"));
+}
+
+#[test]
 fn reseau_de_neurones() {
     avec_essais(|| run("soit r = creerReseau(2, 4, 1)\npour i allantde 1 a 4000 faire\n iaEntrainer(r, [0,1], [1])\n iaEntrainer(r, [1,0], [1])\n iaEntrainer(r, [0,0], [0])\n iaEntrainer(r, [1,1], [0])\nfin\nafficher arrondir(lireElement(iaPredire(r, [0,1]), 0))\nafficher arrondir(lireElement(iaPredire(r, [1,1]), 0))\nafficher r") == "1\n0\n[Réseau 2-4-1]");
 }

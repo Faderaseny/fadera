@@ -48,6 +48,7 @@ serveur_http(3000, gestionnaire)
 | `crypto_scrypt(mot_de_passe, sel)` | empreinte scrypt (N=16384, r=8, p=1) en hexadécimal ; le sel est lu comme du texte, comme `crypto.scryptSync` de Node |
 | `crypto_hmac_base64url(texte, cle)` | HMAC-SHA-256 en base64url sans remplissage (jetons signés) |
 | `crypto_egal_constant(a, b)` | compare deux textes sans révéler la position de la première différence |
+| `crypto_totp(secret_base32)` ou `crypto_totp(secret_base32, temps_ms)` | code à 6 chiffres à usage unique (TOTP, RFC 6238 : pas de 30 s, HMAC-SHA-1), celui que calculent Google Authenticator, Microsoft Authenticator ou Aegis ; le secret est du base32 (16 caractères ou plus) ; sans second argument, l'heure actuelle est utilisée |
 | `crypto_aleatoire_entier(n)` | entier aléatoire cryptographique dans [0, n[ |
 | `base64url_encoder(texte)`, `base64url_decoder(texte)` | encode / décode ; le décodage renvoie « rien » si l'entrée est invalide |
 

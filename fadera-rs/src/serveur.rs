@@ -39,6 +39,7 @@ pub fn trouver(nom: &str) -> Option<NatFn> {
         "crypto_scrypt" => crypto_scrypt,
         "crypto_hmac_base64url" => crypto_hmac_base64url,
         "crypto_egal_constant" => crypto_egal_constant,
+        "crypto_totp" => crypto_totp,
         "crypto_aleatoire_entier" => crypto_aleatoire_entier,
         "base64url_encoder" => base64url_encoder,
         "base64url_decoder" => base64url_decoder,
@@ -237,6 +238,102 @@ fn crypto_egal_constant(_: &mut Interp, a: &[Valeur], _: usize) -> R<Valeur> {
         d |= (*x.get(i).unwrap_or(&0) ^ *y.get(i).unwrap_or(&0)) as u32;
     }
     Ok(Valeur::Bool(d == 0))
+}
+// ------------------------------------------------------- code à usage unique (TOTP, RFC 6238)
+/// SHA-1 (RFC 3174). Nécessaire pour le TOTP des applications d'authentification ; ne sert à rien d'autre.
+fn sha1(msg: &[u8]) -> [u8; 20] {
+    let mut h: [u32; 5] = [0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476, 0xC3D2E1F0];
+    let mut m = msg.to_vec();
+    m.push(0x80);
+    while m.len() % 64 != 56 {
+        m.push(0);
+    }
+    m.extend_from_slice(&((msg.len() as u64) * 8).to_be_bytes());
+    for bloc in m.chunks(64) {
+        let mut w = [0u32; 80];
+        for i in 0..16 {
+            w[i] = u32::from_be_bytes([bloc[4 * i], bloc[4 * i + 1], bloc[4 * i + 2], bloc[4 * i + 3]]);
+        }
+        for i in 16..80 {
+            w[i] = (w[i - 3] ^ w[i - 8] ^ w[i - 14] ^ w[i - 16]).rotate_left(1);
+        }
+        let (mut a, mut b, mut c, mut d, mut e) = (h[0], h[1], h[2], h[3], h[4]);
+        for (i, wi) in w.iter().enumerate() {
+            let (f, k) = match i {
+                0..=19 => ((b & c) | (!b & d), 0x5A827999),
+                20..=39 => (b ^ c ^ d, 0x6ED9EBA1),
+                40..=59 => ((b & c) | (b & d) | (c & d), 0x8F1BBCDC),
+                _ => (b ^ c ^ d, 0xCA62C1D6),
+            };
+            let tmp = a.rotate_left(5).wrapping_add(f).wrapping_add(e).wrapping_add(k).wrapping_add(*wi);
+            e = d;
+            d = c;
+            c = b.rotate_left(30);
+            b = a;
+            a = tmp;
+        }
+        h[0] = h[0].wrapping_add(a);
+        h[1] = h[1].wrapping_add(b);
+        h[2] = h[2].wrapping_add(c);
+        h[3] = h[3].wrapping_add(d);
+        h[4] = h[4].wrapping_add(e);
+    }
+    let mut r = [0u8; 20];
+    for i in 0..5 {
+        r[4 * i..4 * i + 4].copy_from_slice(&h[i].to_be_bytes());
+    }
+    r
+}
+fn hmac_sha1(cle: &[u8], msg: &[u8]) -> [u8; 20] {
+    let mut k = [0u8; 64];
+    if cle.len() > 64 {
+        k[..20].copy_from_slice(&sha1(cle));
+    } else {
+        k[..cle.len()].copy_from_slice(cle);
+    }
+    let mut interne: Vec<u8> = k.iter().map(|b| b ^ 0x36).collect();
+    interne.extend_from_slice(msg);
+    let mut externe: Vec<u8> = k.iter().map(|b| b ^ 0x5c).collect();
+    externe.extend_from_slice(&sha1(&interne));
+    sha1(&externe)
+}
+/// Décode du base32 (RFC 4648) : majuscules ou minuscules, espaces et « = » ignorés. None si un caractère est invalide.
+fn base32_decoder(s: &str) -> Option<Vec<u8>> {
+    let (mut tampon, mut bits, mut sortie) = (0u32, 0u32, Vec::new());
+    for c in s.chars().filter(|c| !c.is_whitespace() && *c != '=' && *c != '-') {
+        let v = match c.to_ascii_uppercase() {
+            'A'..='Z' => c.to_ascii_uppercase() as u32 - 'A' as u32,
+            '2'..='7' => c as u32 - '2' as u32 + 26,
+            _ => return None,
+        };
+        tampon = (tampon << 5) | v;
+        bits += 5;
+        if bits >= 8 {
+            bits -= 8;
+            sortie.push(((tampon >> bits) & 0xFF) as u8);
+        }
+    }
+    Some(sortie)
+}
+/// crypto_totp(secret_base32 [, temps_ms]) : code à 6 chiffres (pas de 30 s, HMAC-SHA-1), compatible Google Authenticator.
+fn crypto_totp(_: &mut Interp, a: &[Valeur], _: usize) -> R<Valeur> {
+    let secret = txt(a, 0, "crypto_totp")?;
+    let cle = match base32_decoder(&secret) {
+        Some(c) if c.len() >= 10 => c,
+        _ => return Err(fad("crypto_totp : le secret doit être un texte base32 (lettres A-Z et chiffres 2-7) d'au moins 16 caractères.")),
+    };
+    let ms = match a.get(1) {
+        Some(v) => js_nombre(v),
+        None => std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map_or(0.0, |d| d.as_millis() as f64),
+    };
+    if !ms.is_finite() || ms < 0.0 {
+        return Err(fad("crypto_totp : le temps doit être un nombre de millisecondes positif."));
+    }
+    let pas = (ms / 30000.0).floor() as u64;
+    let h = hmac_sha1(&cle, &pas.to_be_bytes());
+    let o = (h[19] & 15) as usize;
+    let v = (u32::from_be_bytes([h[o], h[o + 1], h[o + 2], h[o + 3]]) & 0x7fff_ffff) % 1_000_000;
+    Ok(t(format!("{:06}", v)))
 }
 /// Entier aléatoire cryptographique dans [0, n[ (sans biais).
 fn crypto_aleatoire_entier(_: &mut Interp, a: &[Valeur], _: usize) -> R<Valeur> {
